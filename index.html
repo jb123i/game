@@ -761,7 +761,18 @@ function renderNode(id){const {ctx,strokes}=nodeCanvas[id];const guide=guides[id
  if(tracing&&tracing.id===id&&tracing.tool==='trace')stroke(ctx,tracing.points,'#233e46',3.5);
  if(owned&&!drawn.length){ctx.font='700 12px system-ui';ctx.fillStyle='#ae7160';ctx.textAlign='center';ctx.fillText('OFF',48,18)}
 }
-function visibleNode(id){return id==='root'||(id==='eraser'?s.owned.grid:id==='eraserSize'?s.owned.eraser:id==='dashedCircle'?s.owned.circle:id==='circle'?s.owned.square||s.owned.circle:s.owned.root)}
+// Reveal only the next upgrade(s) directly connected to a purchased skill.
+// Owning an upgrade always keeps that node visible, including older saved games.
+// For junctions such as Composer, either purchased parent reveals the node;
+// buying it still requires all of its active prerequisites.
+const treeParents={
+ root:[],stamina:['root'],square:['root'],free:['root'],grid:['root'],
+ circle:['square'],composer:['stamina','circle'],dashedCircle:['circle'],
+ eraser:['grid'],eraserSize:['eraser']
+};
+function visibleNode(id){
+ return id==='root'||!!s.owned[id]||(treeParents[id]||[]).some(parent=>!!s.owned[parent]);
+}
 function prerequisites(id){
  if(id==='circle')return ['square'];
  if(id==='composer')return ['stamina','circle'];
@@ -787,14 +798,15 @@ function renderTree(){
   n.querySelector('.node-price').textContent=s.owned[id]?(nodeActive(id)?'ON · OWNED':'OFF · OWNED'):defs[id].cost;
   renderNode(id);
  }
- const linkParents={stamina:'stamina',circle:'circle',free:'free',grid:'grid',eraser:'eraser',dashedCircle:'dashedCircle',eraserSize:'eraserSize',square:'square',composer:'composer'};
- for(const id of Object.keys(linkParents)){
+ // Draw each connection only after its source upgrade has been purchased.
+ const linkParents={stamina:'root',circle:'square',free:'root',grid:'root',eraser:'grid',dashedCircle:'circle',eraserSize:'eraser',square:'root',composer:'circle'};
+ for(const [id,parent] of Object.entries(linkParents)){
   const link=$('link-'+id);
-  link.style.display=visibleNode(id)?'':'none';
+  link.style.display=visibleNode(id)&&s.owned[parent]?'':'none';
   link.classList.toggle('live',id==='composer'?circlePlayable():id==='circle'?squarePlayable():id==='square'?upgradeActive('root'):id==='eraserSize'?upgradeActive('eraser'):id==='eraser'?upgradeActive('grid'):id==='dashedCircle'?circlePlayable():upgradeActive(id));
  }
  const stamina=$('link-composer-stamina');
- stamina.style.display=visibleNode('composer')?'':'none';
+ stamina.style.display=visibleNode('composer')&&s.owned.stamina?'':'none';
  stamina.classList.toggle('live',upgradeActive('stamina'));
  if(inspectId&&!visibleNode(inspectId))closeInspector();
  if(inspectId)inspect(inspectId);
