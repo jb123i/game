@@ -33,6 +33,36 @@
 #shopStage.single-upgrade .inspect p{font-size:11px;margin-bottom:6px}
 #shopStage.single-upgrade .inspect-hint{font-size:10px}
 .logo{width:38px;height:38px}}
+
+/* V12: let the sketchbook occupy the usable desktop viewport instead of
+   sitting inside a fixed 1,030px column. Keep the compact shop independent. */
+#app{
+  width:100%;
+  max-width:2000px;
+  min-height:100svh;
+  display:flex;
+  flex-direction:column;
+  padding:clamp(12px,1.5vw,24px) clamp(14px,2vw,34px) 16px;
+}
+.brand{margin-bottom:16px}
+.stats{margin-bottom:14px}
+#playStage:not(.hidden){display:flex;flex-direction:column;flex:1 1 auto;min-height:0}
+#playStage .paper-area{height:auto;min-height:440px;flex:1 1 440px}
+#shopStage:not(.hidden){width:100%;max-width:1100px;margin-inline:auto}
+#shopStage.single-upgrade:not(.hidden){max-width:840px}
+.reset{margin-top:12px}
+/* Prevent excessive stretching of the paper on tablets and phones, where
+   portrait scrolling and stable touch coordinates matter more. */
+@media(max-width:780px){
+  #app{display:block;min-height:0;padding:14px 12px 28px}
+  #playStage:not(.hidden){display:block}
+  #playStage .paper-area{height:min(60svh,550px);min-height:320px;flex:none}
+  #shopStage:not(.hidden){width:100%}
+  #shopStage.single-upgrade:not(.hidden){max-width:none}
+}
+@media(max-width:490px){
+  #playStage .paper-area{height:clamp(280px,52svh,390px);min-height:280px}
+}
 </style>
 </head>
 <body>
@@ -76,7 +106,7 @@ const defs={
  eraserSize:{name:'Adjustable Eraser',price:250,desc:'Unlock a size slider for your pencil eraser. Adjust its width from 8 to 64 pixels; the grid and guides are never erased.',cost:'$2.50'},
  dashedCircle:{name:'Dashed Circle Guide',price:500,desc:'Trade your center and four outer circle guide dots for a dashed circle outline. It costs $5.00.',cost:'$5.00'}
 };
-const blank=()=>({cash:0,turn:1,energy:1,left:1,strokes:0,phase:'draw',last:0,lastPay:0,lastKind:'line',owned:{root:false,stamina:false,circle:false,free:false,grid:false,eraser:false,eraserSize:false,dashedCircle:false},traces:{},pendingTraces:{},paperMarks:[],eraserSize:30,gridOn:true,freeOn:false,mode:'line',tool:'pencil'});
+const blank=()=>({cash:0,turn:1,energy:1,left:1,strokes:0,phase:'draw',last:0,lastPay:0,lastKind:'line',owned:{root:false,stamina:false,circle:false,free:false,grid:false,eraser:false,eraserSize:false,dashedCircle:false},traces:{},pendingTraces:{},paperMarks:[],legacyAspect:null,eraserSize:30,gridOn:true,freeOn:false,mode:'line',tool:'pencil'});
 let s=blank();
 try{const q=JSON.parse(localStorage.getItem(key)||'null');if(q&&Number.isFinite(q.cash)&&q.owned&&['draw','shop'].includes(q.phase)){
  s={...blank(),...q,owned:{...blank().owned,...q.owned},traces:q.traces&&typeof q.traces==='object'?q.traces:{},pendingTraces:q.pendingTraces&&typeof q.pendingTraces==='object'?q.pendingTraces:{},paperMarks:Array.isArray(q.paperMarks)?q.paperMarks:[]};
@@ -130,11 +160,11 @@ window.addEventListener('touchmove',e=>{if(activePointer!==null&&e.cancelable)e.
 
 let W=0,H=0,A=null,B=null,O=null,strokePts=[],drawing=false,eraserPts=[],erasing=false,locked=false,advanceTimer=null,activePointer=null,strokeAnchor=null,pendingResize=false,paintFrame=0;
 const requestPaperPaint=()=>{if(paintFrame)return;paintFrame=requestAnimationFrame(()=>{paintFrame=0;paintPaper()})};
-function resizePaper(){if(drawing||erasing){pendingResize=true;return}pendingResize=false;const rect=$('paperArea').getBoundingClientRect(),w=Math.max(1,Math.round(rect.width)),h=Math.max(1,Math.round(rect.height));const ow=W,oh=H;if(W===w&&H===h)return;W=w;H=h;draw.width=grid.width=ink.width=w;draw.height=grid.height=ink.height=h;
+function resizePaper(){if(drawing||erasing){pendingResize=true;return}pendingResize=false;const rect=$('paperArea').getBoundingClientRect(),w=Math.max(1,Math.round(rect.width)),h=Math.max(1,Math.round(rect.height));const ow=W,oh=H;if(W===w&&H===h)return;W=w;H=h;if(s.paperMarks.length&&!(Number(s.legacyAspect)>0)){s.legacyAspect=legacyPaperAspect();save()}draw.width=grid.width=ink.width=w;draw.height=grid.height=ink.height=h;
  if(A&&ow&&oh){for(let p of [A,B,...strokePts].filter(Boolean)){p.x*=w/ow;p.y*=h/oh}if(O){O.x*=w/ow;O.y*=h/oh;O.r*=Math.min(w/ow,h/oh)}}paintGrid();paintInk();paintPaper()}
 function createPrompt(){strokePts=[];drawing=false;locked=false;const margin=Math.min(70,W*.15);
- if(s.mode==='circle'){const radius=Math.min(W*.30,H*.34,110),rmin=Math.min(42,radius);const rr=rmin+Math.random()*Math.max(0,radius-rmin);O={x:rr+15+Math.random()*Math.max(1,W-2*rr-30),y:rr+15+Math.random()*Math.max(1,H-2*rr-30),r:rr};A=null;B=null}
- else if(!s.freeOn){O=null;for(let i=0;i<130;i++){const a={x:margin+Math.random()*(W-2*margin),y:55+Math.random()*(H-95)},b={x:margin+Math.random()*(W-2*margin),y:55+Math.random()*(H-95)};if(distance(a,b)>Math.min(95,W*.2)&&distance(a,b)<W*.75){A=a;B=b;break}}if(!A){A={x:margin,y:H*.36};B={x:W-margin,y:H*.62}}}
+ if(s.mode==='circle'){const radius=Math.min(W*.30,H*.34,window.innerWidth>780?170:110),rmin=Math.min(window.innerWidth>780?75:42,radius);const rr=rmin+Math.random()*Math.max(0,radius-rmin);O={x:rr+15+Math.random()*Math.max(1,W-2*rr-30),y:rr+15+Math.random()*Math.max(1,H-2*rr-30),r:rr};A=null;B=null}
+ else if(!s.freeOn){O=null;for(let i=0;i<130;i++){const a={x:margin+Math.random()*(W-2*margin),y:55+Math.random()*(H-95)},b={x:margin+Math.random()*(W-2*margin),y:55+Math.random()*(H-95)};if(distance(a,b)>Math.min(95,W*.2)&&distance(a,b)<Math.min(W*.75,620)){A=a;B=b;break}}if(!A){A={x:W*.35,y:H*.36};B={x:Math.min(W-margin,W*.35+Math.min(450,W*.55)),y:H*.62}}}
  else{A=null;B=null;O=null}
  $('score').textContent='Ready to draw';paintPaper()}
 function circleDot(x,y,center=false){dc.beginPath();dc.arc(x,y,center?4.4:5.6,0,2*Math.PI);dc.fillStyle='#fffefa';dc.fill();dc.strokeStyle='#59917e';dc.lineWidth=1.8;dc.stroke();dc.beginPath();dc.arc(x,y,center?2.4:3.3,0,2*Math.PI);dc.fillStyle='#417d6b';dc.fill()}
@@ -143,16 +173,22 @@ function paintPaper(reveal=false){dc.clearRect(0,0,W,H);
  if(s.mode==='circle'&&O){if(s.owned.dashedCircle){dc.beginPath();dc.arc(O.x,O.y,O.r,0,Math.PI*2);dc.strokeStyle='#82aa9b99';dc.lineWidth=2;dc.setLineDash([5,7]);dc.stroke();dc.setLineDash([])}else{circleDot(O.x,O.y,true);for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]])circleDot(O.x+dx*O.r,O.y+dy*O.r)}if(reveal){dc.beginPath();dc.arc(O.x,O.y,O.r,0,Math.PI*2);dc.strokeStyle='#73a891';dc.lineWidth=1.2;dc.stroke()}}
  else if(A&&B){if(reveal){dc.beginPath();dc.moveTo(A.x,A.y);dc.lineTo(B.x,B.y);dc.strokeStyle='#9fbdaf';dc.lineWidth=1.5;dc.setLineDash([6,6]);dc.stroke();dc.setLineDash([])}dot(A,'A','#d9835e');dot(B,'B','#468d7c')}
  stroke(dc,strokePts,'#243941',3.2)}
-// Normalize pencil coordinates so previously drawn marks survive canvas resize and reload.
-const normalizeMark=pts=>pts.map(p=>[Math.round(clamp(p.x/Math.max(1,W))*10000)/10000,Math.round(clamp(p.y/Math.max(1,H))*10000)/10000]);
+// Keep ink in height-relative, centered coordinates. That preserves circles and
+// eraser paths even if a desktop layout change dramatically widens the paper.
+const legacyPaperAspect=()=>{
+ const vw=window.innerWidth,vh=window.innerHeight;
+ if(vw<=490)return Math.max(1,vw-26)/Math.max(280,Math.min(390,vh*.52));
+ return Math.max(1,Math.min(982,vw-(vw<=780?26:50)))/440;
+};
+const normalizeMark=pts=>pts.map(p=>[Math.round(((p.x-W/2)/Math.max(1,H))*10000)/10000,Math.round(clamp(p.y/Math.max(1,H))*10000)/10000]);
 function applyMark(mark){if(!mark||!Array.isArray(mark.points)||mark.points.length===0)return;
- const points=mark.points.filter(p=>Array.isArray(p)&&Number.isFinite(p[0])&&Number.isFinite(p[1])).map(p=>({x:p[0]*W,y:p[1]*H}));if(!points.length)return;
+ const aspect=Number(s.legacyAspect)>0?s.legacyAspect:legacyPaperAspect();const points=mark.points.filter(p=>Array.isArray(p)&&Number.isFinite(p[0])&&Number.isFinite(p[1])).map(p=>({x:mark.space==='iso'?W/2+p[0]*H:W/2+(p[0]-.5)*aspect*H,y:p[1]*H}));if(!points.length)return;
  const erase=mark.kind==='erase',diameter=erase?Math.min(64,Math.max(8,Number(mark.size)||30)):3.2;ic.save();ic.globalCompositeOperation=erase?'destination-out':'source-over';
  if(points.length===1){ic.beginPath();ic.arc(points[0].x,points[0].y,erase?diameter/2:1.6,0,2*Math.PI);ic.fillStyle=erase?'#000':'#243941';ic.fill()}
  else stroke(ic,points,'#243941',erase?diameter:3.2);
  ic.restore();
 }
-function paintInk(){ic.clearRect(0,0,W,H);for(const mark of s.paperMarks)applyMark(mark);if(erasing&&eraserPts.length)applyMark({kind:'erase',size:s.eraserSize,points:normalizeMark(eraserPts)})}
+function paintInk(){ic.clearRect(0,0,W,H);for(const mark of s.paperMarks)applyMark(mark);if(erasing&&eraserPts.length)applyMark({kind:'erase',space:'iso',size:s.eraserSize,points:normalizeMark(eraserPts)})}
 function paintGrid(){gc.clearRect(0,0,W,H);if(!s.owned.grid||!s.gridOn)return;const d=26;gc.strokeStyle='#becbc5ba';gc.lineWidth=1;gc.beginPath();for(let x=d/2;x<W;x+=d){gc.moveTo(x+.5,0);gc.lineTo(x+.5,H)}for(let y=d/2;y<H;y+=d){gc.moveTo(0,y+.5);gc.lineTo(W,y+.5)}gc.stroke()}
 function eraserBegin(e){if(!s.owned.eraser)return;
  erasing=true;activePointer=e.pointerId;eraserPts=[pointer(e,draw)];startStablePointer(e,eraserPts[0]);draw.setPointerCapture(e.pointerId);paintInk();$('score').textContent='Erasing pencil · No energy used'
@@ -173,17 +209,17 @@ function circleAccuracy(){if(strokePts.length<2)return 0;const actual=pathLength
 function finishPractice(){if(!drawing)return;drawing=false;if(strokePts.length<2||pathLength(strokePts)<7){strokePts=[];paintPaper();return}locked=true;
  const accuracy=s.mode==='circle'?circleAccuracy():lineAccuracy(),reward=accuracy*(s.mode==='circle'?2:1);s.cash+=reward;s.strokes++;s.left=Math.max(0,s.left-1);s.last=accuracy;s.lastPay=reward;s.lastKind=s.mode;
  // Completed drawings remain permanently on the ink layer until erased or reset.
- s.paperMarks.push({kind:'ink',points:normalizeMark(strokePts)});strokePts=[];save();stats();paintInk();$('score').textContent=accuracy+'% · +'+cash(reward);paintPaper(true);clearTimeout(advanceTimer);advanceTimer=setTimeout(()=>{if(s.left<=0)openShop();else createPrompt()},1000)
+ s.paperMarks.push({kind:'ink',space:'iso',points:normalizeMark(strokePts)});strokePts=[];save();stats();paintInk();$('score').textContent=accuracy+'% · +'+cash(reward);paintPaper(true);clearTimeout(advanceTimer);advanceTimer=setTimeout(()=>{if(s.left<=0)openShop();else createPrompt()},1000)
 }
 draw.addEventListener('pointerdown',e=>{if(s.phase!=='draw'||drawing||erasing||(locked&&s.tool!=='eraser')||(!e.isPrimary&&e.pointerType==='touch'))return;if(s.tool==='eraser'){e.preventDefault();eraserBegin(e);return}const p=pointer(e,draw);
  if(s.mode==='line'&&!s.freeOn&&distance(p,A)>31){$('score').textContent='Start near point A';return}e.preventDefault();drawing=true;activePointer=e.pointerId;strokePts=[p];startStablePointer(e,p);draw.setPointerCapture(e.pointerId);paintPaper()});
 draw.addEventListener('pointermove',e=>{if(activePointer!==e.pointerId||(!drawing&&!erasing))return;e.preventDefault();for(const sample of stableSamples(e)){const p=stablePointer(sample);if(!p)continue;const pts=drawing?strokePts:eraserPts;const last=pts[pts.length-1];if(distance(p,last)>.65)pts.push(p)}if(drawing)requestPaperPaint();if(erasing)paintInk()});
 function preserveInterruptedStroke(){
- if(drawing&&strokePts.length>1&&pathLength(strokePts)>3)s.paperMarks.push({kind:'ink',points:normalizeMark(strokePts)});
- if(erasing&&eraserPts.length)s.paperMarks.push({kind:'erase',size:s.eraserSize,points:normalizeMark(eraserPts)});
+ if(drawing&&strokePts.length>1&&pathLength(strokePts)>3)s.paperMarks.push({kind:'ink',space:'iso',points:normalizeMark(strokePts)});
+ if(erasing&&eraserPts.length)s.paperMarks.push({kind:'erase',space:'iso',size:s.eraserSize,points:normalizeMark(eraserPts)});
  drawing=false;erasing=false;strokePts=[];eraserPts=[];activePointer=null;strokeAnchor=null;save();paintInk();paintPaper();if(pendingResize)resizePaper();
 }
-draw.addEventListener('pointerup',e=>{if(activePointer!==e.pointerId)return;e.preventDefault();const p=stablePointer(e);if(drawing){if(p)strokePts.push(p);activePointer=null;strokeAnchor=null;finishPractice()}else if(erasing){if(p)eraserPts.push(p);s.paperMarks.push({kind:'erase',size:s.eraserSize,points:normalizeMark(eraserPts)});erasing=false;eraserPts=[];activePointer=null;strokeAnchor=null;save();paintInk();stats();$('score').textContent='Pencil erased · No energy used'}if(pendingResize)resizePaper()});
+draw.addEventListener('pointerup',e=>{if(activePointer!==e.pointerId)return;e.preventDefault();const p=stablePointer(e);if(drawing){if(p)strokePts.push(p);activePointer=null;strokeAnchor=null;finishPractice()}else if(erasing){if(p)eraserPts.push(p);s.paperMarks.push({kind:'erase',space:'iso',size:s.eraserSize,points:normalizeMark(eraserPts)});erasing=false;eraserPts=[];activePointer=null;strokeAnchor=null;save();paintInk();stats();$('score').textContent='Pencil erased · No energy used'}if(pendingResize)resizePaper()});
 draw.addEventListener('pointercancel',e=>{if(activePointer!==e.pointerId)return;preserveInterruptedStroke();$('score').textContent='Stroke interrupted · Partial drawing saved';});
 window.addEventListener('pagehide',()=>{if(drawing||erasing)preserveInterruptedStroke()});
 function changeMode(mode){if(s.phase!=='draw'||locked||drawing)return;if(mode==='circle'&&!s.owned.circle)return;s.mode=mode;s.tool='pencil';save();stats();createPrompt()}
