@@ -128,8 +128,9 @@ $('restoreGrid').addEventListener('click',()=>{s.gridMarks=[];save();stats();pai
 // never a mathematically perfect replacement ring.
 const nodes=[...document.querySelectorAll('.upgrade')],nodeCanvas={};let tracing=null,inspectId='root';
 const circleGuide=()=>{const arr=[];for(let i=0;i<=144;i++){const t=-Math.PI/2+2*Math.PI*i/144;arr.push({x:48+36*Math.cos(t),y:48+36*Math.sin(t)})}return arr};
-const polygonGuide=(sides,radius=36,rotation=-Math.PI/2)=>{const verts=[];for(let i=0;i<sides;i++){const t=rotation+2*Math.PI*i/sides;verts.push({x:48+radius*Math.cos(t),y:48+radius*Math.sin(t)})}verts.push({...verts[0]});return verts};
-const starGuide=(points=5,outer=36,inner=16,rotation=-Math.PI/2)=>{const verts=[];for(let i=0;i<points*2;i++){const r=i%2===0?outer:inner;const t=rotation+Math.PI*i/points;verts.push({x:48+r*Math.cos(t),y:48+r*Math.sin(t)})}verts.push({...verts[0]});return verts};
+const sampleGuide=verts=>{const pts=[];for(let i=1;i<verts.length;i++){const a=verts[i-1],b=verts[i],n=Math.max(1,Math.ceil(distance(a,b)/2));for(let j=0;j<n;j++){const t=j/n;pts.push({x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t})}}pts.push({...verts[verts.length-1]});return pts};
+const polygonGuide=(sides,radius=36,rotation=-Math.PI/2)=>{const verts=[];for(let i=0;i<sides;i++){const t=rotation+2*Math.PI*i/sides;verts.push({x:48+radius*Math.cos(t),y:48+radius*Math.sin(t)})}verts.push({...verts[0]});return sampleGuide(verts)};
+const starGuide=(points=5,outer=36,inner=16,rotation=-Math.PI/2)=>{const verts=[];for(let i=0;i<points*2;i++){const r=i%2===0?outer:inner;const t=rotation+Math.PI*i/points;verts.push({x:48+r*Math.cos(t),y:48+r*Math.sin(t)})}verts.push({...verts[0]});return sampleGuide(verts)};
 const guides={
  root:polygonGuide(3,35,-Math.PI/2),
  stamina:starGuide(5,36,16,-Math.PI/2),
