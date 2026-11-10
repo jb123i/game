@@ -11,7 +11,10 @@
 .brand{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}.brandmark{display:flex;gap:14px;align-items:center}.logo{width:43px;height:43px;display:grid;place-items:center;background:var(--ink);border-radius:13px;color:#fff;font-size:22px;transform:rotate(-5deg)}h1{font:700 clamp(28px,4.2vw,39px)/1.04 Georgia,Times,serif;letter-spacing:-1.5px;margin:0}.eyebrow{font-size:10px;font-weight:800;letter-spacing:2.2px;text-transform:uppercase;color:#73827b;margin:0 0 5px}.series{border:1px solid #d9dbd1;border-radius:30px;padding:8px 13px;font-size:11px;letter-spacing:.11em;font-weight:800;color:#718078;white-space:nowrap}
 .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:16px}.stat{background:#fffdfa;border:1px solid var(--line);border-radius:14px;padding:13px 17px;min-width:0}.stat-label{color:#83908a;text-transform:uppercase;font-size:10px;letter-spacing:1.5px;font-weight:800}.stat-value{font-size:clamp(21px,3vw,30px);font-weight:760;letter-spacing:-.75px;font-variant-numeric:tabular-nums;margin-top:4px}.stat-value.money{color:#267864}.stat-sub{margin-top:1px;font-size:11px;color:#999e97}
 .panel{background:var(--paper);border:1px solid #dedcd2;border-radius:18px;box-shadow:var(--shadow)}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 25px 17px;border-bottom:1px solid #e9e7dd}.panel-title{font:700 25px/1.2 Georgia,serif;letter-spacing:-.6px;margin:0}.panel-sub{font-size:13px;color:#788079;margin:5px 0 0;line-height:1.55}.smalltag{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#49897a;background:#e9f2e9;border:1px solid #d8eadf;border-radius:30px;padding:7px 11px;white-space:nowrap}.hidden{display:none!important}
-.paper-tools{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:11px 18px;border-bottom:1px solid #e9e7dd;background:#faf9f4}.toolgroup{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.tiny-label{font-size:10px;letter-spacing:1px;font-weight:800;color:#919990;text-transform:uppercase;margin-right:4px}.pill{border:1px solid #dddcd2;color:#586b66;background:#fffefa;border-radius:9px;font-size:12px;font-weight:700;padding:8px 10px;cursor:pointer;transition:background .18s,border-color .18s}.pill:hover{border-color:#9ab0a8}.pill.active{background:#e2f0e8;border-color:#91bfb0;color:#246656}.pill:disabled{opacity:.35;cursor:not-allowed}.eraser-size-control{display:inline-flex;align-items:center;gap:6px;background:#f0f4ed;border:1px solid #d8e3da;padding:6px 9px;border-radius:9px;color:#35695b;font-size:11px;font-weight:800;white-space:nowrap}.eraser-size-control input{width:93px;accent-color:#327e70;touch-action:pan-x;cursor:pointer}.eraser-size-control output{min-width:38px;text-align:right;font-variant-numeric:tabular-nums}.paper-area{height:440px;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;position:relative;overflow:hidden;overflow-anchor:none;overscroll-behavior:none;contain:layout paint;background:radial-gradient(ellipse at 35% 20%,#fffefd,#fcfaf5 93%);touch-action:none;cursor:crosshair}.paper-area.eraser-cursor{cursor:cell}#gridLayer,#inkLayer,#drawingLayer{position:absolute;inset:0;width:100%;height:100%;display:block}#gridLayer,#inkLayer{pointer-events:none}#drawingLayer{touch-action:none;user-select:none;-webkit-user-select:none}.draw-foot{padding:16px 22px;display:flex;justify-content:space-between;gap:12px;align-items:center;border-top:1px solid #e9e7dd;background:#faf9f4;border-radius:0 0 18px 18px}.draw-foot small{font-size:12px;color:#8a8e87}.draw-actions{display:flex;align-items:center;justify-content:flex-end;gap:11px;flex-wrap:wrap}.score{font-size:14px;font-weight:800;color:#317a69;text-align:right}.note{margin:12px 4px 0;color:#8a8f88;font-size:12px;text-align:center}
+.paper-tools{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:11px 18px;border-bottom:1px solid #e9e7dd;background:#faf9f4}.toolgroup{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.tiny-label{font-size:10px;letter-spacing:1px;font-weight:800;color:#919990;text-transform:uppercase;margin-right:4px}.pill{border:1px solid #dddcd2;color:#586b66;background:#fffefa;border-radius:9px;font-size:12px;font-weight:700;padding:8px 10px;cursor:pointer;transition:background .18s,border-color .18s}.pill:hover{border-color:#9ab0a8}.pill.active{background:#e2f0e8;border-color:#91bfb0;color:#246656}.pill:disabled{opacity:.35;cursor:not-allowed}.eraser-size-control{display:inline-flex;align-items:center;gap:6px;background:#f0f4ed;border:1px solid #d8e3da;padding:6px 9px;border-radius:9px;color:#35695b;font-size:11px;font-weight:800;white-space:nowrap}.eraser-size-control input{width:93px;accent-color:#327e70;touch-action:pan-x;cursor:pointer}.eraser-size-control output{min-width:38px;text-align:right;font-variant-numeric:tabular-nums}.paper-area{height:440px;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;position:relative;overflow:hidden;overflow-anchor:none;overscroll-behavior:none;contain:layout paint;background:radial-gradient(ellipse at 35% 20%,#fffefd,#fcfaf5 93%);touch-action:none;cursor:crosshair}.paper-area.eraser-cursor{cursor:cell}#gridLayer,#inkLayer,#drawingLayer{position:absolute;inset:0;width:100%;height:100%;display:block}#gridLayer,#inkLayer{pointer-events:none}#drawingLayer{touch-action:none;user-select:none;-webkit-user-select:none}.earning-popup{position:absolute;z-index:6;pointer-events:none;white-space:nowrap;min-width:74px;text-align:center;background:#e9f6ecf5;color:#207254;border:1px solid #91ccb0;border-radius:999px;box-shadow:0 7px 19px #224d3420;padding:8px 13px;font-size:17px;font-weight:850;font-variant-numeric:tabular-nums;letter-spacing:.01em;transform:translateX(-50%);animation:earnFloat 1.30s ease-out both}
+@keyframes earnFloat{0%{opacity:0;transform:translate(-50%,8px) scale(.95)}17%{opacity:1;transform:translate(-50%,0) scale(1)}65%{opacity:1;transform:translate(-50%,-11px)}100%{opacity:0;transform:translate(-50%,-27px)}}
+@media(prefers-reduced-motion:reduce){.earning-popup{animation:earnFade 1.30s linear both}@keyframes earnFade{0%{opacity:0}18%{opacity:1}70%{opacity:1}100%{opacity:0}}}
+.draw-foot{padding:16px 22px;display:flex;justify-content:space-between;gap:12px;align-items:center;border-top:1px solid #e9e7dd;background:#faf9f4;border-radius:0 0 18px 18px}.draw-foot small{font-size:12px;color:#8a8e87}.draw-actions{display:flex;align-items:center;justify-content:flex-end;gap:11px;flex-wrap:wrap}.score{font-size:14px;font-weight:800;color:#317a69;text-align:right}.note{margin:12px 4px 0;color:#8a8f88;font-size:12px;text-align:center}
 .shop-head{align-items:flex-start}.shop-body{position:relative;display:grid;grid-template-columns:minmax(0,1fr);gap:12px;padding:13px 18px 0;align-items:center}.skill-wrap{padding:0;min-width:0}.skill-tree{position:relative;width:100%;max-width:450px;height:355px;isolation:isolate;margin:0 auto;background:radial-gradient(circle at center,#f6f8f0 0%,transparent 65%)}.skill-tree.prebranch{height:132px;background:none}.skill-tree.eraser-branch{height:455px;margin-bottom:32px}.skill-tree.eraser-branch .upgrade[data-id="root"],.skill-tree.eraser-branch .upgrade[data-id="stamina"],.skill-tree.eraser-branch .upgrade[data-id="free"]{top:44%!important}.skill-tree.eraser-branch .upgrade[data-id="circle"],.skill-tree.eraser-branch .upgrade[data-id="dashedCircle"]{top:14%!important}.skill-tree.eraser-branch .upgrade[data-id="grid"],.skill-tree.eraser-branch .upgrade[data-id="eraser"]{top:69%!important}.branches{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}.branches line{stroke:#cfd8d0;stroke-width:1.8;stroke-dasharray:5 6}.branches line.live{stroke:#9abdab;stroke-width:2.5;stroke-dasharray:none}.upgrade{position:absolute;width:var(--node-size,86px);height:var(--node-size,86px);transform:translate(-50%,-50%);z-index:2;outline:none}.upgrade.off{display:none}.upgrade canvas{position:absolute;inset:0;display:block;width:100%;height:100%;touch-action:none;cursor:crosshair}.upgrade.owned canvas{cursor:crosshair}.upgrade.deactivated .node-symbol,.upgrade.deactivated .node-name{color:#a18b78}.upgrade.deactivated .node-price{color:#ab7462}.upgrade.deactivated{opacity:.79}.shop-tool-picker{display:flex;gap:7px;align-items:center;justify-content:center;flex-wrap:wrap;margin:0;padding:12px 12px 0}.shop-tool-picker button{background:#fffefa;color:#61736a;border:1px solid #d8ded6;border-radius:8px;font-size:11px;font-weight:750;cursor:pointer;padding:6px 11px}.shop-tool-picker button.active{background:#e3f1e9;color:#216a56;border-color:#96c2af}.shop-tool-picker button:focus-visible{outline:2px solid #e3a76b;outline-offset:2px}.shop-tool-picker button:disabled{opacity:.43;cursor:not-allowed;border-style:dashed}.upgrade.shop-erase canvas{cursor:cell}.node-symbol{position:absolute;left:0;right:0;top:30%;display:block;text-align:center;pointer-events:none;color:#537f73;font:700 25px/1 Georgia,serif}.upgrade.owned .node-symbol{color:#1d6b5c}.node-price{position:absolute;top:74%;left:0;right:0;text-align:center;font-size:10px;font-weight:800;color:#778a7f;pointer-events:none;letter-spacing:.01em}.upgrade.owned .node-price{color:#2f866b}.node-name{position:absolute;top:calc(100% + 2px);left:50%;transform:translateX(-50%);font-size:10px;color:#687970;font-weight:800;letter-spacing:.05em;text-align:center;white-space:nowrap;pointer-events:none;text-transform:uppercase}.upgrade.owned .node-name{color:#2e7062}.upgrade .tip{position:absolute;z-index:8;bottom:calc(100% + 7px);left:50%;transform:translateX(-50%);width:220px;max-width:60vw;border-radius:11px;background:#223b41;color:#edf5ee;padding:12px 13px;text-align:left;line-height:1.48;font-size:12px;box-shadow:0 10px 26px #213b413d;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .16s}.upgrade .tip strong{display:block;margin-bottom:4px;color:white;font-size:13px}.upgrade .tip .tip-cost{display:block;color:#b4e3ca;font-weight:800;margin-top:5px}.upgrade:hover .tip,.upgrade:focus .tip{visibility:visible;opacity:1}.upgrade[data-id="free"] .tip,.upgrade[data-id="eraser"] .tip,.upgrade[data-id="dashedCircle"] .tip,.upgrade[data-id="eraserSize"] .tip{left:auto;right:0;transform:none}.upgrade[data-id="stamina"] .tip,.upgrade[data-id="composer"] .tip{left:0;transform:none}.upgrade[data-id="circle"] .tip{bottom:auto;top:calc(100% + 17px)}
 .inspect{position:absolute;right:18px;top:13px;width:245px;z-index:7;box-shadow:0 12px 28px #223b411c;background:#faf9f4;border:1px solid #e5e5da;border-radius:15px;padding:18px 16px;align-self:center;min-height:205px;display:flex;flex-direction:column}.inspect-top{display:flex;align-items:center;justify-content:space-between;gap:8px}.inspect-close{font-size:22px;color:#718078;background:none;border:0;cursor:pointer;padding:0 5px}.inspect .mini{font-size:10px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;color:#84958a}.inspect h3{font:700 23px Georgia,serif;margin:8px 0 12px}.inspect p{color:#6d7a73;font-size:12px;line-height:1.65;margin:0 0 14px}.inspect-price{font-weight:800;font-size:17px;color:#2c765f;margin-top:auto}.inspect-hint{color:#939c93;margin-top:7px;font-size:11px;line-height:1.45}.clear-trace{align-self:flex-start;margin:9px 0 0;padding:4px 0;font-size:11px;color:#8a6760;border:0;background:none;text-decoration:underline;cursor:pointer}.clear-trace.hidden{display:none}#shopStage.single-upgrade .shop-body{max-width:590px;grid-template-columns:160px minmax(0,1fr);gap:16px;margin:0 auto;padding:14px 20px 12px;align-items:center}
 #shopStage.single-upgrade .skill-tree{width:160px;height:137px;max-width:none;margin:0}
@@ -72,7 +75,7 @@
 <div class="stats" role="status" aria-label="Progress"><div class="stat"><div class="stat-label">Wallet</div><div class="stat-value money" id="wallet">$0.00</div><div class="stat-sub">Available funds</div></div><div class="stat"><div class="stat-label">Turn</div><div class="stat-value" id="turn">1</div><div class="stat-sub">Practice rounds</div></div><div class="stat"><div class="stat-label">Hand energy</div><div class="stat-value" id="energy">1 / 1</div><div class="stat-sub">Strokes remaining</div></div><div class="stat"><div class="stat-label">Strokes</div><div class="stat-value" id="strokes">0</div><div class="stat-sub">Completed</div></div></div>
 <section class="panel" id="playStage"><div class="panel-head"><div><p class="eyebrow hidden" id="activityTag"></p><h2 class="panel-title" id="activityHeading">Connect the points</h2><p class="panel-sub" id="instruction">Start on A, draw a continuous line, and finish on B.</p></div><span class="smalltag" id="rewardTag">UP TO $1.00</span></div>
 <div class="paper-tools"><div class="toolgroup" id="modeTools"><span class="tiny-label">Study</span><button class="pill active" id="lineMode" type="button">Line</button><button class="pill hidden" id="circleMode" type="button">Circle</button><button class="pill hidden" id="composeMode" type="button">Compose</button></div><div class="toolgroup"><span class="tiny-label">Paper</span><button class="pill hidden" id="gridSwitch" type="button" hidden aria-hidden="true">▦ Grid on</button><button class="pill hidden" id="guideSwitch" type="button" hidden aria-hidden="true">Freehand on</button><button class="pill hidden" id="pencilTool" type="button">Pencil</button><button class="pill hidden" id="eraserTool" type="button">Eraser</button><label class="eraser-size-control hidden" id="eraserSizeControl" for="eraserSize"><span>Eraser size</span><input id="eraserSize" type="range" min="8" max="64" step="2" value="30" aria-label="Eraser width"/><output id="eraserSizeValue" for="eraserSize">30 px</output></label></div></div>
-<div class="paper-area" id="paperArea"><canvas id="gridLayer" aria-hidden="true"></canvas><canvas id="inkLayer" aria-hidden="true"></canvas><canvas id="drawingLayer" aria-label="Drawing canvas. Use a mouse, stylus or finger to draw."></canvas></div>
+<div class="paper-area" id="paperArea"><canvas id="gridLayer" aria-hidden="true"></canvas><canvas id="inkLayer" aria-hidden="true"></canvas><canvas id="drawingLayer" aria-label="Drawing canvas. Use a mouse, stylus or finger to draw."></canvas><div id="earningPopup" class="earning-popup hidden" aria-hidden="true"></div></div>
 <div class="draw-foot"><small id="drawHint">1% = $0.01 · 100% = $1.00</small><div class="draw-actions"><span class="score" id="score">Ready to draw</span></div></div></section>
 <section class="panel hidden" id="shopStage"><div class="panel-head shop-head"><div><p class="eyebrow">Between turns</p><h2 class="panel-title">Skill tree</h2><p class="panel-sub">Buy by tracing. To switch off an owned upgrade, choose Erase and rub out its shape. Redraw it to switch back on for free.</p></div><span class="smalltag" id="shopLevel">1 AVAILABLE</span></div>
 <div class="shop-tool-picker" aria-label="Skill tree tools"><button type="button" id="skillPencil" class="active" aria-pressed="true">✎ Trace</button><button type="button" id="skillEraser" class="hidden" aria-pressed="false" disabled aria-disabled="true" title="Buy Pencil Eraser to unlock">⌫ Erase</button></div>
@@ -174,7 +177,7 @@ for(const name of ['touchstart','touchmove'])draw.addEventListener(name,e=>{if(e
 // Prevent page scrolling during an active touch stroke, even on older mobile browsers.
 window.addEventListener('touchmove',e=>{if(activePointer!==null&&e.cancelable)e.preventDefault()},{passive:false});
 
-let composeStage=0,composeScores=[],composeTemplate='balloon';
+let composeStage=0,composeScores=[],composeTemplate='balloon',composeFirstBounds=null;
 let W=0,H=0,A=null,B=null,O=null,strokePts=[],practiceStrokes=[],drawing=false,eraserPts=[],erasing=false,locked=false,advanceTimer=null,activePointer=null,strokeAnchor=null,pendingResize=false,paintFrame=0;
 const requestPaperPaint=()=>{if(paintFrame)return;paintFrame=requestAnimationFrame(()=>{paintFrame=0;paintPaper()})};
 function resizePaper(){if(drawing||erasing){pendingResize=true;return}pendingResize=false;const rect=$('paperArea').getBoundingClientRect(),w=Math.max(1,Math.round(rect.width)),h=Math.max(1,Math.round(rect.height));const ow=W,oh=H;if(W===w&&H===h)return;W=w;H=h;if(s.paperMarks.length&&!(Number(s.legacyAspect)>0)){s.legacyAspect=legacyPaperAspect();save()}draw.width=grid.width=ink.width=w;draw.height=grid.height=ink.height=h;
@@ -199,7 +202,7 @@ function persistPracticeDraft(){
  s.practiceDraft={mode:s.mode,freeOn:!!s.freeOn,composeStage,composeScores:[...composeScores],composeTemplate,
   A:A?pointToIso(A):null,B:B?pointToIso(B):null,
   O:O?{at:pointToIso(O),r:O.r/Math.max(1,H)}:null,
-  strokes:practiceStrokes.map(pts=>pts.map(pointToIso))};
+  strokes:practiceStrokes.map(pts=>pts.map(pointToIso)),composeFirstBounds};
  save();
 }
 function restorePracticeDraft(){
@@ -210,6 +213,7 @@ function restorePracticeDraft(){
   A=d.A?pointFromIso(d.A):null;B=d.B?pointFromIso(d.B):null;
   O=d.O?{...pointFromIso(d.O.at),r:d.O.r*H}:null;
   composeStage=d.mode==='compose'?(d.composeStage===1?1:0):0;composeScores=Array.isArray(d.composeScores)?d.composeScores.slice(0,1):[];composeTemplate=d.composeTemplate==='magnifier'?'magnifier':'balloon';
+  composeFirstBounds=d.composeFirstBounds&&['minX','maxX','minY','maxY'].every(k=>Number.isFinite(d.composeFirstBounds[k]))?d.composeFirstBounds:null;
   practiceStrokes=d.strokes.map(pts=>pts.map(pointFromIso)).filter(pts=>pts.length>=2);
   if(!practiceStrokes.length&&!(d.mode==='compose'&&composeStage===1))return false;
   drawing=false;locked=false;strokePts=[];
@@ -221,7 +225,7 @@ function createPrompt(){
  // A two-part drawing must never start with fewer than two remaining strokes.
  // When Endurance II leaves one spare stroke, return to the line study instead.
  if(s.mode==='compose'&&s.left<2)s.mode='line';
- strokePts=[];practiceStrokes=[];s.practiceDraft=null;drawing=false;locked=false;composeStage=0;composeScores=[];const margin=Math.min(70,W*.15);
+ strokePts=[];practiceStrokes=[];s.practiceDraft=null;drawing=false;locked=false;composeStage=0;composeScores=[];composeFirstBounds=null;const margin=Math.min(70,W*.15);
  if(s.mode==='compose'){
   composeTemplate=Math.random()<.5?'balloon':'magnifier';
   const r=Math.max(30,Math.min(W*.13,H*.17,88));const centerX=clamp(W*.43,r+30,W-r-110),centerY=clamp(H*.34,r+25,H-r-125);
@@ -391,24 +395,64 @@ function componentLooksComplete(){
  if(s.mode==='circle'||s.mode==='compose'&&composeStage===0)return circleLooksComplete();
  return lineLooksComplete(s.mode==='compose');
 }
+// Use the actual ink's bounding box so the payout appears centered just beneath
+// the finished drawing, not at a fixed location on the paper.
+function drawnBounds(strokes){
+ let minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;
+ for(const points of strokes)for(const p of points){
+  if(!Number.isFinite(p.x)||!Number.isFinite(p.y))continue;
+  minX=Math.min(minX,p.x);maxX=Math.max(maxX,p.x);
+  minY=Math.min(minY,p.y);maxY=Math.max(maxY,p.y);
+ }
+ return Number.isFinite(minX)?{minX,maxX,minY,maxY}:null;
+}
+function unionBounds(a,b){
+ if(!a)return b;if(!b)return a;
+ return {minX:Math.min(a.minX,b.minX),maxX:Math.max(a.maxX,b.maxX),minY:Math.min(a.minY,b.minY),maxY:Math.max(a.maxY,b.maxY)};
+}
+function boundsToIso(box){
+ if(!box)return null;
+ const h=Math.max(1,H);return {minX:(box.minX-W/2)/h,maxX:(box.maxX-W/2)/h,minY:box.minY/h,maxY:box.maxY/h};
+}
+function boundsFromIso(box){
+ if(!box)return null;
+ return {minX:W/2+box.minX*H,maxX:W/2+box.maxX*H,minY:box.minY*H,maxY:box.maxY*H};
+}
+const earningPopup=$('earningPopup');
+earningPopup.addEventListener('animationend',()=>earningPopup.classList.add('hidden'));
+function showEarnings(reward,bounds){
+ if(!bounds||s.phase!=='draw')return;
+ earningPopup.textContent='+'+cash(reward);
+ // Keep the entire pill on the paper at phone widths and near the edges.
+ earningPopup.style.left=clamp((bounds.minX+bounds.maxX)/2,60,Math.max(60,W-60))+'px';
+ earningPopup.style.top=clamp(bounds.maxY+18,20,Math.max(20,H-38))+'px';
+ earningPopup.classList.add('hidden');
+ earningPopup.style.animation='none';
+ void earningPopup.offsetWidth; // restart the animation for consecutive payouts
+ earningPopup.style.animation='';
+ earningPopup.classList.remove('hidden');
+}
 function finalizeShape(){
  if(locked||drawing||!practiceStrokes.length)return;
  locked=true;
  const accuracy=s.mode==='circle'?circleAccuracy():lineAccuracy();
  const reward=accuracy; // Every 1% equals $0.01 in ordinary studies.
+ const rewardBounds=drawnBounds(practiceStrokes);
  s.cash+=reward;s.last=accuracy;s.lastPay=reward;s.lastKind=s.mode;
  if(s.mode==='line'||s.mode==='circle')s.mastery[s.mode]=Math.max(Number(s.mastery[s.mode])||0,accuracy);
  s.practiceDraft=null;
  save();stats();
  $('score').textContent=accuracy+'% · +'+cash(reward);
+ showEarnings(reward,rewardBounds);
  paintPaper(true);
  clearTimeout(advanceTimer);
- advanceTimer=setTimeout(()=>{if(s.left<=0)openShop();else createPrompt()},850);
+ advanceTimer=setTimeout(()=>{if(s.left<=0)openShop();else createPrompt()},1370);
 }
 function finishCompositionPart(){
  const accuracy=composeStage===0?circleAccuracy():lineAccuracy(true);
  composeScores.push(accuracy);
  if(composeStage===0){
+  composeFirstBounds=boundsToIso(drawnBounds(practiceStrokes));
   composeStage=1;practiceStrokes=[];strokePts=[];persistPracticeDraft();stats();paintPaper();
   $('score').textContent='Circle '+accuracy+'% · Now draw the '+(composeTemplate==='balloon'?'string':'handle');
   return;
@@ -416,10 +460,12 @@ function finishCompositionPart(){
  locked=true;
  // A composition consists of two separately scored parts, each worth at most $1.00.
  const reward=composeScores.reduce((total,score)=>total+score,0);
+ const rewardBounds=unionBounds(boundsFromIso(composeFirstBounds),drawnBounds(practiceStrokes));
  s.cash+=reward;s.last=Math.round(reward/2);s.lastPay=reward;s.lastKind='composition';
  s.practiceDraft=null;save();stats();paintPaper(true);
  $('score').textContent='Composition '+s.last+'% · +'+cash(reward);
- clearTimeout(advanceTimer);advanceTimer=setTimeout(()=>{if(s.left<=0)openShop();else createPrompt()},850);
+ showEarnings(reward,rewardBounds);
+ clearTimeout(advanceTimer);advanceTimer=setTimeout(()=>{if(s.left<=0)openShop();else createPrompt()},1370);
 }
 function finishPractice(){
  if(!drawing)return;
