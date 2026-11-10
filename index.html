@@ -201,7 +201,7 @@ for(const name of ['touchstart','touchmove'])draw.addEventListener(name,e=>{if(e
 window.addEventListener('touchmove',e=>{if(activePointer!==null&&e.cancelable)e.preventDefault()},{passive:false});
 
 let composeStage=0,composeScores=[],composeTemplate='balloon',composeFirstBounds=null;
-let W=0,H=0,A=null,B=null,O=null,strokePts=[],practiceStrokes=[],drawing=false,eraserPts=[],erasing=false,locked=false,advanceTimer=null,activePointer=null,strokeAnchor=null,pendingResize=false,paintFrame=0;
+let W=0,H=0,A=null,B=null,O=null,strokePts=[],practiceStrokes=[],drawing=false,eraserPts=[],erasing=false,locked=false,advanceTimer=null,activePointer=null,strokeAnchor=null,pendingResize=false,paintFrame=0,feedbackReveal=false;
 const requestPaperPaint=()=>{if(paintFrame)return;paintFrame=requestAnimationFrame(()=>{paintFrame=0;paintPaper()})};
 function resizePaper(){if(drawing||erasing){pendingResize=true;return}pendingResize=false;const rect=$('paperArea').getBoundingClientRect(),w=Math.max(1,Math.round(rect.width)),h=Math.max(1,Math.round(rect.height));const ow=W,oh=H;if(W===w&&H===h)return;W=w;H=h;if(s.paperMarks.length&&!(Number(s.legacyAspect)>0)){s.legacyAspect=legacyPaperAspect();save()}draw.width=grid.width=ink.width=w;draw.height=grid.height=ink.height=h;
  if(ow&&oh){
@@ -248,7 +248,7 @@ function createPrompt(){
  // A two-part drawing must never start with fewer than two remaining strokes.
  // When Endurance II leaves one spare stroke, return to the line study instead.
  if(s.mode==='compose'&&s.left<2)s.mode='line';
- strokePts=[];practiceStrokes=[];s.practiceDraft=null;drawing=false;locked=false;composeStage=0;composeScores=[];composeFirstBounds=null;const margin=Math.min(70,W*.15);
+ strokePts=[];practiceStrokes=[];s.practiceDraft=null;drawing=false;locked=false;feedbackReveal=false;composeStage=0;composeScores=[];composeFirstBounds=null;const margin=Math.min(70,W*.15);
  if(s.mode==='compose'){
   composeTemplate=['balloon','magnifier','signpost'][Math.floor(Math.random()*3)];
   const r=Math.max(30,Math.min(W*.13,H*.17,88));const centerX=clamp(W*.43,r+30,W-r-110),centerY=clamp(H*.34,r+25,H-r-125);
@@ -267,10 +267,12 @@ function createPrompt(){
 function circleDot(x,y,center=false){dc.beginPath();dc.arc(x,y,center?4.4:5.6,0,2*Math.PI);dc.fillStyle='#fffefa';dc.fill();dc.strokeStyle='#59917e';dc.lineWidth=1.8;dc.stroke();dc.beginPath();dc.arc(x,y,center?2.4:3.3,0,2*Math.PI);dc.fillStyle='#417d6b';dc.fill()}
 function dot(p,label,color){dc.beginPath();dc.arc(p.x,p.y,10,0,Math.PI*2);dc.fillStyle='#fffefa';dc.fill();dc.lineWidth=1.8;dc.strokeStyle=color;dc.stroke();dc.beginPath();dc.arc(p.x,p.y,3,0,Math.PI*2);dc.fillStyle=color;dc.fill();dc.font='700 13px system-ui';dc.textAlign='center';dc.fillText(label,p.x,p.y-20)}
 function squareCorners(){if(!O)return [];return [{x:O.x-O.r,y:O.y-O.r},{x:O.x+O.r,y:O.y-O.r},{x:O.x+O.r,y:O.y+O.r},{x:O.x-O.r,y:O.y+O.r}]}
-function paintPaper(reveal=false){dc.clearRect(0,0,W,H);
+// Keep the completed ideal outline on screen until the next prompt. A queued
+// animation frame or a responsive resize must not erase scoring feedback.
+function paintPaper(reveal=feedbackReveal){dc.clearRect(0,0,W,H);
  if((s.mode==='square'||s.mode==='compose'&&composeStage===0&&composeTemplate==='signpost')&&O){for(const p of squareCorners())circleDot(p.x,p.y)}
  else if((s.mode==='circle'||s.mode==='compose'&&composeStage===0)&&O){if(upgradeActive('dashedCircle')){dc.beginPath();dc.arc(O.x,O.y,O.r,0,Math.PI*2);dc.strokeStyle='#82aa9b99';dc.lineWidth=2;dc.setLineDash([5,7]);dc.stroke();dc.setLineDash([])}else{circleDot(O.x,O.y,true);for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]])circleDot(O.x+dx*O.r,O.y+dy*O.r)}if(reveal){dc.beginPath();dc.arc(O.x,O.y,O.r,0,Math.PI*2);dc.strokeStyle='#73a891';dc.lineWidth=1.2;dc.stroke()}}
- else if(A&&B){if(reveal){dc.beginPath();dc.moveTo(A.x,A.y);dc.lineTo(B.x,B.y);dc.strokeStyle='#9fbdaf';dc.lineWidth=1.5;dc.setLineDash([6,6]);dc.stroke();dc.setLineDash([])}dot(A,'A','#d9835e');dot(B,'B','#468d7c')}
+ else if(A&&B){if(reveal){dc.save();dc.beginPath();dc.moveTo(A.x,A.y);dc.lineTo(B.x,B.y);dc.strokeStyle='#51a888';dc.lineWidth=2.4;dc.setLineDash([7,5]);dc.shadowColor='rgba(69,153,118,.35)';dc.shadowBlur=3;dc.stroke();dc.restore()}dot(A,'A','#d9835e');dot(B,'B','#468d7c')}
  stroke(dc,strokePts,'#243941',3.2)}
 // Keep ink in height-relative, centered coordinates. That preserves circles and
 // eraser paths even if a desktop layout change dramatically widens the paper.
@@ -526,7 +528,7 @@ function finalizeShape(){
  const reward=payoutForShape(s.mode,accuracy);
  const rewardBounds=drawnBounds(practiceStrokes);
  s.cash+=reward;s.last=accuracy;s.lastPay=reward;s.lastKind=s.mode;
- s.practiceDraft=null;
+ s.practiceDraft=null;feedbackReveal=true;
  save();stats();
  $('score').textContent=accuracy+'% · +'+cash(reward);
  showEarnings(reward,rewardBounds);
@@ -539,7 +541,7 @@ function finishCompositionPart(){
  composeScores.push(accuracy);
  if(composeStage===0){
   composeFirstBounds=boundsToIso(drawnBounds(practiceStrokes));
-  composeStage=1;practiceStrokes=[];strokePts=[];persistPracticeDraft();stats();paintPaper();
+  composeStage=1;feedbackReveal=false;practiceStrokes=[];strokePts=[];persistPracticeDraft();stats();paintPaper();
   $('score').textContent=(composeTemplate==='signpost'?'Square ':'Circle ')+accuracy+'% · Now draw the '+(composeTemplate==='balloon'?'string':composeTemplate==='signpost'?'post':'handle');
   return;
  }
@@ -549,7 +551,7 @@ function finishCompositionPart(){
  const reward=payoutForShape(firstMode,composeScores[0])+payoutForShape('line',composeScores[1]);
  const rewardBounds=unionBounds(boundsFromIso(composeFirstBounds),drawnBounds(practiceStrokes));
  s.cash+=reward;s.last=Math.round((composeScores[0]+composeScores[1])/2);s.lastPay=reward;s.lastKind='composition';
- s.practiceDraft=null;save();stats();paintPaper(true);
+ s.practiceDraft=null;feedbackReveal=true;save();stats();paintPaper(true);
  $('score').textContent='Composition '+s.last+'% · +'+cash(reward);
  showEarnings(reward,rewardBounds);
  clearTimeout(advanceTimer);advanceTimer=setTimeout(()=>{if(s.left<=0)openShop();else createPrompt()},1370);
