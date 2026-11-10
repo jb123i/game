@@ -398,6 +398,9 @@ function refreshSkillTools(){
  // skill tree. Turning that upgrade off locks both tools until it is retraced.
  const unlocked=upgradeActive('eraser');
  const eraseButton=$('skillEraser');
+ // The tool chooser only appears when both tracing and erasing are available.
+ // Otherwise tracing is the automatic default.
+ document.querySelector('.shop-tool-picker').classList.toggle('hidden',!unlocked);
  eraseButton.classList.toggle('hidden',!s.owned.eraser);
  eraseButton.disabled=!unlocked;
  eraseButton.setAttribute('aria-disabled',String(!unlocked));
