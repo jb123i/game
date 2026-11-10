@@ -13,7 +13,7 @@
 .panel{background:var(--paper);border:1px solid #dedcd2;border-radius:18px;box-shadow:var(--shadow)}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 25px 17px;border-bottom:1px solid #e9e7dd}.panel-title{font:700 25px/1.2 Georgia,serif;letter-spacing:-.6px;margin:0}.panel-sub{font-size:13px;color:#788079;margin:5px 0 0;line-height:1.55}.smalltag{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#49897a;background:#e9f2e9;border:1px solid #d8eadf;border-radius:30px;padding:7px 11px;white-space:nowrap}.hidden{display:none!important}
 .paper-tools{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:11px 18px;border-bottom:1px solid #e9e7dd;background:#faf9f4}.toolgroup{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.tiny-label{font-size:10px;letter-spacing:1px;font-weight:800;color:#919990;text-transform:uppercase;margin-right:4px}.pill{border:1px solid #dddcd2;color:#586b66;background:#fffefa;border-radius:9px;font-size:12px;font-weight:700;padding:8px 10px;cursor:pointer;transition:background .18s,border-color .18s}.pill:hover{border-color:#9ab0a8}.pill.active{background:#e2f0e8;border-color:#91bfb0;color:#246656}.pill:disabled{opacity:.35;cursor:not-allowed}.paper-area{height:440px;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;position:relative;overflow:hidden;overflow-anchor:none;overscroll-behavior:none;contain:layout paint;background:radial-gradient(ellipse at 35% 20%,#fffefd,#fcfaf5 93%);touch-action:none;cursor:crosshair}.paper-area.eraser-cursor{cursor:cell}#gridLayer,#inkLayer,#drawingLayer{position:absolute;inset:0;width:100%;height:100%;display:block}#gridLayer,#inkLayer{pointer-events:none}#drawingLayer{touch-action:none;user-select:none;-webkit-user-select:none}.draw-foot{padding:16px 22px;display:flex;justify-content:space-between;gap:12px;align-items:center;border-top:1px solid #e9e7dd;background:#faf9f4;border-radius:0 0 18px 18px}.draw-foot small{font-size:12px;color:#8a8e87}.score{font-size:14px;font-weight:800;color:#317a69;text-align:right}.note{margin:12px 4px 0;color:#8a8f88;font-size:12px;text-align:center}
 .shop-head{align-items:flex-start}.shop-body{display:grid;grid-template-columns:minmax(0,1fr) 245px;gap:12px;padding:13px 18px 0;align-items:center}.skill-wrap{padding:0;min-width:0}.skill-tree{position:relative;width:100%;max-width:480px;height:408px;isolation:isolate;margin:0 auto;background:radial-gradient(circle at center,#f6f8f0 0%,transparent 65%)}.skill-tree.prebranch{height:235px}.branches{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}.branches line{stroke:#cfd8d0;stroke-width:1.8;stroke-dasharray:5 6}.branches line.live{stroke:#9abdab;stroke-width:2.5;stroke-dasharray:none}.upgrade{position:absolute;width:var(--node-size,86px);height:var(--node-size,86px);transform:translate(-50%,-50%);z-index:2;outline:none}.upgrade.off{display:none}.upgrade canvas{position:absolute;inset:0;display:block;width:100%;height:100%;touch-action:none;cursor:crosshair}.upgrade.owned canvas{cursor:default}.node-symbol{position:absolute;left:0;right:0;top:30%;display:block;text-align:center;pointer-events:none;color:#537f73;font:700 25px/1 Georgia,serif}.upgrade.owned .node-symbol{color:#1d6b5c}.node-price{position:absolute;top:60%;left:0;right:0;text-align:center;font-size:10px;font-weight:800;color:#778a7f;pointer-events:none;letter-spacing:.01em}.upgrade.owned .node-price{color:#2f866b}.node-name{position:absolute;top:calc(100% + 2px);left:50%;transform:translateX(-50%);font-size:10px;color:#687970;font-weight:800;letter-spacing:.05em;text-align:center;white-space:nowrap;pointer-events:none;text-transform:uppercase}.upgrade.owned .node-name{color:#2e7062}.upgrade .tip{position:absolute;z-index:8;bottom:calc(100% + 7px);left:50%;transform:translateX(-50%);width:220px;max-width:60vw;border-radius:11px;background:#223b41;color:#edf5ee;padding:12px 13px;text-align:left;line-height:1.48;font-size:12px;box-shadow:0 10px 26px #213b413d;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .16s}.upgrade .tip strong{display:block;margin-bottom:4px;color:white;font-size:13px}.upgrade .tip .tip-cost{display:block;color:#b4e3ca;font-weight:800;margin-top:5px}.upgrade:hover .tip,.upgrade:focus .tip{visibility:visible;opacity:1}.upgrade[data-id="free"] .tip,.upgrade[data-id="eraser"] .tip,.upgrade[data-id="dashedCircle"] .tip{left:auto;right:0;transform:none}.upgrade[data-id="stamina"] .tip{left:0;transform:none}.upgrade[data-id="circle"] .tip{bottom:auto;top:calc(100% + 17px)}
-.inspect{background:#faf9f4;border:1px solid #e5e5da;border-radius:15px;padding:18px 16px;align-self:center;min-height:245px;display:flex;flex-direction:column}.inspect .mini{font-size:10px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;color:#84958a}.inspect h3{font:700 23px Georgia,serif;margin:8px 0 12px}.inspect p{color:#6d7a73;font-size:12px;line-height:1.65;margin:0 0 14px}.inspect-price{font-weight:800;font-size:17px;color:#2c765f;margin-top:auto}.inspect-hint{color:#939c93;margin-top:7px;font-size:11px;line-height:1.45}.shop-feedback{text-align:center;font-size:12px;color:#3c806b;min-height:20px;padding:0 18px 10px;font-weight:750}.shop-bottom{border-top:1px solid #e9e7dd;background:#faf9f4;border-radius:0 0 18px 18px;padding:14px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px}.receipt{font-size:12px;color:#818983;line-height:1.5}.action{border:0;background:#24434a;color:white;padding:12px 17px;font-size:13px;font-weight:800;border-radius:11px;cursor:pointer;white-space:nowrap;transition:background .18s,transform .18s}.action:hover{background:#366268;transform:translateY(-1px)}.textbtn{border:0;background:transparent;font-size:12px;text-decoration:underline;color:#7d817b;cursor:pointer;padding:8px}.reset{display:block;margin:20px auto 0}.tipstrong{font-weight:800}
+.inspect{background:#faf9f4;border:1px solid #e5e5da;border-radius:15px;padding:18px 16px;align-self:center;min-height:245px;display:flex;flex-direction:column}.inspect .mini{font-size:10px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;color:#84958a}.inspect h3{font:700 23px Georgia,serif;margin:8px 0 12px}.inspect p{color:#6d7a73;font-size:12px;line-height:1.65;margin:0 0 14px}.inspect-price{font-weight:800;font-size:17px;color:#2c765f;margin-top:auto}.inspect-hint{color:#939c93;margin-top:7px;font-size:11px;line-height:1.45}.clear-trace{align-self:flex-start;margin:9px 0 0;padding:4px 0;font-size:11px;color:#8a6760;border:0;background:none;text-decoration:underline;cursor:pointer}.clear-trace.hidden{display:none}.shop-feedback{text-align:center;font-size:12px;color:#3c806b;min-height:20px;padding:0 18px 10px;font-weight:750}.shop-bottom{border-top:1px solid #e9e7dd;background:#faf9f4;border-radius:0 0 18px 18px;padding:14px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px}.receipt{font-size:12px;color:#818983;line-height:1.5}.action{border:0;background:#24434a;color:white;padding:12px 17px;font-size:13px;font-weight:800;border-radius:11px;cursor:pointer;white-space:nowrap;transition:background .18s,transform .18s}.action:hover{background:#366268;transform:translateY(-1px)}.textbtn{border:0;background:transparent;font-size:12px;text-decoration:underline;color:#7d817b;cursor:pointer;padding:8px}.reset{display:block;margin:20px auto 0}.tipstrong{font-weight:800}
 @media(max-width:780px){#app{padding:14px 12px 30px}.shop-body{grid-template-columns:1fr;gap:0}.skill-tree{max-width:480px;height:382px;--node-size:78px}.inspect{min-height:auto;margin:0 3px 13px;padding:13px 15px}.inspect h3{font-size:18px;margin:5px 0}.inspect p{margin:0 0 8px}.brand{margin-bottom:15px}}
 @media(max-width:490px){.series{display:none}.stats{grid-template-columns:repeat(2,1fr);gap:7px}.stat{padding:10px 13px}.stat-value{font-size:24px}.panel-head{padding:17px 16px}.panel-title{font-size:22px}.paper-area{height:clamp(280px,52svh,390px);min-height:280px}.skill-tree{height:326px;--node-size:66px}.skill-tree.prebranch{height:196px}.upgrade .node-symbol{font-size:20px}.node-price{font-size:9px}.node-name{font-size:9px}.shop-body{padding:12px 9px 0}.shop-bottom{padding:13px;align-items:flex-start;flex-direction:column}.shop-bottom button.action{width:100%}.draw-foot{padding:13px;font-size:12px}.logo{width:38px;height:38px}}
 </style>
@@ -26,7 +26,7 @@
 <div class="paper-tools"><div class="toolgroup" id="modeTools"><span class="tiny-label">Study</span><button class="pill active" id="lineMode" type="button">Line</button><button class="pill hidden" id="circleMode" type="button">Circle</button></div><div class="toolgroup"><span class="tiny-label">Paper</span><button class="pill hidden" id="gridSwitch" type="button">Grid on</button><button class="pill hidden" id="guideSwitch" type="button">Freehand on</button><button class="pill hidden" id="pencilTool" type="button">Pencil</button><button class="pill hidden" id="eraserTool" type="button">Eraser</button></div></div>
 <div class="paper-area" id="paperArea"><canvas id="gridLayer" aria-hidden="true"></canvas><canvas id="inkLayer" aria-hidden="true"></canvas><canvas id="drawingLayer" aria-label="Drawing canvas. Use a mouse, stylus or finger to draw."></canvas></div>
 <div class="draw-foot"><small id="drawHint">1% = $0.01 · 100% = $1.00</small><span class="score" id="score">Ready to draw</span></div></section>
-<section class="panel hidden" id="shopStage"><div class="panel-head shop-head"><div><p class="eyebrow">Between turns</p><h2 class="panel-title">Skill tree</h2><p class="panel-sub">Trace the faint shape to buy an upgrade. Hover or tap for details.</p></div><span class="smalltag" id="shopLevel">1 AVAILABLE</span></div>
+<section class="panel hidden" id="shopStage"><div class="panel-head shop-head"><div><p class="eyebrow">Between turns</p><h2 class="panel-title">Skill tree</h2><p class="panel-sub">Trace with as many strokes as you need. Lift and continue; your progress stays.</p></div><span class="smalltag" id="shopLevel">1 AVAILABLE</span></div>
 <div class="shop-body"><div class="skill-wrap"><div class="skill-tree" id="skillTree" aria-label="Upgrade tree">
 <svg class="branches" viewBox="0 0 480 408" preserveAspectRatio="none" aria-hidden="true">
 <line id="link-stamina" x1="240" y1="200" x2="101" y2="200"/><line id="link-circle" x1="240" y1="200" x2="240" y2="73"/><line id="link-free" x1="240" y1="200" x2="379" y2="200"/><line id="link-grid" x1="240" y1="200" x2="240" y2="326"/><line id="link-eraser" x1="240" y1="326" x2="379" y2="326"/><line id="link-dashedCircle" x1="240" y1="73" x2="379" y2="73"/>
@@ -39,8 +39,8 @@
 <div class="upgrade off" data-id="dashedCircle" style="left:79%;top:18%;" tabindex="0" aria-label="Circle Guides, five dollars"><canvas width="192" height="192"></canvas><span class="node-symbol">◌</span><span class="node-price">$5.00</span><span class="node-name">Circle guides</span><span class="tip"><strong>Dashed Circle Guide</strong>Replace the five circle guide dots with a dashed circular outline during circle practice.<span class="tip-cost">$5.00 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="eraser" style="left:79%;top:80%;" tabindex="0" aria-label="Pencil Eraser, one dollar twenty five"><canvas width="192" height="192"></canvas><span class="node-symbol">⌫</span><span class="node-price">$1.25</span><span class="node-name">Eraser</span><span class="tip"><strong>Pencil Eraser</strong>Erase your own pencil lines without using hand energy. Grid lines and drawing guides stay untouched.<span class="tip-cost">$1.25 · Trace to buy</span></span></div>
 </div></div>
-<aside class="inspect" id="inspect"><span class="mini">Selected upgrade</span><h3 id="inspectTitle">Better Endurance</h3><p id="inspectDesc">Increase Hand Energy from 1 to 2 strokes per turn.</p><div class="inspect-price" id="inspectPrice">$1.00</div><div class="inspect-hint" id="inspectHint">Trace at least 80% of the faint shape to purchase.</div></aside></div>
-<div class="shop-feedback" id="shopFeedback" aria-live="polite">Trace the shape to purchase.</div>
+<aside class="inspect" id="inspect"><span class="mini">Selected upgrade</span><h3 id="inspectTitle">Better Endurance</h3><p id="inspectDesc">Increase Hand Energy from 1 to 2 strokes per turn.</p><div class="inspect-price" id="inspectPrice">$1.00</div><div class="inspect-hint" id="inspectHint">Trace at least 80% of the faint shape, using multiple strokes if needed.</div><button class="clear-trace hidden" id="clearTrace" type="button">Clear unfinished trace</button></aside></div>
+<div class="shop-feedback" id="shopFeedback" aria-live="polite">Lift and continue tracing until the upgrade is complete.</div>
 <div class="shop-bottom"><span class="receipt" id="receipt">Turn 1 complete.</span><button class="action" id="nextTurn" type="button">Begin turn 2 →</button></div></section>
 <button class="textbtn reset" id="reset" type="button">Reset all progress</button>
 </main>
@@ -57,10 +57,10 @@ const defs={
  eraser:{name:'Pencil Eraser',price:125,desc:'Erase your completed pencil strokes, without spending energy. The grid and prompt guides remain untouched.',cost:'$1.25'},
  dashedCircle:{name:'Dashed Circle Guide',price:500,desc:'Trade your center and four outer circle guide dots for a dashed circle outline. It costs $5.00.',cost:'$5.00'}
 };
-const blank=()=>({cash:0,turn:1,energy:1,left:1,strokes:0,phase:'draw',last:0,lastPay:0,lastKind:'line',owned:{root:false,stamina:false,circle:false,free:false,grid:false,eraser:false,dashedCircle:false},traces:{},paperMarks:[],gridOn:true,freeOn:false,mode:'line',tool:'pencil'});
+const blank=()=>({cash:0,turn:1,energy:1,left:1,strokes:0,phase:'draw',last:0,lastPay:0,lastKind:'line',owned:{root:false,stamina:false,circle:false,free:false,grid:false,eraser:false,dashedCircle:false},traces:{},pendingTraces:{},paperMarks:[],gridOn:true,freeOn:false,mode:'line',tool:'pencil'});
 let s=blank();
 try{const q=JSON.parse(localStorage.getItem(key)||'null');if(q&&Number.isFinite(q.cash)&&q.owned&&['draw','shop'].includes(q.phase)){
- s={...blank(),...q,owned:{...blank().owned,...q.owned},traces:q.traces&&typeof q.traces==='object'?q.traces:{},paperMarks:Array.isArray(q.paperMarks)?q.paperMarks:[]};
+ s={...blank(),...q,owned:{...blank().owned,...q.owned},traces:q.traces&&typeof q.traces==='object'?q.traces:{},pendingTraces:q.pendingTraces&&typeof q.pendingTraces==='object'?q.pendingTraces:{},paperMarks:Array.isArray(q.paperMarks)?q.paperMarks:[]};
  s.cash=Math.max(0,Math.floor(s.cash));s.energy=1+(s.owned.root?1:0)+(s.owned.stamina?1:0);s.left=Math.max(0,Math.min(s.energy,Number(s.left)||0));if(!s.owned.circle)s.mode='line';if(!s.owned.eraser)s.tool='pencil';if(!s.owned.free)s.freeOn=false;
  }else if(!q){const old=JSON.parse(localStorage.getItem('learn-to-draw-playable-v3')||'null');if(old&&Number.isFinite(old.cash)){s.cash=Math.max(0,Math.floor(old.cash));s.turn=old.turn||1;s.strokes=old.lines||0;s.last=old.last||0;s.owned.root=!!old.upgraded;s.energy=s.owned.root?2:1;s.left=Math.max(0,Math.min(s.energy,old.left??s.energy));s.phase=old.phase==='shop'?'shop':'draw';}}}catch{}
 const save=()=>{try{localStorage.setItem(key,JSON.stringify(s))}catch{}};
@@ -174,8 +174,8 @@ $('gridSwitch').addEventListener('click',()=>{s.gridOn=!s.gridOn;save();stats();
 $('guideSwitch').addEventListener('click',()=>{if(s.phase!=='draw'||locked)return;s.freeOn=!s.freeOn;s.mode='line';s.tool='pencil';save();stats();createPrompt()});
 $('pencilTool').addEventListener('click',()=>{s.tool='pencil';save();stats()});
 $('eraserTool').addEventListener('click',()=>{s.tool='eraser';save();stats()});
-// Every upgrade has its OWN canvas. A purchased node uses ONLY the user's saved trace,
-// never a mathematically perfect replacement ring.
+// Each upgrade has its own canvas. Unfinished work consists of separate strokes;
+// lifting a finger never connects strokes with a straight line or loses progress.
 const nodes=[...document.querySelectorAll('.upgrade')],nodeCanvas={};let tracing=null,inspectId='root';
 const circleGuide=()=>{const arr=[];for(let i=0;i<=144;i++){const t=-Math.PI/2+2*Math.PI*i/144;arr.push({x:48+36*Math.cos(t),y:48+36*Math.sin(t)})}return arr};
 const sampleGuide=verts=>{const pts=[];for(let i=1;i<verts.length;i++){const a=verts[i-1],b=verts[i],n=Math.max(1,Math.ceil(distance(a,b)/2));for(let j=0;j<n;j++){const t=j/n;pts.push({x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t})}}pts.push({...verts[verts.length-1]});return pts};
@@ -190,41 +190,91 @@ const guides={
  eraser:circleGuide(),
  dashedCircle:polygonGuide(6,36,-Math.PI/2)
 };
-for(const n of nodes){const id=n.dataset.id,c=n.querySelector('canvas'),ctx=c.getContext('2d');ctx.setTransform(2,0,0,2,0,0);nodeCanvas[id]={c,ctx,attempt:[]};
- n.addEventListener('pointerenter',()=>inspect(id));n.addEventListener('focus',()=>inspect(id));
- n.addEventListener('click',()=>inspect(id));
- c.addEventListener('pointerdown',e=>{inspect(id);if(s.phase!=='shop'||s.owned[id])return;const guide=guides[id]||guides.circle;const p=pointer(e,c);p.x/=2;p.y/=2;if(polyDist(p,guide)>19){$('shopFeedback').textContent='Begin on the faint shape.';return}e.preventDefault();tracing={id,ptr:e.pointerId};nodeCanvas[id].attempt=[p];c.setPointerCapture(e.pointerId);renderNode(id)});
- c.addEventListener('pointermove',e=>{if(!tracing||tracing.id!==id)return;const p=pointer(e,c);p.x/=2;p.y/=2;const pts=nodeCanvas[id].attempt;if(distance(p,pts[pts.length-1])>.3){pts.push(p);renderNode(id)}});
- c.addEventListener('pointerup',e=>{if(!tracing||tracing.id!==id)return;tracing=null;const p=pointer(e,c);p.x/=2;p.y/=2;nodeCanvas[id].attempt.push(p);attemptPurchase(id)});
- c.addEventListener('pointercancel',()=>{if(tracing&&tracing.id===id)tracing=null;nodeCanvas[id].attempt=[];renderNode(id)})
+// Old saves use one array of [x,y] points. New saves use arrays of separate strokes.
+function decodeStrokes(raw){
+ if(!Array.isArray(raw)||!raw.length)return [];
+ const groups=Array.isArray(raw[0])&&typeof raw[0][0]==='number'?[raw]:raw;
+ return groups.filter(Array.isArray).map(group=>group.filter(p=>Array.isArray(p)&&Number.isFinite(p[0])&&Number.isFinite(p[1])).map(p=>({x:p[0],y:p[1]}))).filter(group=>group.length>=2);
 }
-function renderNode(id){const {ctx,attempt}=nodeCanvas[id];const guide=guides[id]||guides.circle;ctx.clearRect(0,0,96,96);const owned=s.owned[id];
+function encodeStrokes(strokes){return strokes.map(group=>group.map(p=>[Math.round(p.x*100)/100,Math.round(p.y*100)/100]))}
+function traceStats(id,strokes){
+ const guide=guides[id]||guides.circle;
+ const segments=strokes.filter(pts=>pts.length>=2);
+ if(!segments.length)return {coverage:0,precision:0,travel:0,guideLen:pathLength(guide)};
+ // Coverage is the union of all strokes; breaks are not filled in or scored as drawn.
+ const coverage=guide.filter(p=>segments.some(pts=>polyDist(p,pts)<12)).length/guide.length;
+ let total=0,precisionSum=0;for(const pts of segments)for(const p of pts){precisionSum+=clamp(1-polyDist(p,guide)/24);total++}
+ return {coverage,precision:precisionSum/Math.max(1,total),travel:segments.reduce((v,pts)=>v+pathLength(pts),0),guideLen:pathLength(guide)};
+}
+function persistTrace(id){
+ if(nodeCanvas[id].strokes.length)s.pendingTraces[id]=encodeStrokes(nodeCanvas[id].strokes);
+ else delete s.pendingTraces[id];
+ save();
+}
+for(const n of nodes){const id=n.dataset.id,c=n.querySelector('canvas'),ctx=c.getContext('2d');ctx.setTransform(2,0,0,2,0,0);
+ nodeCanvas[id]={c,ctx,strokes:decodeStrokes(s.pendingTraces[id])};
+ n.addEventListener('pointerenter',()=>inspect(id));n.addEventListener('focus',()=>inspect(id));n.addEventListener('click',()=>inspect(id));
+ c.addEventListener('pointerdown',e=>{
+  inspect(id);if(s.phase!=='shop'||s.owned[id]||tracing)return;
+  const p=pointer(e,c);p.x/=2;p.y/=2;
+  if(polyDist(p,guides[id]||guides.circle)>19){$('shopFeedback').textContent='Start on the faint outline, then trace any unfinished section.';return}
+  e.preventDefault();tracing={id,ptr:e.pointerId,points:[p]};
+  c.setPointerCapture(e.pointerId);renderNode(id)
+ });
+ c.addEventListener('pointermove',e=>{
+  if(!tracing||tracing.id!==id||tracing.ptr!==e.pointerId)return;
+  e.preventDefault();const p=pointer(e,c);p.x/=2;p.y/=2;
+  const pts=tracing.points;if(distance(p,pts[pts.length-1])>.3){pts.push(p);renderNode(id)}
+ });
+ function finishTrace(e,cancelled=false){
+  if(!tracing||tracing.id!==id||tracing.ptr!==e.pointerId)return;
+  if(!cancelled){const p=pointer(e,c);p.x/=2;p.y/=2;if(distance(p,tracing.points[tracing.points.length-1])>.3)tracing.points.push(p)}
+  const pts=tracing.points;tracing=null;
+  if(pts.length>=2&&pathLength(pts)>1.5){nodeCanvas[id].strokes.push(pts);persistTrace(id);if(!cancelled)attemptPurchase(id)}
+  renderNode(id);inspect(id)
+ }
+ c.addEventListener('pointerup',e=>finishTrace(e));
+ c.addEventListener('pointercancel',e=>finishTrace(e,true));
+}
+function renderNode(id){const {ctx,strokes}=nodeCanvas[id];const guide=guides[id]||guides.circle;ctx.clearRect(0,0,96,96);const owned=s.owned[id];
  if(!owned){ctx.globalAlpha=.42;stroke(ctx,guide,'#84ae9a',8);ctx.globalAlpha=.8;ctx.setLineDash([2,5]);stroke(ctx,guide,'#578d79',1.5);ctx.setLineDash([]);ctx.globalAlpha=1}
- // Saved purchase shape is kept exactly as a series of pointer positions.
- let pts=owned?(Array.isArray(s.traces[id])?s.traces[id].map(a=>({x:a[0],y:a[1]})):[]):attempt;
- if(pts.length>=2)stroke(ctx,pts,owned?'#248269':'#233e46',owned?4.1:3.5);
- if(owned&&!pts.length){ctx.font='700 12px system-ui';ctx.fillStyle='#2c846d';ctx.textAlign='center';ctx.fillText('✓',48,16)}
+ const drawn=owned?decodeStrokes(s.traces[id]):strokes;
+ for(const pts of drawn)stroke(ctx,pts,owned?'#248269':'#233e46',owned?4.1:3.5);
+ if(tracing&&tracing.id===id)stroke(ctx,tracing.points,'#233e46',3.5);
+ if(owned&&!drawn.length){ctx.font='700 12px system-ui';ctx.fillStyle='#2c846d';ctx.textAlign='center';ctx.fillText('✓',48,16)}
 }
 function visibleNode(id){return id==='root'||(id==='eraser'?s.owned.grid:id==='dashedCircle'?s.owned.circle:s.owned.root)}
 function renderTree(){$('skillTree').classList.toggle('prebranch',!s.owned.root);for(const n of nodes){const id=n.dataset.id;n.classList.toggle('off',!visibleNode(id));n.classList.toggle('owned',!!s.owned[id]);n.querySelector('.node-price').textContent=s.owned[id]?'OWNED':defs[id].cost;renderNode(id)}for(const id of ['stamina','circle','free','grid','eraser','dashedCircle']){const l=$('link-'+id);l.style.display=visibleNode(id)?'':'none';l.classList.toggle('live',!!s.owned[id])}if(!visibleNode(inspectId))inspectId='root';inspect(inspectId)}
-function inspect(id){inspectId=id;const d=defs[id];$('inspectTitle').textContent=d.name;$('inspectDesc').textContent=d.desc;$('inspectPrice').textContent=s.owned[id]?'Purchased':d.cost;
- $('inspectHint').textContent=s.owned[id]?'Your original hand-drawn shape is preserved.':s.cash<d.price?'Trace the shape to preview. You still need '+cash(d.price-s.cash)+'.':'Trace 80% of the shape to purchase.'}
-function attemptPurchase(id){const pts=nodeCanvas[id].attempt;const guide=guides[id]||guides.circle;if(pts.length<3){$('shopFeedback').textContent='Trace around the shape to buy the upgrade.';renderNode(id);return}
- const coverage=guide.filter(p=>polyDist(p,pts)<16).length/guide.length;
- const precision=pts.reduce((v,p)=>v+clamp(1-polyDist(p,guide)/24),0)/pts.length;
- const travel=pathLength(pts),guideLen=pathLength(guide);
- renderNode(id);
- if(coverage<.8||precision<.57||travel<guideLen*.55||travel>guideLen*2.25){$('shopFeedback').textContent='Traced '+Math.round(coverage*100)+'% · Need 80% coverage and a steady stroke. Try again.';return}
- if(s.cash<defs[id].price){$('shopFeedback').textContent='Well traced! You need '+cash(defs[id].price-s.cash)+' more for '+defs[id].name+'.';return}
- s.cash-=defs[id].price;s.owned[id]=true;s.traces[id]=pts.map(p=>[Math.round(p.x*100)/100,Math.round(p.y*100)/100]);nodeCanvas[id].attempt=[];
+function inspect(id){
+ inspectId=id;const d=defs[id];$('inspectTitle').textContent=d.name;$('inspectDesc').textContent=d.desc;$('inspectPrice').textContent=s.owned[id]?'Purchased':d.cost;
+ const count=nodeCanvas[id]?.strokes.length||0,progress=traceStats(id,nodeCanvas[id]?.strokes||[]);
+ $('clearTrace').classList.toggle('hidden',s.owned[id]||count===0);
+ $('inspectHint').textContent=s.owned[id]?'Your hand-drawn strokes are preserved.':count?
+  Math.round(progress.coverage*100)+'% traced across '+count+' stroke'+(count===1?'':'s')+'. Continue tracing; unfinished progress is saved.':
+  'Trace at least 80% of the outline. You can lift your finger and use multiple strokes.';
+}
+$('clearTrace').addEventListener('click',()=>{
+ if(s.owned[inspectId]||tracing)return;
+ nodeCanvas[inspectId].strokes=[];persistTrace(inspectId);renderNode(inspectId);inspect(inspectId);
+ $('shopFeedback').textContent='Unfinished trace cleared. Start again whenever you like.';
+});
+function attemptPurchase(id){
+ const strokes=nodeCanvas[id].strokes;
+ const {coverage,precision,travel,guideLen}=traceStats(id,strokes);
+ if(coverage<.8||precision<.57||travel<guideLen*.55){
+  $('shopFeedback').textContent=Math.round(coverage*100)+'% traced · '+strokes.length+' stroke'+(strokes.length===1?'':'s')+' so far. Lift and keep tracing to reach 80%.';
+  return;
+ }
+ if(s.cash<defs[id].price){$('shopFeedback').textContent='Shape complete! '+cash(defs[id].price-s.cash)+' more needed for '+defs[id].name+'. Your trace is saved.';return}
+ s.cash-=defs[id].price;s.owned[id]=true;s.traces[id]=encodeStrokes(strokes);nodeCanvas[id].strokes=[];delete s.pendingTraces[id];
  if(id==='root'||id==='stamina')s.energy++;
  if(id==='free')s.freeOn=true;
  if(id==='grid')s.gridOn=true;
  save();stats();renderTree();$('shopFeedback').textContent='';inspect(id)
 }
-function openShop(){s.phase='shop';s.tool='pencil';save();stats();renderTree();$('receipt').textContent='Turn '+s.turn+' complete · Last '+s.lastKind+': '+s.last+'% accuracy · +'+cash(s.lastPay);$('shopFeedback').textContent=s.owned.root?'Trace any available shape to purchase.':'First upgrade: Better Endurance for $1.00.'}
+function openShop(){s.phase='shop';s.tool='pencil';save();stats();renderTree();$('receipt').textContent='Turn '+s.turn+' complete · Last '+s.lastKind+': '+s.last+'% accuracy · +'+cash(s.lastPay);$('shopFeedback').textContent='Lift and resume tracing as often as you like. Progress is saved between turns.'}
 $('nextTurn').addEventListener('click',()=>{clearTimeout(advanceTimer);s.turn++;s.left=s.energy;s.phase='draw';s.tool='pencil';save();stats();requestAnimationFrame(()=>{resizePaper();createPrompt()})});
-$('reset').addEventListener('click',()=>{if(!confirm('Erase all game progress and hand-drawn upgrade shapes?'))return;clearTimeout(advanceTimer);s=blank();for(const id in nodeCanvas)nodeCanvas[id].attempt=[];strokePts=[];eraserPts=[];save();stats();resizePaper();createPrompt();renderTree()});
+$('reset').addEventListener('click',()=>{if(!confirm('Erase all game progress and hand-drawn upgrade shapes?'))return;clearTimeout(advanceTimer);s=blank();for(const id in nodeCanvas)nodeCanvas[id].strokes=[];strokePts=[];eraserPts=[];save();stats();resizePaper();createPrompt();renderTree()});
 window.addEventListener('resize',()=>{if(s.phase==='draw')resizePaper()});
 if(s.phase==='draw'&&s.left<=0)s.phase='shop';stats();renderTree();requestAnimationFrame(()=>{resizePaper();if(s.phase==='shop')openShop();else createPrompt()});
 })();
