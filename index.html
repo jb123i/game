@@ -272,6 +272,27 @@ function eraserBegin(e){if(!upgradeActive('eraser'))return;
 }
 // Accuracy for multi-stroke studies uses the UNION of separate strokes. Never
 // connect distant endpoints across a pen lift, or count those invisible links.
+// A perfect payout requires the actual ink to follow the intended line at
+// subpixel precision, including its endpoints and any joins between strokes.
+// Scoring still rounds to whole cents, but rounding alone must never turn an
+// imperfect line into a perfect $1.00 line.
+function pixelPerfectLine(segments,points,start,end,travel){
+ const length=distance(start,end);
+ if(length<1||Math.abs(travel-length)>Math.max(.5,length*.002))return false;
+ let totalError=0;
+ for(const p of points){
+  const d=lineDistance(p,start,end);
+  if(d>.4)return false;
+  totalError+=d;
+ }
+ if(totalError/points.length>.12)return false;
+ // A multi-stroke line cannot skip a small gap and still earn a perfect score.
+ for(let i=0;i<=90;i++){
+  const t=i/90,p={x:start.x+(end.x-start.x)*t,y:start.y+(end.y-start.y)*t};
+  if(Math.min(...segments.map(pts=>polyDist(p,pts)))>.55)return false;
+ }
+ return true;
+}
 function lineAccuracy(forceGuided=false){
  const segments=practiceStrokes.filter(pts=>pts.length>=2);
  if(!segments.length)return 0;
@@ -288,7 +309,7 @@ function lineAccuracy(forceGuided=false){
   const efficiency=clamp(best/travel),reach=clamp((best-35)/95);
   const covered=Array.from({length:71},(_,i)=>({x:start.x+(end.x-start.x)*i/70,y:start.y+(end.y-start.y)*i/70})).reduce((v,p)=>v+clamp(1-Math.min(...segments.map(pts=>polyDist(p,pts)))/21),0)/71;
   const score=Math.round(100*(.43*precision+.27*covered+.20*efficiency+.10*reach));
-  if(precision>.96&&covered>.93&&efficiency>.98&&best>140)return 100;
+  if(best>140&&pixelPerfectLine(segments,points,start,end,travel))return 100;
   return clamp(score,0,99);
  }
  const ideal=distance(start,end);
@@ -300,7 +321,7 @@ function lineAccuracy(forceGuided=false){
  const toA=Math.min(...points.map(p=>distance(p,start))),toB=Math.min(...points.map(p=>distance(p,end)));
  const ends=(clamp(1-toA/25)+clamp(1-toB/25))/2,eff=clamp(ideal/travel);
  const v=.49*coverage+.26*precision+.2*ends+.05*eff;
- if(coverage>.91&&precision>.92&&ends>.88&&travel/ideal<1.12)return 100;
+ if(toA<=.55&&toB<=.55&&pixelPerfectLine(segments,points,start,end,travel))return 100;
  return clamp(Math.round(100*v),0,99);
 }
 function circleAccuracy(){
