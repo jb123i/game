@@ -15,7 +15,7 @@
 @keyframes earnFloat{0%{opacity:0;transform:translate(-50%,8px) scale(.95)}17%{opacity:1;transform:translate(-50%,0) scale(1)}65%{opacity:1;transform:translate(-50%,-11px)}100%{opacity:0;transform:translate(-50%,-27px)}}
 @media(prefers-reduced-motion:reduce){.earning-popup{animation:earnFade 1.30s linear both}@keyframes earnFade{0%{opacity:0}18%{opacity:1}70%{opacity:1}100%{opacity:0}}}
 .draw-foot{padding:16px 22px;display:flex;justify-content:space-between;gap:12px;align-items:center;border-top:1px solid #e9e7dd;background:#faf9f4;border-radius:0 0 18px 18px}.draw-foot small{font-size:12px;color:#8a8e87}.draw-actions{display:flex;align-items:center;justify-content:flex-end;gap:11px;flex-wrap:wrap}.score{font-size:14px;font-weight:800;color:#317a69;text-align:right}.note{margin:12px 4px 0;color:#8a8f88;font-size:12px;text-align:center}
-.shop-head{align-items:flex-start}.shop-body{position:relative;display:grid;grid-template-columns:minmax(0,1fr);gap:12px;padding:13px 18px 0;align-items:center}.skill-wrap{padding:0;min-width:0}.skill-tree{position:relative;width:100%;max-width:550px;height:420px;isolation:isolate;margin:0 auto;background:radial-gradient(circle at center,#f6f8f0 0%,transparent 65%)}.skill-tree.prebranch{height:132px;background:none}.skill-tree.eraser-branch{height:420px;margin-bottom:10px}.branches{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}.branches line{stroke:#cfd8d0;stroke-width:.36;stroke-dasharray:1.1 1.2}.branches line.live{stroke:#9abdab;stroke-width:.48;stroke-dasharray:none}.upgrade.prereq-locked{opacity:.64}.upgrade.prereq-locked .node-name::after{content:attr(data-hint);display:block;margin-top:4px;font:750 9px/1.4 system-ui,sans-serif;color:#817f74;letter-spacing:.015em;text-transform:uppercase}.upgrade{position:absolute;width:var(--node-size,86px);height:var(--node-size,86px);transform:translate(-50%,-50%);z-index:2;outline:none}/* Purchasable upgrades glow green only when funded and prerequisites are met. */
+.shop-head{align-items:flex-start}.shop-body{position:relative;display:grid;grid-template-columns:minmax(0,1fr);gap:12px;padding:13px 18px 0;align-items:center}.skill-wrap{padding:0;min-width:0}.skill-tree{position:relative;width:100%;max-width:550px;height:420px;isolation:isolate;margin:0 auto;background:radial-gradient(circle at center,#f6f8f0 0%,transparent 65%)}.skill-tree.prebranch{height:132px;background:none}.skill-tree.eraser-branch{height:420px;margin-bottom:10px}.branches{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}.branches line,.branches path{fill:none;stroke:#cfd8d0;stroke-width:.36;stroke-dasharray:1.1 1.2}.branches line.live,.branches path.live{stroke:#9abdab;stroke-width:.48;stroke-dasharray:none}.upgrade.prereq-locked{opacity:.64}.upgrade.prereq-locked .node-name::after{content:attr(data-hint);display:block;margin-top:4px;font:750 9px/1.4 system-ui,sans-serif;color:#817f74;letter-spacing:.015em;text-transform:uppercase}.upgrade{position:absolute;width:var(--node-size,86px);height:var(--node-size,86px);transform:translate(-50%,-50%);z-index:2;outline:none}/* Purchasable upgrades glow green only when funded and prerequisites are met. */
 .upgrade.affordable::before{content:"";position:absolute;inset:8px;border-radius:50%;pointer-events:none;z-index:-1;background:radial-gradient(circle,rgba(126,204,157,.26) 18%,rgba(104,184,139,.30) 56%,rgba(104,184,139,.08) 76%,transparent 86%);box-shadow:0 0 20px 10px rgba(63,157,117,.24);animation:affordableGlow 2.8s ease-in-out infinite}
 @keyframes affordableGlow{0%,100%{opacity:.78}50%{opacity:1}}
 @media(prefers-reduced-motion:reduce){.upgrade.affordable::before{animation:none;opacity:.85}}
@@ -85,15 +85,15 @@
 <div class="shop-tool-picker" aria-label="Skill tree tools"><button type="button" id="skillPencil" class="active" aria-pressed="true">✎ Trace</button><button type="button" id="skillEraser" class="hidden" aria-pressed="false" disabled aria-disabled="true" title="Buy Pencil Eraser to unlock">⌫ Erase</button></div>
 <div class="shop-body"><div class="skill-wrap"><div class="skill-tree" id="skillTree" aria-label="Upgrade tree">
 <svg class="branches" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-<line id="link-stamina" x1="40" y1="51" x2="15" y2="51"/><line id="link-circle" x1="40" y1="51" x2="65" y2="21"/><line id="link-free" x1="40" y1="51" x2="65" y2="51"/><line id="link-grid" x1="40" y1="51" x2="40" y2="82"/><line id="link-eraser" x1="40" y1="82" x2="65" y2="82"/><line id="link-dashedCircle" x1="65" y1="21" x2="88" y2="21"/><line id="link-eraserSize" x1="65" y1="82" x2="88" y2="82"/><line id="link-square" x1="65" y1="21" x2="40" y2="21"/><line id="link-composer" x1="40" y1="21" x2="15" y2="21"/><line id="link-composer-stamina" x1="15" y1="51" x2="15" y2="21"/>
+<line id="link-stamina" x1="40" y1="51" x2="15" y2="51"/><line id="link-circle" x1="65" y1="21" x2="40" y2="21"/><line id="link-free" x1="40" y1="51" x2="65" y2="51"/><line id="link-grid" x1="40" y1="51" x2="40" y2="82"/><line id="link-eraser" x1="40" y1="82" x2="65" y2="82"/><path id="link-dashedCircle" d="M40 21 L40 6 L88 6 L88 21"/><line id="link-eraserSize" x1="65" y1="82" x2="88" y2="82"/><line id="link-square" x1="40" y1="51" x2="65" y2="21"/><line id="link-composer" x1="40" y1="21" x2="15" y2="21"/><line id="link-composer-stamina" x1="15" y1="51" x2="15" y2="21"/>
 </svg>
 <div class="upgrade" data-id="root" style="left:40%;top:51%;" tabindex="0" aria-label="Better Endurance, fifty cents"><canvas width="192" height="192"></canvas><span class="node-symbol">△</span><span class="node-price">$0.50</span><span class="node-name">Endurance I</span><span class="tip"><strong>Better Endurance</strong>Get 2 strokes per turn instead of 1.<span class="tip-cost">$0.50 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="stamina" style="left:15%;top:51%;" tabindex="0" aria-label="Endurance II, two dollars"><canvas width="192" height="192"></canvas><span class="node-symbol">★</span><span class="node-price">$2.00</span><span class="node-name">Endurance II</span><span class="tip"><strong>Endurance II</strong>Gain another stroke. Hand energy increases from 2 to 3 strokes per turn.<span class="tip-cost">$2.00 · Trace to buy</span></span></div>
-<div class="upgrade off" data-id="circle" style="left:65%;top:21%;" tabindex="0" aria-label="Circle Studies, two dollars"><canvas width="192" height="192"></canvas><span class="node-symbol">○</span><span class="node-price">$2.00</span><span class="node-name">Circles</span><span class="tip"><strong>Circle Studies</strong>Unlock circle challenges. Each accuracy point earns $0.01, up to $1.00 per circle.<span class="tip-cost">$2.00 · Trace to buy</span></span></div>
+<div class="upgrade off" data-id="circle" style="left:40%;top:21%;" tabindex="0" aria-label="Circle Studies, two dollars; requires Square Studies"><canvas width="192" height="192"></canvas><span class="node-symbol">○</span><span class="node-price">$2.00</span><span class="node-name">Circles</span><span class="tip"><strong>Circle Studies</strong>Unlock curved-line challenges after Square Studies. Each accuracy point earns $0.01, up to $1.00 per circle.<span class="tip-cost">$2.00 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="free" style="left:65%;top:51%;" tabindex="0" aria-label="Freehand Lines, one dollar fifty"><canvas width="192" height="192"></canvas><span class="node-symbol">⬟</span><span class="node-price">$1.50</span><span class="node-name">Free lines</span><span class="tip"><strong>Freehand Lines</strong>Remove the A and B points and draw straight lines anywhere on the page. Toggle guides back on at any time.<span class="tip-cost">$1.50 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="grid" style="left:40%;top:82%;" tabindex="0" aria-label="Grid Paper, one dollar"><canvas width="192" height="192"></canvas><span class="node-symbol">□</span><span class="node-price">$1.00</span><span class="node-name">Grid</span><span class="tip"><strong>Grid Paper</strong>Add a toggleable drawing grid to your paper. Unlock the Eraser branch.<span class="tip-cost">$1.00 · Trace to buy</span></span></div>
-<div class="upgrade off" data-id="square" style="left:40%;top:21%;" tabindex="0" aria-label="Square Studies, one dollar fifty; requires Circle Studies"><canvas width="192" height="192"></canvas><span class="node-symbol">▢</span><span class="node-price">$1.50</span><span class="node-name">Squares</span><span class="tip"><strong>Square Studies</strong>Follow four sides and corners to draw a square. Requires active Circle Studies.<span class="tip-cost">$1.50 · Trace to buy</span></span></div>
-<div class="upgrade off" data-id="composer" style="left:15%;top:21%;" tabindex="0" aria-label="Shape Composer, three dollars; requires Endurance II and Square Studies"><canvas width="192" height="192"></canvas><span class="node-symbol">♧</span><span class="node-price">$3.00</span><span class="node-name">Composer</span><span class="tip"><strong>Shape Composer</strong>Requires Endurance II and Square Studies. Draw two-part objects such as balloons, magnifying glasses and signposts.<span class="tip-cost">$3.00 · Trace to buy</span></span></div>
+<div class="upgrade off" data-id="square" style="left:65%;top:21%;" tabindex="0" aria-label="Square Studies, one dollar fifty"><canvas width="192" height="192"></canvas><span class="node-symbol">▢</span><span class="node-price">$1.50</span><span class="node-name">Squares</span><span class="tip"><strong>Square Studies</strong>Follow four sides and corners to draw a square. The first geometry lesson after Endurance I.<span class="tip-cost">$1.50 · Trace to buy</span></span></div>
+<div class="upgrade off" data-id="composer" style="left:15%;top:21%;" tabindex="0" aria-label="Shape Composer, three dollars; requires Endurance II and Circle Studies"><canvas width="192" height="192"></canvas><span class="node-symbol">♧</span><span class="node-price">$3.00</span><span class="node-name">Composer</span><span class="tip"><strong>Shape Composer</strong>Requires Endurance II and Circle Studies. Draw two-part objects such as balloons, magnifying glasses and signposts.<span class="tip-cost">$3.00 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="dashedCircle" style="left:88%;top:21%;" tabindex="0" aria-label="Circle Guides, five dollars"><canvas width="192" height="192"></canvas><span class="node-symbol">◌</span><span class="node-price">$5.00</span><span class="node-name">Circle guides</span><span class="tip"><strong>Dashed Circle Guide</strong>Replace the five circle guide dots with a dashed circular outline during circle practice.<span class="tip-cost">$5.00 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="eraser" style="left:65%;top:82%;" tabindex="0" aria-label="Pencil Eraser, one dollar twenty five"><canvas width="192" height="192"></canvas><span class="node-symbol eraser-symbol" aria-hidden="true"><svg viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><path d="M4 21 20 5q2-2 4 0l9 9q2 2 0 4L17 34H12L4 26q-2-2 0-5Z"/><path d="m13 12 15 15"/><path d="M12 34h19" stroke-width="1.5"/></svg></span><span class="node-price">$1.25</span><span class="node-name">Eraser</span><span class="tip"><strong>Pencil Eraser</strong>Erase your own pencil lines without using hand energy. Grid lines and drawing guides stay untouched.<span class="tip-cost">$1.25 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="eraserSize" style="left:88%;top:82%;" tabindex="0" aria-label="Adjustable Eraser Size, two dollars fifty"><canvas width="192" height="192"></canvas><span class="node-symbol" aria-hidden="true">◉</span><span class="node-price">$2.50</span><span class="node-name">Eraser size</span><span class="tip"><strong>Adjustable Eraser</strong>Choose an eraser width from 8 to 64 pixels. Your size preference is saved and the grid stays untouched.<span class="tip-cost">$2.50 · Trace to buy</span></span></div>
@@ -110,13 +110,13 @@ const $=id=>document.getElementById(id),key='learn-to-draw-v4';
 const defs={
  root:{name:'Better Endurance',price:50,desc:'Increase hand energy from 1 to 2 strokes per turn.',cost:'$0.50'},
  stamina:{name:'Endurance II',price:200,desc:'Add another stroke to your hand. You get 3 strokes per turn.',cost:'$2.00'},
- circle:{name:'Circle Studies',price:200,desc:'Unlock circle-drawing challenges. Every 1% of accuracy earns $0.01, up to $1.00.',cost:'$2.00'},
- square:{name:'Square Studies',price:150,desc:'Learn four-sided shapes in a new Square study. Requires active Circle Studies. Each 1% accuracy earns $0.01, up to $1.00.',cost:'$1.50'},
+ circle:{name:'Circle Studies',price:200,desc:'Progress from four straight sides to smooth circles. Requires active Square Studies. Every 1% of accuracy earns $0.01, up to $1.00.',cost:'$2.00'},
+ square:{name:'Square Studies',price:150,desc:'Learn straight edges and corners by drawing squares. Requires Endurance I. Each 1% accuracy earns $0.01, up to $1.00.',cost:'$1.50'},
  free:{name:'Freehand Lines',price:150,desc:'Remove the A and B guide points. Draw a straight line wherever you like, or switch back to guided lines.',cost:'$1.50'},
  grid:{name:'Grid Paper',price:100,desc:'Add an optional graph-paper grid to the page. This opens a branch for a Pencil Eraser.',cost:'$1.00'},
  eraser:{name:'Pencil Eraser',price:125,desc:'Erase your completed pencil strokes, without spending energy. The grid and prompt guides remain untouched.',cost:'$1.25'},
  eraserSize:{name:'Adjustable Eraser',price:250,desc:'Unlock a size slider for your pencil eraser. Adjust its width from 8 to 64 pixels; the grid and guides are never erased.',cost:'$2.50'},
- composer:{name:'Shape Composer',price:300,desc:'Requires active Endurance II and Square Studies. Combine squares or circles with lines into two-part objects. Each uses two Hand Energy and can earn up to $2.00.',cost:'$3.00'},
+ composer:{name:'Shape Composer',price:300,desc:'Requires active Endurance II and Circle Studies. Combine squares or circles with lines into two-part objects. Each uses two Hand Energy and can earn up to $2.00.',cost:'$3.00'},
  dashedCircle:{name:'Dashed Circle Guide',price:500,desc:'Trade your center and four outer circle guide dots for a dashed circle outline. It costs $5.00.',cost:'$5.00'}
 };
 const blank=()=>({cash:0,turn:1,energy:1,left:1,strokes:0,practiceDraft:null,phase:'draw',last:0,lastPay:0,lastKind:'line',owned:{root:false,stamina:false,circle:false,free:false,grid:false,eraser:false,eraserSize:false,dashedCircle:false,square:false,composer:false},legacyComposer:false,disabled:{},traces:{},pendingTraces:{},paperMarks:[],legacyAspect:null,eraserSize:30,gridOn:true,freeOn:false,mode:'line',tool:'pencil'});
@@ -127,20 +127,24 @@ try{const q=JSON.parse(localStorage.getItem(key)||'null');if(q&&Number.isFinite(
  if(q.owned.composer&&!Object.prototype.hasOwnProperty.call(q.owned,'square'))s.legacyComposer=true;
  // Migrate legacy play-mode toggles once; from now on only erasing/retracing shop shapes changes activation.
  if(!q.disabled){if(s.owned.grid&&!q.gridOn)s.disabled.grid=true;if(s.owned.free&&!q.freeOn)s.disabled.free=true}
- s.eraserSize=Number.isFinite(Number(s.eraserSize))?Math.round(Math.min(64,Math.max(8,Number(s.eraserSize)))/2)*2:30;s.cash=Math.max(0,Math.floor(s.cash));s.energy=1+((s.owned.root&&!s.disabled.root)?1:0)+((s.owned.stamina&&!s.disabled.stamina)?1:0);s.left=Math.max(0,Math.min(s.energy,Number(s.left)||0));if((!s.owned.circle||s.disabled.circle)&&s.mode==='circle')s.mode='line';if(s.mode==='square'&&(!s.owned.square||s.disabled.square||!s.owned.circle||s.disabled.circle))s.mode='line';if(s.mode==='compose'&&(!s.owned.composer||s.disabled.composer||!s.owned.circle||s.disabled.circle||(s.legacyComposer?(s.owned.stamina?!!s.disabled.stamina:!s.owned.root||!!s.disabled.root):!s.owned.stamina||!!s.disabled.stamina||!s.owned.square||!!s.disabled.square)))s.mode='line';if(!s.owned.eraser||s.disabled.eraser)s.tool='pencil';s.freeOn=!!(s.owned.free&&!s.disabled.free);s.gridOn=!!(s.owned.grid&&!s.disabled.grid);
+ s.eraserSize=Number.isFinite(Number(s.eraserSize))?Math.round(Math.min(64,Math.max(8,Number(s.eraserSize)))/2)*2:30;s.cash=Math.max(0,Math.floor(s.cash));s.energy=1+((s.owned.root&&!s.disabled.root)?1:0)+((s.owned.stamina&&!s.disabled.stamina)?1:0);s.left=Math.max(0,Math.min(s.energy,Number(s.left)||0));if((!s.owned.circle||s.disabled.circle||(s.owned.square&&s.disabled.square))&&s.mode==='circle')s.mode='line';if(s.mode==='square'&&(!s.owned.square||s.disabled.square))s.mode='line';if(s.mode==='compose'&&(!s.owned.composer||s.disabled.composer||!s.owned.circle||s.disabled.circle||(s.owned.square&&s.disabled.square)||(s.legacyComposer?(s.owned.stamina?!!s.disabled.stamina:!s.owned.root||!!s.disabled.root):!s.owned.stamina||!!s.disabled.stamina)))s.mode='line';if(!s.owned.eraser||s.disabled.eraser)s.tool='pencil';s.freeOn=!!(s.owned.free&&!s.disabled.free);s.gridOn=!!(s.owned.grid&&!s.disabled.grid);
  }else if(!q){const old=JSON.parse(localStorage.getItem('learn-to-draw-playable-v3')||'null');if(old&&Number.isFinite(old.cash)){s.cash=Math.max(0,Math.floor(old.cash));s.turn=old.turn||1;s.strokes=old.lines||0;s.last=old.last||0;s.owned.root=!!old.upgraded;s.energy=s.owned.root?2:1;s.left=Math.max(0,Math.min(s.energy,old.left??s.energy));s.phase=old.phase==='shop'?'shop':'draw';}}}catch{}
 const save=()=>{try{localStorage.setItem(key,JSON.stringify(s))}catch{}};
 const upgradeActive=id=>!!s.owned[id]&&!s.disabled[id];
-// Legacy Composer purchases remain usable; new Composer purchases need both
-// visible parents, Endurance II and Square Studies, with Circle active above it.
-const squarePlayable=()=>upgradeActive('square')&&upgradeActive('circle');
-const composerPlayable=()=>upgradeActive('composer')&&upgradeActive('circle')&&(s.legacyComposer?(s.owned.stamina?upgradeActive('stamina'):upgradeActive('root')):upgradeActive('stamina')&&squarePlayable());
-const nodeActive=id=>id==='composer'?composerPlayable():id==='square'?squarePlayable():upgradeActive(id);
+// Existing Circle owners retain their purchased ability. New Circle
+// purchases require Square Studies first. Deactivating a purchased Square
+// disables the later Circle branch until it is retraced.
+const squarePlayable=()=>upgradeActive('square');
+const circlePlayable=()=>upgradeActive('circle')&&(!s.owned.square||squarePlayable());
+// Legacy Composer purchases remain usable with their original Endurance
+// parent; new purchases require active Endurance II and Circle Studies.
+const composerPlayable=()=>upgradeActive('composer')&&circlePlayable()&&(s.legacyComposer?(s.owned.stamina?upgradeActive('stamina'):upgradeActive('root')):upgradeActive('stamina'));
+const nodeActive=id=>id==='composer'?composerPlayable():id==='square'?squarePlayable():id==='circle'?circlePlayable():upgradeActive(id);
 const eraserWidth=()=>upgradeActive('eraserSize')?s.eraserSize:30;
 function reconcileUpgradeEffects(){
  const energy=1+(upgradeActive('root')?1:0)+(upgradeActive('stamina')?1:0);s.energy=energy;s.left=Math.max(0,Math.min(s.left,energy));
  s.gridOn=upgradeActive('grid');s.freeOn=upgradeActive('free');
- if(s.mode==='circle'&&!upgradeActive('circle')||s.mode==='square'&&!squarePlayable()||s.mode==='compose'&&!composerPlayable())s.mode='line';
+ if(s.mode==='circle'&&!circlePlayable()||s.mode==='square'&&!squarePlayable()||s.mode==='compose'&&!composerPlayable())s.mode='line';
  if(!upgradeActive('eraser'))s.tool='pencil';
 }
 const cash=c=>'$'+(c/100).toFixed(2),clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
@@ -175,7 +179,7 @@ function stableSamples(e){const samples=typeof e.getCoalescedEvents==='function'
 function stats(){
  $('wallet').textContent=cash(s.cash);$('turn').textContent=s.turn;$('energy').textContent=s.left+' / '+s.energy;$('strokes').textContent=s.strokes;
  $('playStage').classList.toggle('hidden',s.phase!=='draw');$('shopStage').classList.toggle('hidden',s.phase!=='shop');
- $('circleMode').classList.toggle('hidden',!upgradeActive('circle'));$('squareMode').classList.toggle('hidden',!squarePlayable());$('composeMode').classList.toggle('hidden',!composerPlayable());$('gridSwitch').classList.add('hidden');$('guideSwitch').classList.add('hidden');$('pencilTool').classList.toggle('hidden',!upgradeActive('eraser'));$('eraserTool').classList.toggle('hidden',!upgradeActive('eraser'));$('eraserSizeControl').classList.toggle('hidden',!upgradeActive('eraser')||!upgradeActive('eraserSize'));$('eraserSize').value=s.eraserSize;$('eraserSizeValue').textContent=s.eraserSize+' px';
+ $('circleMode').classList.toggle('hidden',!circlePlayable());$('squareMode').classList.toggle('hidden',!squarePlayable());$('composeMode').classList.toggle('hidden',!composerPlayable());$('gridSwitch').classList.add('hidden');$('guideSwitch').classList.add('hidden');$('pencilTool').classList.toggle('hidden',!upgradeActive('eraser'));$('eraserTool').classList.toggle('hidden',!upgradeActive('eraser'));$('eraserSizeControl').classList.toggle('hidden',!upgradeActive('eraser')||!upgradeActive('eraserSize'));$('eraserSize').value=s.eraserSize;$('eraserSizeValue').textContent=s.eraserSize+' px';
  $('lineMode').classList.toggle('active',s.mode==='line');$('circleMode').classList.toggle('active',s.mode==='circle');$('squareMode').classList.toggle('active',s.mode==='square');$('composeMode').classList.toggle('active',s.mode==='compose');$('gridSwitch').textContent=s.gridOn?'▦ Grid on':'▦ Grid off';$('gridSwitch').classList.toggle('active',s.gridOn);$('guideSwitch').textContent=s.freeOn?'Freehand on':'Guided on';$('guideSwitch').classList.toggle('active',s.freeOn);$('pencilTool').classList.toggle('active',s.tool==='pencil');$('eraserTool').classList.toggle('active',s.tool==='eraser');
  const circle=s.mode==='circle',square=s.mode==='square',compose=s.mode==='compose';
  $('activityHeading').textContent=compose?(composeTemplate==='balloon'?'Draw a balloon':composeTemplate==='signpost'?'Draw a signpost':'Draw a magnifying glass'):circle?'Draw a circle':square?'Draw a square':s.freeOn?'Draw a straight line':'Connect the points';
@@ -580,7 +584,7 @@ function preserveInterruptedStroke(){
 draw.addEventListener('pointerup',e=>{if(activePointer!==e.pointerId)return;e.preventDefault();const p=stablePointer(e);if(drawing){if(p)strokePts.push(p);activePointer=null;strokeAnchor=null;finishPractice()}else if(erasing){if(p)eraserPts.push(p);s.paperMarks.push({kind:'erase',space:'iso',size:eraserWidth(),points:normalizeMark(eraserPts)});erasing=false;eraserPts=[];activePointer=null;strokeAnchor=null;save();paintInk();stats();$('score').textContent='Pencil erased · No energy used'}if(pendingResize)resizePaper()});
 draw.addEventListener('pointercancel',e=>{if(activePointer!==e.pointerId)return;preserveInterruptedStroke();$('score').textContent='Stroke interrupted · Partial drawing saved';});
 window.addEventListener('pagehide',()=>{if(drawing||erasing)preserveInterruptedStroke()});
-function changeMode(mode){if(s.phase!=='draw'||locked||drawing)return;if(mode==='compose'&&(!composerPlayable()||s.left<2)){$('score').textContent='Shape Composer needs its active upgrade and at least 2 Hand Energy';return;}if(practiceStrokes.length||s.mode==='compose'&&composeStage===1){$('score').textContent='Finish the current shape before switching modes';return}if(mode==='circle'&&!upgradeActive('circle')||mode==='square'&&!squarePlayable())return;s.mode=mode;s.tool='pencil';save();stats();createPrompt()}
+function changeMode(mode){if(s.phase!=='draw'||locked||drawing)return;if(mode==='compose'&&(!composerPlayable()||s.left<2)){$('score').textContent='Shape Composer needs its active upgrade and at least 2 Hand Energy';return;}if(practiceStrokes.length||s.mode==='compose'&&composeStage===1){$('score').textContent='Finish the current shape before switching modes';return}if(mode==='circle'&&!circlePlayable()||mode==='square'&&!squarePlayable())return;s.mode=mode;s.tool='pencil';save();stats();createPrompt()}
 $('lineMode').addEventListener('click',()=>changeMode('line'));
 $('circleMode').addEventListener('click',()=>changeMode('circle'));$('squareMode').addEventListener('click',()=>changeMode('square'));$('composeMode').addEventListener('click',()=>changeMode('compose'));
 // Grid activation is controlled only by erasing / retracing its owned skill-tree shape.
@@ -757,20 +761,20 @@ function renderNode(id){const {ctx,strokes}=nodeCanvas[id];const guide=guides[id
  if(tracing&&tracing.id===id&&tracing.tool==='trace')stroke(ctx,tracing.points,'#233e46',3.5);
  if(owned&&!drawn.length){ctx.font='700 12px system-ui';ctx.fillStyle='#ae7160';ctx.textAlign='center';ctx.fillText('OFF',48,18)}
 }
-function visibleNode(id){return id==='root'||(id==='eraser'?s.owned.grid:id==='eraserSize'?s.owned.eraser:id==='dashedCircle'?s.owned.circle:s.owned.root)}
+function visibleNode(id){return id==='root'||(id==='eraser'?s.owned.grid:id==='eraserSize'?s.owned.eraser:id==='dashedCircle'?s.owned.circle:id==='circle'?s.owned.square||s.owned.circle:s.owned.root)}
 function prerequisites(id){
- if(id==='square')return ['circle'];
- if(id==='composer')return ['stamina','square'];
+ if(id==='circle')return ['square'];
+ if(id==='composer')return ['stamina','circle'];
  return [];
 }
-function eligibleToBuy(id){return visibleNode(id)&&!s.owned[id]&&prerequisites(id).every(upgradeActive)}
+function eligibleToBuy(id){return visibleNode(id)&&!s.owned[id]&&prerequisites(id).every(nodeActive)}
 function renderTree(){
  refreshSkillTools();
  $('skillTree').classList.toggle('prebranch',!s.owned.root);
  $('shopStage').classList.toggle('single-upgrade',!s.owned.root);
  for(const n of nodes){
   const id=n.dataset.id,visible=visibleNode(id),parents=prerequisites(id);
-  const parentReady=parents.every(upgradeActive),missing=parents.filter(x=>!s.owned[x]);
+  const parentReady=parents.every(nodeActive),missing=parents.filter(x=>!s.owned[x]);
   n.classList.toggle('off',!visible);
   n.classList.toggle('owned',!!s.owned[id]);
   n.classList.toggle('deactivated',!!s.owned[id]&&!nodeActive(id));
@@ -787,7 +791,7 @@ function renderTree(){
  for(const id of Object.keys(linkParents)){
   const link=$('link-'+id);
   link.style.display=visibleNode(id)?'':'none';
-  link.classList.toggle('live',id==='composer'?squarePlayable():id==='square'?upgradeActive('circle'):id==='eraserSize'?upgradeActive('eraser'):id==='eraser'?upgradeActive('grid'):id==='dashedCircle'?upgradeActive('circle'):upgradeActive(id));
+  link.classList.toggle('live',id==='composer'?circlePlayable():id==='circle'?squarePlayable():id==='square'?upgradeActive('root'):id==='eraserSize'?upgradeActive('eraser'):id==='eraser'?upgradeActive('grid'):id==='dashedCircle'?circlePlayable():upgradeActive(id));
  }
  const stamina=$('link-composer-stamina');
  stamina.style.display=visibleNode('composer')?'':'none';
@@ -824,7 +828,7 @@ function inspect(id){
   'Trace 80% of the outline; multiple strokes are allowed.';
  if(!owned&&prerequisites(id).length){
   const missing=prerequisites(id).filter(parent=>!s.owned[parent]);
-  const inactive=prerequisites(id).filter(parent=>s.owned[parent]&&!upgradeActive(parent));
+  const inactive=prerequisites(id).filter(parent=>s.owned[parent]&&!nodeActive(parent));
   const extra=missing.length?'Buy '+missing.map(x=>defs[x].name).join(' and ')+' first. ':inactive.length?'Reactivate '+inactive.map(x=>defs[x].name).join(' and ')+'. ':s.cash<defs[id].price?'Save '+cash(defs[id].price-s.cash)+' more. ':'Ready to buy. ';
   $('inspectHint').textContent=extra+$('inspectHint').textContent;
  }
@@ -841,7 +845,7 @@ function attemptPurchase(id){
   $('shopFeedback').textContent=Math.round(coverage*100)+'% traced · '+strokes.length+' stroke'+(strokes.length===1?'':'s')+' so far. Lift and keep tracing to reach 80%.';
   return;
  }
- if(!prerequisites(id).every(upgradeActive)){
+ if(!prerequisites(id).every(nodeActive)){
   $('shopFeedback').textContent=defs[id].name+' requires '+prerequisites(id).map(parent=>defs[parent].name).join(' and ')+' to be active. Your trace is saved.';
   return;
  }
