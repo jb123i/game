@@ -89,10 +89,10 @@
 </svg>
 <div class="upgrade" data-id="root" style="left:40%;top:51%;" tabindex="0" aria-label="Better Endurance, fifty cents"><canvas width="192" height="192"></canvas><span class="node-symbol">△</span><span class="node-price">$0.50</span><span class="node-name">Endurance I</span><span class="tip"><strong>Better Endurance</strong>Get 2 strokes per turn instead of 1.<span class="tip-cost">$0.50 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="stamina" style="left:15%;top:51%;" tabindex="0" aria-label="Endurance II, two dollars"><canvas width="192" height="192"></canvas><span class="node-symbol">★</span><span class="node-price">$2.00</span><span class="node-name">Endurance II</span><span class="tip"><strong>Endurance II</strong>Gain another stroke. Hand energy increases from 2 to 3 strokes per turn.<span class="tip-cost">$2.00 · Trace to buy</span></span></div>
-<div class="upgrade off" data-id="circle" style="left:40%;top:21%;" tabindex="0" aria-label="Circle Studies, two dollars; requires Square Studies"><canvas width="192" height="192"></canvas><span class="node-symbol">○</span><span class="node-price">$2.00</span><span class="node-name">Circles</span><span class="tip"><strong>Circle Studies</strong>Unlock curved-line challenges after Square Studies. Each accuracy point earns $0.01, up to $1.00 per circle.<span class="tip-cost">$2.00 · Trace to buy</span></span></div>
+<div class="upgrade off" data-id="circle" style="left:40%;top:21%;" tabindex="0" aria-label="Circle Studies, two dollars; requires Square Studies"><canvas width="192" height="192"></canvas><span class="node-symbol">○</span><span class="node-price">$2.00</span><span class="node-name">Circles</span><span class="tip"><strong>Circle Studies</strong>Unlock curved-line challenges after Square Studies. A perfect circle earns $2.00.<span class="tip-cost">$2.00 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="free" style="left:65%;top:51%;" tabindex="0" aria-label="Freehand Lines, one dollar fifty"><canvas width="192" height="192"></canvas><span class="node-symbol">⬟</span><span class="node-price">$1.50</span><span class="node-name">Free lines</span><span class="tip"><strong>Freehand Lines</strong>Remove the A and B points and draw straight lines anywhere on the page. Toggle guides back on at any time.<span class="tip-cost">$1.50 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="grid" style="left:40%;top:82%;" tabindex="0" aria-label="Grid Paper, one dollar"><canvas width="192" height="192"></canvas><span class="node-symbol">□</span><span class="node-price">$1.00</span><span class="node-name">Grid</span><span class="tip"><strong>Grid Paper</strong>Add a toggleable drawing grid to your paper. Unlock the Eraser branch.<span class="tip-cost">$1.00 · Trace to buy</span></span></div>
-<div class="upgrade off" data-id="square" style="left:65%;top:21%;" tabindex="0" aria-label="Square Studies, one dollar fifty"><canvas width="192" height="192"></canvas><span class="node-symbol">▢</span><span class="node-price">$1.50</span><span class="node-name">Squares</span><span class="tip"><strong>Square Studies</strong>Follow four sides and corners to draw a square. The first geometry lesson after Endurance I.<span class="tip-cost">$1.50 · Trace to buy</span></span></div>
+<div class="upgrade off" data-id="square" style="left:65%;top:21%;" tabindex="0" aria-label="Square Studies, one dollar fifty"><canvas width="192" height="192"></canvas><span class="node-symbol">▢</span><span class="node-price">$1.50</span><span class="node-name">Squares</span><span class="tip"><strong>Square Studies</strong>Connect four corner points to draw a square. A perfect square earns $1.50.<span class="tip-cost">$1.50 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="composer" style="left:15%;top:21%;" tabindex="0" aria-label="Shape Composer, three dollars; requires Endurance II and Circle Studies"><canvas width="192" height="192"></canvas><span class="node-symbol">♧</span><span class="node-price">$3.00</span><span class="node-name">Composer</span><span class="tip"><strong>Shape Composer</strong>Requires Endurance II and Circle Studies. Draw two-part objects such as balloons, magnifying glasses and signposts.<span class="tip-cost">$3.00 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="dashedCircle" style="left:88%;top:21%;" tabindex="0" aria-label="Circle Guides, five dollars"><canvas width="192" height="192"></canvas><span class="node-symbol">◌</span><span class="node-price">$5.00</span><span class="node-name">Circle guides</span><span class="tip"><strong>Dashed Circle Guide</strong>Replace the five circle guide dots with a dashed circular outline during circle practice.<span class="tip-cost">$5.00 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="eraser" style="left:65%;top:82%;" tabindex="0" aria-label="Pencil Eraser, one dollar twenty five"><canvas width="192" height="192"></canvas><span class="node-symbol eraser-symbol" aria-hidden="true"><svg viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><path d="M4 21 20 5q2-2 4 0l9 9q2 2 0 4L17 34H12L4 26q-2-2 0-5Z"/><path d="m13 12 15 15"/><path d="M12 34h19" stroke-width="1.5"/></svg></span><span class="node-price">$1.25</span><span class="node-name">Eraser</span><span class="tip"><strong>Pencil Eraser</strong>Erase your own pencil lines without using hand energy. Grid lines and drawing guides stay untouched.<span class="tip-cost">$1.25 · Trace to buy</span></span></div>
@@ -110,13 +110,13 @@ const $=id=>document.getElementById(id),key='learn-to-draw-v4';
 const defs={
  root:{name:'Better Endurance',price:50,desc:'Increase hand energy from 1 to 2 strokes per turn.',cost:'$0.50'},
  stamina:{name:'Endurance II',price:200,desc:'Add another stroke to your hand. You get 3 strokes per turn.',cost:'$2.00'},
- circle:{name:'Circle Studies',price:200,desc:'Progress from four straight sides to smooth circles. Requires active Square Studies. Every 1% of accuracy earns $0.01, up to $1.00.',cost:'$2.00'},
- square:{name:'Square Studies',price:150,desc:'Learn straight edges and corners by drawing squares. Requires Endurance I. Each 1% accuracy earns $0.01, up to $1.00.',cost:'$1.50'},
+ circle:{name:'Circle Studies',price:200,desc:'Progress from four straight sides to smooth circles. Requires active Square Studies. A perfect circle earns $2.00.',cost:'$2.00'},
+ square:{name:'Square Studies',price:150,desc:'Connect four corner points using straight edges. Requires Endurance I. A perfect square earns $1.50.',cost:'$1.50'},
  free:{name:'Freehand Lines',price:150,desc:'Remove the A and B guide points. Draw a straight line wherever you like, or switch back to guided lines.',cost:'$1.50'},
  grid:{name:'Grid Paper',price:100,desc:'Add an optional graph-paper grid to the page. This opens a branch for a Pencil Eraser.',cost:'$1.00'},
  eraser:{name:'Pencil Eraser',price:125,desc:'Erase your completed pencil strokes, without spending energy. The grid and prompt guides remain untouched.',cost:'$1.25'},
  eraserSize:{name:'Adjustable Eraser',price:250,desc:'Unlock a size slider for your pencil eraser. Adjust its width from 8 to 64 pixels; the grid and guides are never erased.',cost:'$2.50'},
- composer:{name:'Shape Composer',price:300,desc:'Requires active Endurance II and Circle Studies. Combine squares or circles with lines into two-part objects. Each uses two Hand Energy and can earn up to $2.00.',cost:'$3.00'},
+ composer:{name:'Shape Composer',price:300,desc:'Requires active Endurance II and Circle Studies. Combine squares or circles with lines into two-part objects. Each uses two Hand Energy; payouts reflect the component shapes.',cost:'$3.00'},
  dashedCircle:{name:'Dashed Circle Guide',price:500,desc:'Trade your center and four outer circle guide dots for a dashed circle outline. It costs $5.00.',cost:'$5.00'}
 };
 const blank=()=>({cash:0,turn:1,energy:1,left:1,strokes:0,practiceDraft:null,phase:'draw',last:0,lastPay:0,lastKind:'line',owned:{root:false,stamina:false,circle:false,free:false,grid:false,eraser:false,eraserSize:false,dashedCircle:false,square:false,composer:false},legacyComposer:false,disabled:{},traces:{},pendingTraces:{},paperMarks:[],legacyAspect:null,eraserSize:30,gridOn:true,freeOn:false,mode:'line',tool:'pencil'});
@@ -148,6 +148,10 @@ function reconcileUpgradeEffects(){
  if(!upgradeActive('eraser'))s.tool='pencil';
 }
 const cash=c=>'$'+(c/100).toFixed(2),clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+function payoutForShape(mode,accuracy){
+ const scale=mode==='circle'?2:mode==='square'?1.5:1;
+ return Math.round(Math.max(0,Math.min(100,accuracy))*scale);
+}
 const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
 const lineDistance=(p,a,b)=>{const dx=b.x-a.x,dy=b.y-a.y,k=dx*dx+dy*dy,t=clamp(k?((p.x-a.x)*dx+(p.y-a.y)*dy)/k:0);return Math.hypot(p.x-a.x-t*dx,p.y-a.y-t*dy)};
 const polyDist=(p,poly)=>{let d=1e6;for(let i=1;i<poly.length;i++)d=Math.min(d,lineDistance(p,poly[i-1],poly[i]));return d};
@@ -183,8 +187,10 @@ function stats(){
  $('lineMode').classList.toggle('active',s.mode==='line');$('circleMode').classList.toggle('active',s.mode==='circle');$('squareMode').classList.toggle('active',s.mode==='square');$('composeMode').classList.toggle('active',s.mode==='compose');$('gridSwitch').textContent=s.gridOn?'▦ Grid on':'▦ Grid off';$('gridSwitch').classList.toggle('active',s.gridOn);$('guideSwitch').textContent=s.freeOn?'Freehand on':'Guided on';$('guideSwitch').classList.toggle('active',s.freeOn);$('pencilTool').classList.toggle('active',s.tool==='pencil');$('eraserTool').classList.toggle('active',s.tool==='eraser');
  const circle=s.mode==='circle',square=s.mode==='square',compose=s.mode==='compose';
  $('activityHeading').textContent=compose?(composeTemplate==='balloon'?'Draw a balloon':composeTemplate==='signpost'?'Draw a signpost':'Draw a magnifying glass'):circle?'Draw a circle':square?'Draw a square':s.freeOn?'Draw a straight line':'Connect the points';
- $('instruction').textContent=compose?(composeStage===0?(composeTemplate==='signpost'?'Part 1 of 2: Draw the square sign. Every stroke costs one Hand Energy.':'Part 1 of 2: Draw the circular outline. Every stroke costs one Hand Energy.'):'Part 2 of 2: Connect A to B to finish your object.'):circle?(upgradeActive('dashedCircle')?'Trace the dashed circular guide. With Endurance, you can finish it using multiple strokes.':'Use the center dot and four surrounding dots to draw a circle.'):square?'Trace all four sides of the square. With Endurance, you can lift your pencil and continue.':s.freeOn?'Start anywhere and draw one smooth, straight line.':'Start on A, draw a continuous line, and finish on B.';
- $('rewardTag').textContent=compose?'UP TO $2.00':'UP TO $1.00';$('drawHint').textContent=compose?'1% = $0.01 per component · Up to $2.00':'1% = $0.01 · 100% = $1.00';$('activityTag').textContent=compose?'Composition · Part '+(composeStage+1)+'/2':circle?'Circle study':square?'Square study':s.freeOn?'Freehand study':'';$('activityTag').classList.toggle('hidden',!compose&&!circle&&!square&&!s.freeOn);$('paperArea').classList.toggle('eraser-cursor',s.tool==='eraser');
+ $('instruction').textContent=compose?(composeStage===0?(composeTemplate==='signpost'?'Part 1 of 2: Draw the square sign. Every stroke costs one Hand Energy.':'Part 1 of 2: Draw the circular outline. Every stroke costs one Hand Energy.'):'Part 2 of 2: Connect A to B to finish your object.'):circle?(upgradeActive('dashedCircle')?'Trace the dashed circular guide. With Endurance, you can finish it using multiple strokes.':'Use the center dot and four surrounding dots to draw a circle.'):square?'Connect the four corner points with straight sides. With Endurance, you can lift and continue.':s.freeOn?'Start anywhere and draw one smooth, straight line.':'Start on A, draw a continuous line, and finish on B.';
+ const maxReward=compose?(composeTemplate==='signpost'?250:300):circle?200:square?150:100;
+ $('rewardTag').textContent='UP TO '+cash(maxReward);
+ $('drawHint').textContent=compose?'Square $1.50 / Circle $2.00 + Line $1.00':circle?'100% = $2.00':square?'100% = $1.50':'1% = $0.01 · 100% = $1.00';$('activityTag').textContent=compose?'Composition · Part '+(composeStage+1)+'/2':circle?'Circle study':square?'Square study':s.freeOn?'Freehand study':'';$('activityTag').classList.toggle('hidden',!compose&&!circle&&!square&&!s.freeOn);$('paperArea').classList.toggle('eraser-cursor',s.tool==='eraser');
  $('nextTurn').textContent='Begin turn '+(s.turn+1)+' →';const available=Object.keys(defs).filter(visibleNode).length;$('shopLevel').textContent=available===1?'1 NODE':available+' NODES';
 }
 // Grid, saved pencil marks, and temporary guides occupy separate layers.
@@ -262,7 +268,7 @@ function circleDot(x,y,center=false){dc.beginPath();dc.arc(x,y,center?4.4:5.6,0,
 function dot(p,label,color){dc.beginPath();dc.arc(p.x,p.y,10,0,Math.PI*2);dc.fillStyle='#fffefa';dc.fill();dc.lineWidth=1.8;dc.strokeStyle=color;dc.stroke();dc.beginPath();dc.arc(p.x,p.y,3,0,Math.PI*2);dc.fillStyle=color;dc.fill();dc.font='700 13px system-ui';dc.textAlign='center';dc.fillText(label,p.x,p.y-20)}
 function squareCorners(){if(!O)return [];return [{x:O.x-O.r,y:O.y-O.r},{x:O.x+O.r,y:O.y-O.r},{x:O.x+O.r,y:O.y+O.r},{x:O.x-O.r,y:O.y+O.r}]}
 function paintPaper(reveal=false){dc.clearRect(0,0,W,H);
- if((s.mode==='square'||s.mode==='compose'&&composeStage===0&&composeTemplate==='signpost')&&O){const c=squareCorners();dc.save();dc.strokeStyle='#8db5a3aa';dc.lineWidth=2;dc.setLineDash([5,7]);dc.beginPath();dc.moveTo(c[0].x,c[0].y);for(const p of c.slice(1))dc.lineTo(p.x,p.y);dc.closePath();dc.stroke();dc.setLineDash([]);for(const p of c)circleDot(p.x,p.y);dc.restore()}
+ if((s.mode==='square'||s.mode==='compose'&&composeStage===0&&composeTemplate==='signpost')&&O){for(const p of squareCorners())circleDot(p.x,p.y)}
  else if((s.mode==='circle'||s.mode==='compose'&&composeStage===0)&&O){if(upgradeActive('dashedCircle')){dc.beginPath();dc.arc(O.x,O.y,O.r,0,Math.PI*2);dc.strokeStyle='#82aa9b99';dc.lineWidth=2;dc.setLineDash([5,7]);dc.stroke();dc.setLineDash([])}else{circleDot(O.x,O.y,true);for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]])circleDot(O.x+dx*O.r,O.y+dy*O.r)}if(reveal){dc.beginPath();dc.arc(O.x,O.y,O.r,0,Math.PI*2);dc.strokeStyle='#73a891';dc.lineWidth=1.2;dc.stroke()}}
  else if(A&&B){if(reveal){dc.beginPath();dc.moveTo(A.x,A.y);dc.lineTo(B.x,B.y);dc.strokeStyle='#9fbdaf';dc.lineWidth=1.5;dc.setLineDash([6,6]);dc.stroke();dc.setLineDash([])}dot(A,'A','#d9835e');dot(B,'B','#468d7c')}
  stroke(dc,strokePts,'#243941',3.2)}
@@ -515,7 +521,9 @@ function finalizeShape(){
  if(locked||drawing||!practiceStrokes.length)return;
  locked=true;
  const accuracy=s.mode==='circle'?circleAccuracy():s.mode==='square'?squareAccuracy():lineAccuracy();
- const reward=accuracy; // Every 1% equals $0.01 in ordinary studies.
+ // Rewards scale by complexity: line 1x, square 1.5x, circle 2x.
+ // Keep balances in whole cents; accuracy remains a 0–100 percentage.
+ const reward=payoutForShape(s.mode,accuracy);
  const rewardBounds=drawnBounds(practiceStrokes);
  s.cash+=reward;s.last=accuracy;s.lastPay=reward;s.lastKind=s.mode;
  s.practiceDraft=null;
@@ -536,10 +544,11 @@ function finishCompositionPart(){
   return;
  }
  locked=true;
- // A composition consists of two separately scored parts, each worth at most $1.00.
- const reward=composeScores.reduce((total,score)=>total+score,0);
+ // Each component is paid at its study rate: square/circle plus a line.
+ const firstMode=composeTemplate==='signpost'?'square':'circle';
+ const reward=payoutForShape(firstMode,composeScores[0])+payoutForShape('line',composeScores[1]);
  const rewardBounds=unionBounds(boundsFromIso(composeFirstBounds),drawnBounds(practiceStrokes));
- s.cash+=reward;s.last=Math.round(reward/2);s.lastPay=reward;s.lastKind='composition';
+ s.cash+=reward;s.last=Math.round((composeScores[0]+composeScores[1])/2);s.lastPay=reward;s.lastKind='composition';
  s.practiceDraft=null;save();stats();paintPaper(true);
  $('score').textContent='Composition '+s.last+'% · +'+cash(reward);
  showEarnings(reward,rewardBounds);
