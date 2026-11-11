@@ -20,7 +20,6 @@
 @keyframes affordableGlow{0%,100%{opacity:.78}50%{opacity:1}}
 @media(prefers-reduced-motion:reduce){.upgrade.affordable::before{animation:none;opacity:.85}}
 .upgrade.off{display:none}.upgrade canvas{position:absolute;inset:0;display:block;width:100%;height:100%;touch-action:none;cursor:crosshair}.upgrade.owned canvas{cursor:crosshair}.upgrade.deactivated .node-symbol,.upgrade.deactivated .node-name{color:#a18b78}.upgrade.deactivated .node-price{color:#ab7462}.upgrade.deactivated{opacity:.79}.shop-tool-picker{display:flex;gap:7px;align-items:center;justify-content:center;flex-wrap:wrap;margin:0;padding:12px 12px 0}.shop-tool-picker button{background:#fffefa;color:#61736a;border:1px solid #d8ded6;border-radius:8px;font-size:11px;font-weight:750;cursor:pointer;padding:6px 11px}.shop-tool-picker button.active{background:#e3f1e9;color:#216a56;border-color:#96c2af}.shop-tool-picker button:focus-visible{outline:2px solid #e3a76b;outline-offset:2px}.shop-tool-picker button:disabled{opacity:.43;cursor:not-allowed;border-style:dashed}.upgrade.shop-erase canvas{cursor:cell}.node-symbol{position:absolute;left:0;right:0;top:30%;display:block;text-align:center;pointer-events:none;color:#537f73;font:700 25px/1 Georgia,serif}.upgrade.owned .node-symbol{color:#1d6b5c}.node-price{position:absolute;top:74%;left:0;right:0;text-align:center;font-size:10px;font-weight:800;color:#778a7f;pointer-events:none;letter-spacing:.01em}.upgrade.owned .node-price{color:#2f866b}.node-name{position:absolute;top:calc(100% + 2px);left:50%;transform:translateX(-50%);font-size:10px;color:#687970;font-weight:800;letter-spacing:.05em;text-align:center;white-space:nowrap;pointer-events:none;text-transform:uppercase}.upgrade.owned .node-name{color:#2e7062}.upgrade .tip{position:absolute;z-index:8;bottom:calc(100% + 7px);left:50%;transform:translateX(-50%);width:220px;max-width:60vw;border-radius:11px;background:#223b41;color:#edf5ee;padding:12px 13px;text-align:left;line-height:1.48;font-size:12px;box-shadow:0 10px 26px #213b413d;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .16s}.upgrade .tip strong{display:block;margin-bottom:4px;color:white;font-size:13px}.upgrade .tip .tip-cost{display:block;color:#b4e3ca;font-weight:800;margin-top:5px}.upgrade .tip{display:none!important}/* Upgrade details are shown in the on-demand inspector. */.upgrade[data-id="free"] .tip,.upgrade[data-id="eraser"] .tip,.upgrade[data-id="dashedCircle"] .tip,.upgrade[data-id="eraserSize"] .tip{left:auto;right:0;transform:none}.upgrade[data-id="stamina"] .tip,.upgrade[data-id="composer"] .tip{left:0;transform:none}.upgrade[data-id="circle"] .tip{bottom:auto;top:calc(100% + 17px)}
-<div class="upgrade off" data-id="secondWind" style="left:34%;top:88%;" tabindex="0" aria-label="Second Wind, two dollars"><canvas width="192" height="192"></canvas><span class="node-symbol">↻</span><span class="node-price">$2.00</span><span class="node-name">Second Wind</span><span class="tip"><strong>Second Wind</strong>Gain +1 stroke of Hand Energy every time you enter the skill tree. The extra stroke is for that visit only.<span class="tip-cost">$2.00 · Trace to buy</span></span></div>
 .inspect{position:absolute;right:18px;top:13px;width:245px;z-index:7;box-shadow:0 12px 28px #223b411c;background:#faf9f4;border:1px solid #e5e5da;border-radius:15px;padding:18px 16px;align-self:center;min-height:205px;display:flex;flex-direction:column}.inspect-top{display:flex;align-items:center;justify-content:space-between;gap:8px}.inspect-close{font-size:22px;color:#718078;background:none;border:0;cursor:pointer;padding:0 5px}.inspect .mini{font-size:10px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;color:#84958a}.inspect h3{font:700 23px Georgia,serif;margin:8px 0 12px}.inspect p{color:#6d7a73;font-size:12px;line-height:1.65;margin:0 0 14px}.inspect-price{font-weight:800;font-size:17px;color:#2c765f;margin-top:auto}.inspect-hint{color:#939c93;margin-top:7px;font-size:11px;line-height:1.45}.clear-trace{align-self:flex-start;margin:9px 0 0;padding:4px 0;font-size:11px;color:#8a6760;border:0;background:none;text-decoration:underline;cursor:pointer}.clear-trace.hidden{display:none}#shopStage.single-upgrade .shop-body{width:100%;max-width:none;grid-template-columns:minmax(0,1fr);gap:0;margin:0;padding:14px 20px 12px;align-items:center}
 #shopStage.single-upgrade .skill-tree{width:160px;height:137px;max-width:none;margin:0 auto}
 #shopStage.single-upgrade .skill-tree .upgrade[data-id="root"]{top:50%!important;left:50%!important}
@@ -105,6 +104,7 @@
 </svg>
 <div class="upgrade off" data-id="root" style="left:50%;top:48%;" tabindex="0" aria-label="Endurance I, one dollar"><canvas width="192" height="192"></canvas><span class="node-symbol bolt-symbol" aria-hidden="true"><svg viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"><path d="M60 12 L29 48 L60 48 L36 84"/></svg></span><span class="node-price">$1.00</span><span class="node-name">Endurance I</span><span class="tip"><strong>Better Endurance</strong>Increase Hand Energy from 1 to 2 strokes per turn.<span class="tip-cost">$1.00 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="stamina" style="left:12%;top:88%;" tabindex="0" aria-label="Endurance II, two dollars"><canvas width="192" height="192"></canvas><span class="node-symbol bolt-symbol" aria-hidden="true"><svg viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="6" stroke-linejoin="round"><path d="M58 9 L27 52 L48 52 L38 87 L76 39 L53 39 Z"/></svg></span><span class="node-price">$2.00</span><span class="node-name">Endurance II</span><span class="tip"><strong>Endurance II</strong>Increase Hand Energy from 2 to 3 strokes per turn.<span class="tip-cost">$2.00 · Trace to buy</span></span></div>
+<div class="upgrade off" data-id="secondWind" style="left:34%;top:88%;" tabindex="0" aria-label="Second Wind, two dollars"><canvas width="192" height="192"></canvas><span class="node-symbol">↻</span><span class="node-price">$2.00</span><span class="node-name">Second Wind</span><span class="tip"><strong>Second Wind</strong>Gain +1 stroke of Hand Energy every time you enter the skill tree. The extra stroke is for that visit only.<span class="tip-cost">$2.00 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="circle" style="left:30%;top:10%;" tabindex="0" aria-label="Circle Studies, two dollars"><canvas width="192" height="192"></canvas><span class="node-symbol">○</span><span class="node-price">$2.00</span><span class="node-name">Circles</span><span class="tip"><strong>Circle Studies</strong>Draw circles. Perfect accuracy earns $2.00.<span class="tip-cost">$2.00 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="free" style="left:88%;top:48%;" tabindex="0" aria-label="Freehand Lines, one dollar fifty"><canvas width="192" height="192"></canvas><span class="node-symbol">⬟</span><span class="node-price">$1.50</span><span class="node-name">Free lines</span><span class="tip"><strong>Freehand Lines</strong>Draw straight lines without A and B guide points.<span class="tip-cost">$1.50 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="grid" style="left:50%;top:68%;" tabindex="0" aria-label="Grid Paper, one dollar"><canvas width="192" height="192"></canvas><span class="node-symbol">□</span><span class="node-price">$1.00</span><span class="node-name">Grid</span><span class="tip"><strong>Grid Paper</strong>Add a grid to your drawing paper.<span class="tip-cost">$1.00 · Trace to buy</span></span></div>
@@ -977,6 +977,36 @@ function prerequisites(id){
  return [];
 }
 function eligibleToBuy(id){return visibleNode(id)&&!s.owned[id]&&prerequisites(id).every(nodeActive)}
+// Cache complete branch geometry so a missing dependency can show only the
+// child-side half of its dotted connection without changing the saved tree.
+const branchGeometry={};
+for(const link of document.querySelectorAll('.branches line,.branches path')){
+ branchGeometry[link.id]=link.tagName.toLowerCase()==='line'
+  ?{x1:Number(link.getAttribute('x1')),y1:Number(link.getAttribute('y1')),x2:Number(link.getAttribute('x2')),y2:Number(link.getAttribute('y2'))}
+  :{d:link.getAttribute('d')};
+}
+function drawBranch(linkId,childId,parentId,active){
+ const link=$(linkId),base=branchGeometry[linkId];
+ if(!link||!base)return;
+ const visible=visibleNode(childId),complete=!!s.owned[parentId];
+ link.style.display=visible?'':'none';
+ link.classList.toggle('live',complete&&active);
+ if('x1' in base){
+  // Original lines run from prerequisite to child. A locked connection
+  // begins halfway along that line and terminates at the visible child.
+  const t=complete?0:0.5;
+  link.setAttribute('x1',base.x1+(base.x2-base.x1)*t);
+  link.setAttribute('y1',base.y1+(base.y2-base.y1)*t);
+ }else{
+  // Curved links also retain only their child-side half until unlocked.
+  link.setAttribute('d',base.d);
+  if(!complete&&visible){
+   const length=link.getTotalLength(),points=[];
+   for(let i=0;i<=20;i++)points.push(link.getPointAtLength(length*(.5+i/40)));
+   link.setAttribute('d',points.map((p,i)=>(i?'L':'M')+p.x.toFixed(2)+' '+p.y.toFixed(2)).join(' '));
+  }
+ }
+}
 function renderTree(){
  refreshSkillTools();
  $('skillTree').classList.toggle('prebranch',!s.owned.root);
@@ -990,28 +1020,23 @@ function renderTree(){
   n.classList.toggle('prereq-locked',visible&&!s.owned[id]&&!parentReady);
   n.classList.toggle('affordable',eligibleToBuy(id)&&s.cash>=defs[id].price);
   if(parents.length){
-   n.querySelector('.node-name').dataset.hint=!parentReady?(missing.length?'NEEDS '+missing.length+' SKILL'+(missing.length===1?'':'S'):'REACTIVATE SKILLS'):'';
+   n.querySelector('.node-name').dataset.hint=!parentReady&&!missing.length?'REACTIVATE SKILLS':'';
    n.setAttribute('aria-label',defs[id].name+', '+defs[id].cost+'. '+(missing.length?'Requires '+missing.map(x=>defs[x].name).join(' and ')+'.':!parentReady?'Reactivate prerequisite upgrades.':'Ready to trace.'));
   }
   n.querySelector('.node-price').textContent=s.owned[id]?(nodeActive(id)?'ON · OWNED':'OFF · OWNED'):defs[id].cost;
   renderNode(id);
  }
- // Draw each connection only after its source upgrade has been purchased.
+ // Show a dotted half-connection toward an unpurchased prerequisite, starting
+ // at the visible child. Once the prerequisite is purchased, show the full link.
  const linkParents={stamina:'root',secondWind:'stamina',triangle:'root',circle:'square',free:'root',grid:'root',eraser:'root',dashedCircle:'circle',eraserSize:'eraser',square:'triangle',balloon:'circle',composer:'balloon',selector:'square'};
  for(const [id,parent] of Object.entries(linkParents)){
-  const link=$('link-'+id);
-  link.style.display=visibleNode(id)&&s.owned[parent]?'':'none';
-  link.classList.toggle('live',id==='composer'?balloonPlayable():id==='balloon'?circlePlayable():id==='selector'?squarePlayable():id==='circle'?squarePlayable():id==='square'?trianglePlayable():id==='triangle'?upgradeActive('root'):id==='eraserSize'?upgradeActive('eraser'):id==='eraser'?upgradeActive('root'):id==='dashedCircle'?circlePlayable():upgradeActive(id));
+  drawBranch('link-'+id,id,parent,id==='composer'?balloonPlayable():id==='balloon'?circlePlayable():id==='selector'?squarePlayable():id==='circle'?squarePlayable():id==='square'?trianglePlayable():id==='triangle'?upgradeActive('root'):id==='eraserSize'?upgradeActive('eraser'):id==='eraser'?upgradeActive('root'):id==='dashedCircle'?circlePlayable():upgradeActive(id));
  }
  const legacy=$('link-square-legacy');
  legacy.style.display=s.legacySquare&&s.owned.square&&!s.owned.triangle&&s.owned.root?'':'none';
  legacy.classList.toggle('live',s.legacySquare&&s.owned.root&&upgradeActive('root'));
- const endurance=$('link-balloon-endurance');
- endurance.style.display=visibleNode('balloon')&&s.owned.root?'':'none';
- endurance.classList.toggle('live',upgradeActive('root'));
- const stamina=$('link-composer-stamina');
- stamina.style.display=visibleNode('composer')&&s.owned.stamina?'':'none';
- stamina.classList.toggle('live',upgradeActive('stamina'));
+ drawBranch('link-balloon-endurance','balloon','root',upgradeActive('root'));
+ drawBranch('link-composer-stamina','composer','stamina',upgradeActive('stamina'));
  if(inspectId&&!visibleNode(inspectId))closeInspector();
  if(inspectId)inspect(inspectId);
 }
