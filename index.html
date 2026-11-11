@@ -437,7 +437,20 @@ const spherePlayable=()=>upgradeActive('sphere')&&cylinderPlayable()&&enduranceT
 const balloonPlayable=()=>upgradeActive('balloon')&&circlePlayable()&&upgradeActive('root')&&(s.legacyCurvePath||curvePlayable());
 const composerPlayable=()=>upgradeActive('composer')&&circlePlayable()&&(s.legacyBalloon||balloonPlayable())&&(s.legacyComposer?(s.owned.stamina?upgradeActive('stamina'):upgradeActive('root')):upgradeActive('stamina'));
 const isCompositionMode=(mode=s.mode)=>mode==='balloon'||mode==='compose'||mode==='cylinder'||mode==='sphere';
-const nodeActive=id=>id==='staminaIII'?enduranceThreePlayable():id==='composer'?composerPlayable():id==='balloon'?balloonPlayable():id==='triangle'?trianglePlayable():id==='square'?squarePlayable():id==='circle'?circlePlayable():id==='curve'?curvePlayable():id==='guideFade'?adaptiveGuidesPlayable():id==='oval'?ovalPlayable():id==='cylinder'?cylinderPlayable():id==='sphere'?spherePlayable():upgradeActive(id);
+const isSpecialBranch=id=>id==='living'||id==='perspective';
+const specialPlayable=id=>upgradeActive(id)&&composerPlayable();
+function specialEligibility(id){
+ if(!isSpecialBranch(id))return '';
+ if(!composerPlayable())return 'Activate Shape Composer first.';
+ if(s.specialTrials.length<3)return 'Complete '+(3-s.specialTrials.length)+' more distinct studies at 80%+ accuracy.';
+ if(s.specialChapter===1&&s.specialChoice&&s.specialChoice!==id)return 'Complete your chosen workshop to unlock Chapter 2 first.';
+ return '';
+}
+function recordSpecialTrial(kind,score){
+ if(score<80||s.specialTrials.indexOf(kind)>=0)return;
+ if(['line','triangle','square','circle','curve','oval','balloon','composition','cylinder','sphere'].indexOf(kind)>=0)s.specialTrials.push(kind);
+}
+const nodeActive=id=>isSpecialBranch(id)?specialPlayable(id):id==='staminaIII'?enduranceThreePlayable():id==='composer'?composerPlayable():id==='balloon'?balloonPlayable():id==='triangle'?trianglePlayable():id==='square'?squarePlayable():id==='circle'?circlePlayable():id==='curve'?curvePlayable():id==='guideFade'?adaptiveGuidesPlayable():id==='oval'?ovalPlayable():id==='cylinder'?cylinderPlayable():id==='sphere'?spherePlayable():upgradeActive(id);
 // Without Study Selector, automatically practice the newest available shape.
 // The newest shape does not permanently replace earlier exercises: purchasing
 // Study Selector lets players deliberately return to any unlocked study.
@@ -544,9 +557,10 @@ function refreshFirstUpgradeReady(){
  const first=$('skillTree') && $('skillTree').querySelector('.upgrade[data-id="root"]');
  if(first)first.classList.toggle('first-ready',s.phase==='shop'&&!s.owned.root&&s.cash>=defs.root.price&&s.left>=1);
 }
+let specialOpen=false;
 function stats(){
  $('wallet').textContent=cash(s.cash);refreshWalletWarning();refreshFirstUpgradeReady();$('turn').textContent=s.turn;$('energy').textContent=s.left+' / '+(s.energy+(s.phase==='shop'&&s.shopBonusEarned&&upgradeActive('secondWind')?1:0));$('strokes').textContent=s.strokes;
- $('playStage').classList.toggle('hidden',s.phase!=='draw');$('shopStage').classList.toggle('hidden',s.phase!=='shop');$('endTurn').disabled=s.phase!=='draw'||drawing||erasing;
+ $('playStage').classList.toggle('hidden',s.phase!=='draw'||specialOpen);$('specialStage').classList.toggle('hidden',!specialOpen);$('shopStage').classList.toggle('hidden',s.phase!=='shop');$('endTurn').disabled=s.phase!=='draw'||drawing||erasing;
  $('modeTools').classList.toggle('hidden',!upgradeActive('selector')||!squarePlayable());$('circleMode').classList.toggle('hidden',!circlePlayable());$('curveMode').classList.toggle('hidden',!curvePlayable());$('ovalMode').classList.toggle('hidden',!ovalPlayable());$('cylinderMode').classList.toggle('hidden',!cylinderPlayable());$('sphereMode').classList.toggle('hidden',!spherePlayable());$('triangleMode').classList.toggle('hidden',!trianglePlayable());$('squareMode').classList.toggle('hidden',!squarePlayable());$('balloonMode').classList.toggle('hidden',!balloonPlayable());$('composeMode').classList.toggle('hidden',!composerPlayable());$('composerOptions').classList.toggle('hidden',s.mode!=='compose'||!composerPlayable()||(composeTemplate==='balloon'&&(composeStage>0||practiceStrokes.length>0)));$('gridSwitch').classList.add('hidden');$('guideSwitch').classList.add('hidden');$('pencilTool').classList.toggle('hidden',!upgradeActive('eraser'));$('eraserTool').classList.toggle('hidden',!upgradeActive('eraser'));$('eraserSizeControl').classList.toggle('hidden',!upgradeActive('eraser')||!upgradeActive('eraserSize'));$('eraserSize').value=s.eraserSize;$('eraserSizeValue').textContent=s.eraserSize+' px';
  $('lineMode').classList.toggle('active',s.mode==='line');$('triangleMode').classList.toggle('active',s.mode==='triangle');$('circleMode').classList.toggle('active',s.mode==='circle');$('curveMode').classList.toggle('active',s.mode==='curve');$('ovalMode').classList.toggle('active',s.mode==='oval');$('cylinderMode').classList.toggle('active',s.mode==='cylinder');$('sphereMode').classList.toggle('active',s.mode==='sphere');$('squareMode').classList.toggle('active',s.mode==='square');$('balloonMode').classList.toggle('active',s.mode==='balloon');$('composeMode').classList.toggle('active',s.mode==='compose');for(const [id,active] of [['composeMagnifier',s.composeBase!=='square'],['composeSignpost',s.composeBase==='square'&&s.composeLine==='down'],['composeKite',s.composeBase==='square'&&s.composeLine!=='down']]){$(id).classList.toggle('active',active);$(id).disabled=composeStage>0||practiceStrokes.length>0||drawing||locked;}$('gridSwitch').textContent=s.gridOn?'▦ Grid on':'▦ Grid off';$('gridSwitch').classList.toggle('active',s.gridOn);$('guideSwitch').textContent=s.freeOn?'Freehand on':'Guided on';$('guideSwitch').classList.toggle('active',s.freeOn);$('pencilTool').classList.toggle('active',s.tool==='pencil');$('eraserTool').classList.toggle('active',s.tool==='eraser');
  const circle=s.mode==='circle',curve=s.mode==='curve',oval=s.mode==='oval',cylinder=s.mode==='cylinder',sphere=s.mode==='sphere',square=s.mode==='square',triangle=s.mode==='triangle',compose=isCompositionMode(),squareComposition=compose&&['signpost','kite'].includes(composeTemplate);
@@ -561,6 +575,8 @@ function stats(){
    (showFullGuides?'Guides temporarily 100%':'Guides '+Math.round(guideInfo.opacity*100)+'% · '+guideHistory().length+'/5 recent');
  }$('activityTag').textContent=compose?(sphere?'Sphere':cylinder?'Cylinder':s.mode==='balloon'?'Balloon':'Composition')+' · Part '+(composeStage+1)+'/'+(sphere?4:2):oval?'Oval study':curve?'Curve study':circle?'Circle study':square?'Square study':triangle?'Triangle study':s.freeOn?'Freehand study':'';$('activityTag').classList.toggle('hidden',!compose&&!oval&&!curve&&!circle&&!square&&!triangle&&!s.freeOn);$('paperArea').classList.toggle('eraser-cursor',s.tool==='eraser');
  $('nextTurn').textContent='Begin turn '+(s.turn+1)+' →';
+ $('openLiving').classList.toggle('hidden',!specialPlayable('living'));
+ $('openPerspective').classList.toggle('hidden',!specialPlayable('perspective'));
 }
 // Grid, saved pencil marks, and temporary guides occupy separate layers.
 // The eraser only modifies saved pencil marks, never the grid or guides.
@@ -2204,7 +2220,7 @@ function finalizeShape(){
  // Keep balances in whole cents; accuracy remains a 0–100 percentage.
  const reward=payoutForShape(s.mode,accuracy);
  const rewardBounds=drawnBounds(practiceStrokes);
- s.cash+=reward;s.last=accuracy;s.lastPay=reward;s.lastKind=s.mode;
+ s.cash+=reward;s.last=accuracy;s.lastPay=reward;s.lastKind=s.mode;recordSpecialTrial(s.lastKind,s.last);
  s.practiceDraft=null;feedbackReveal=true;
  recordGuideAccuracy(accuracy);
  save();stats();
@@ -2250,7 +2266,7 @@ function finishSphereStage(){
  const bounds=unionBounds(boundsFromIso(composeFirstBounds),drawnBounds(practiceStrokes));
  s.cash+=reward;
  s.last=Math.round(composeScores.reduce((a,b)=>a+b,0)/4);
- s.lastPay=reward;s.lastKind='sphere';s.practiceDraft=null;feedbackReveal=true;
+ s.lastPay=reward;s.lastKind='sphere';recordSpecialTrial(s.lastKind,s.last);s.practiceDraft=null;feedbackReveal=true;
  save();stats();paintPaper(true);
  $('score').textContent='Sphere '+s.last+'% · +'+cash(reward);
  showEarnings(reward,bounds);
@@ -2278,7 +2294,7 @@ function finishCompositionPart(){
  const firstMode=['signpost','kite'].includes(composeTemplate)?'square':'circle';
  const reward=composeTemplate==='cylinder'?payoutForShape('oval',composeScores[0])+payoutForShape('curve',composeScores[1]):payoutForShape(firstMode,composeScores[0])+payoutForShape('line',composeScores[1]);
  const rewardBounds=unionBounds(boundsFromIso(composeFirstBounds),drawnBounds(practiceStrokes));
- s.cash+=reward;s.last=Math.round((composeScores[0]+composeScores[1])/2);s.lastPay=reward;s.lastKind=composeTemplate==='cylinder'?'cylinder':s.mode==='balloon'?'balloon':'composition';
+ s.cash+=reward;s.last=Math.round((composeScores[0]+composeScores[1])/2);s.lastPay=reward;s.lastKind=composeTemplate==='cylinder'?'cylinder':s.mode==='balloon'?'balloon':'composition';recordSpecialTrial(s.lastKind,s.last);
  if(composeTemplate==='magnifier'&&O)s.magnifiers.push(composeLensShape||{at:pointToIso(O),r:O.r/Math.max(1,H)});
  if(composeTemplate==='balloon')finishHeliumBalloon();
  s.practiceDraft=null;feedbackReveal=true;save();stats();paintPaper(true);
@@ -2427,7 +2443,9 @@ const guides={
  dashedCircle:polygonGuide(6,36,-Math.PI/2),
  balloon:balloonGuide(),
  // Existing Composer owners retain the guide they originally traced.
- composer:s.legacyBalloon?balloonGuide():composerGuide()
+ composer:s.legacyBalloon?balloonGuide():composerGuide(),
+ living:sampleGuide([{x:17,y:24},{x:30,y:30},{x:30,y:43},{x:17,y:49},{x:9,y:37},{x:17,y:24},{x:30,y:70},{x:84,y:48}]),
+ perspective:sampleGuide([{x:18,y:28},{x:49,y:16},{x:81,y:34},{x:48,y:48},{x:18,y:28},{x:18,y:67},{x:48,y:85},{x:81,y:71},{x:81,y:34},{x:48,y:48},{x:48,y:85}])
 };
 // Old saves use one array of [x,y] points. New saves use arrays of separate strokes.
 function decodeStrokes(raw){
@@ -2538,6 +2556,7 @@ for(const n of nodes){const id=n.dataset.id,c=n.querySelector('canvas'),ctx=c.ge
  n.addEventListener('click',()=>{inspectPinned=true;inspect(id)});
  c.addEventListener('pointerdown',e=>{
   inspect(id);if(s.phase!=='shop'||tracing)return;
+ if(isSpecialBranch(id)&&specialEligibility(id)){$('shopFeedback').textContent=specialEligibility(id);return;}
   if(!s.owned[id]&&!prerequisites(id).every(nodeActive)){
     $('shopFeedback').textContent=defs[id].name+' requires '+prerequisites(id).map(parent=>defs[parent].name).join(' and ')+' to be active first.';
     return;
@@ -2608,6 +2627,7 @@ const treeParents={
  eraserSize:['eraser']
 };
 function visibleNode(id){
+ if(isSpecialBranch(id))return !!s.owned.composer||!!s.owned[id];
  return id==='root'||!!s.owned[id]||(treeParents[id]||[]).some(parent=>!!s.owned[parent]);
 }
 function prerequisites(id){
@@ -2622,9 +2642,10 @@ function prerequisites(id){
  if(id==='sphere')return ['cylinder','staminaIII'];
  if(id==='balloon')return ['root','curve'];
  if(id==='composer')return ['stamina','balloon'];
+ if(isSpecialBranch(id))return ['composer'];
  return [];
 }
-function eligibleToBuy(id){return visibleNode(id)&&!s.owned[id]&&prerequisites(id).every(nodeActive)}
+function eligibleToBuy(id){return visibleNode(id)&&!s.owned[id]&&prerequisites(id).every(nodeActive)&&(!isSpecialBranch(id)||!specialEligibility(id))}
 // Cache complete branch geometry so a missing dependency can show only the
 // child-side half of its dotted connection without changing the saved tree.
 const branchGeometry={};
@@ -2655,6 +2676,18 @@ function drawBranch(linkId,childId,parentId,active){
   }
  }
 }
+function updateSpecializationUI(){
+ const seen=!!s.owned.composer;
+ $('specializationSection').classList.toggle('hidden',!seen);
+ if(!seen)return;
+ $('specializationHeading').textContent='Chapter '+s.specialChapter+' · Choose your path';
+ let hint='Optional trials: '+s.specialTrials.length+'/3 different studies at 80%+';
+ if(s.specialTrials.length)hint+=' ('+s.specialTrials.join(', ')+')';
+ if(s.specialChoice)hint+=s.specialChapter===1?' · '+defs[s.specialChoice].name+' chosen. Complete 3 workshop challenges to open Chapter 2.':' · Chapter 2 unlocked: you may now acquire the other specialization.';
+ $('specializationStatus').textContent=hint;
+ $('livingCard').classList.toggle('selected',!!s.owned.living);
+ $('perspectiveCard').classList.toggle('selected',!!s.owned.perspective);
+}
 function renderTree(){
  refreshSkillTools();
  $('skillTree').classList.toggle('prebranch',!s.owned.root);
@@ -2666,6 +2699,7 @@ function renderTree(){
   n.classList.toggle('owned',!!s.owned[id]);
   n.classList.toggle('deactivated',!!s.owned[id]&&!nodeActive(id));
   n.classList.toggle('prereq-locked',visible&&!s.owned[id]&&!parentReady);
+  if(isSpecialBranch(id))n.classList.toggle('challenge-locked',!s.owned[id]&&!!specialEligibility(id));
   n.classList.toggle('affordable',eligibleToBuy(id)&&s.cash>=defs[id].price);
   if(parents.length){
    n.querySelector('.node-name').dataset.hint=!parentReady&&!missing.length?'REACTIVATE SKILLS':'';
@@ -2674,6 +2708,7 @@ function renderTree(){
   n.querySelector('.node-price').textContent=s.owned[id]?'':defs[id].cost;
   renderNode(id);
  }
+ updateSpecializationUI();
  // Show a dotted half-connection toward an unpurchased prerequisite, starting
  // at the visible child. Once the prerequisite is purchased, show the full link.
  const linkParents={sphere:'cylinder',cylinder:'oval',oval:'curve',guideFade:'curve',curve:'circle',stamina:'root',staminaIII:'stamina',secondWind:'stamina',triangle:'root',circle:'square',free:'root',grid:'root',eraser:'root',dashedCircle:'circle',eraserSize:'eraser',square:'triangle',balloon:'curve',composer:'balloon',selector:'square'};
@@ -2718,7 +2753,8 @@ function inspect(id){
  if(!owned){
   const missing=prerequisites(id).filter(parent=>!s.owned[parent]);
   const inactive=prerequisites(id).filter(parent=>s.owned[parent]&&!nodeActive(parent));
-  const prefix=missing.length?'Buy '+missing.map(x=>defs[x].name).join(' and ')+'. ':
+  const specialHint=!owned&&isSpecialBranch(id)?specialEligibility(id):'';
+  const prefix=specialHint?specialHint+' ':missing.length?'Buy '+missing.map(x=>defs[x].name).join(' and ')+'. ':
    inactive.length?'Reactivate '+inactive.map(x=>defs[x].name).join(' and ')+'. ':
    s.cash<defs[id].price?'Need '+cash(defs[id].price-s.cash)+' more. ':'';
   const hint=skillTool==='erase'?'Choose Trace to buy.':s.left<=0?'No strokes left. Begin the next turn.':count?
@@ -2744,9 +2780,10 @@ function attemptPurchase(id){
   $('shopFeedback').textContent=defs[id].name+' requires '+prerequisites(id).map(parent=>defs[parent].name).join(' and ')+' to be active. Your trace is saved.';
   return;
  }
+ if(isSpecialBranch(id)&&specialEligibility(id)){$('shopFeedback').textContent=specialEligibility(id);return}
  if(s.cash<defs[id].price){$('shopFeedback').textContent='Shape complete! '+cash(defs[id].price-s.cash)+' more needed for '+defs[id].name+'. Your trace is saved.';return}
  const previousEnergy=s.energy;
- s.cash-=defs[id].price;s.owned[id]=true;delete s.disabled[id];s.traces[id]=encodeStrokes(strokes);nodeCanvas[id].strokes=[];delete s.pendingTraces[id];
+ s.cash-=defs[id].price;s.owned[id]=true;if(isSpecialBranch(id)&&!s.specialChoice)s.specialChoice=id;delete s.disabled[id];s.traces[id]=encodeStrokes(strokes);nodeCanvas[id].strokes=[];delete s.pendingTraces[id];
  reconcileUpgradeEffects();if(s.energy>previousEnergy)s.left=Math.min(s.energy,s.left+s.energy-previousEnergy);save();stats();paintGrid();paintPaper();renderTree();$('shopFeedback').textContent=id==='secondWind'?'Second Wind unlocked. Gain 1 bonus stroke the next time you enter the skill tree.':'';inspect(id)
 }
 function openShop(newVisit=true){
