@@ -184,6 +184,106 @@
 <button class="textbtn reset" id="reset" type="button">Reset all progress</button>
 </main>
 <script>
+/* Compatibility bridge for iPad mini 2 / Safari 12.
+   Keep the existing drawing logic, which consumes pointer-like events, while
+   translating old Touch Events and mouse events if PointerEvent is missing. */
+(function(){
+ 'use strict';
+ if(!Array.prototype.flat){
+  Array.prototype.flat=function(depth){
+   var result=[],limit=depth===undefined?1:Math.max(0,Number(depth)||0);
+   function add(items,level){for(var i=0;i<items.length;i++){
+    if(!(i in items))continue;
+    var value=items[i];
+    if(level>0&&Array.isArray(value))add(value,level-1);else result.push(value);
+   }}
+   add(this,limit);return result;
+  };
+ }
+ if(!Array.prototype.flatMap){
+  Array.prototype.flatMap=function(fn,that){return this.map(fn,that).flat(1);};
+ }
+ if(typeof window.PointerEvent==='function')return;
+ if(window.HTMLCanvasElement&&!HTMLCanvasElement.prototype.setPointerCapture){
+  HTMLCanvasElement.prototype.setPointerCapture=function(){};
+ }
+ var active=null,lastTouch=0,mouseDown=false;
+ function eligible(canvas){
+  return canvas&&canvas.tagName==='CANVAS'&&
+   (canvas.id==='drawingLayer'||(canvas.closest&&canvas.closest('.upgrade')));
+ }
+ function emit(canvas,type,sample,pointerId,pointerType,buttons,original){
+  if(!canvas)return;
+  var init={bubbles:true,cancelable:true,clientX:sample.clientX,clientY:sample.clientY,
+   screenX:sample.screenX||0,screenY:sample.screenY||0,button:0,buttons:buttons};
+  var ev;
+  try{ev=new MouseEvent(type,init)}catch(err){
+   ev=document.createEvent('MouseEvents');
+   ev.initMouseEvent(type,true,true,window,0,init.screenX,init.screenY,init.clientX,init.clientY,
+    false,false,false,false,0,null);
+  }
+  function define(key,value){try{Object.defineProperty(ev,key,{configurable:true,value:value})}catch(e){}}
+  define('pointerId',pointerId);define('pointerType',pointerType);define('isPrimary',true);
+  define('pageX',sample.pageX);define('pageY',sample.pageY);
+  define('pressure',buttons?0.5:0);
+  define('timeStamp',original.timeStamp||Date.now());
+  canvas.dispatchEvent(ev);
+  if(ev.defaultPrevented&&original.cancelable)original.preventDefault();
+ }
+ function findTouch(list,id){
+  for(var i=0;i<list.length;i++)if(list[i].identifier===id)return list[i];
+  return null;
+ }
+ document.addEventListener('touchstart',function(e){
+  lastTouch=Date.now();
+  if(active||!eligible(e.target)||!e.changedTouches.length)return;
+  // One pen/finger per stroke; ignore pinches and other fingers.
+  if(e.touches.length!==1)return;
+  var t=e.changedTouches[0];active={canvas:e.target,id:t.identifier};
+  emit(active.canvas,'pointerdown',t,t.identifier+1,'touch',1,e);
+  if(e.cancelable)e.preventDefault();
+ },{capture:true,passive:false});
+ document.addEventListener('touchmove',function(e){
+  if(!active)return;
+  var t=findTouch(e.changedTouches,active.id);
+  if(!t)return;
+  emit(active.canvas,'pointermove',t,t.identifier+1,'touch',1,e);
+  if(e.cancelable)e.preventDefault();
+ },{capture:true,passive:false});
+ function finishTouch(e,cancel){
+  if(!active)return;
+  var t=findTouch(e.changedTouches,active.id);
+  if(!t)return;
+  emit(active.canvas,cancel?'pointercancel':'pointerup',t,t.identifier+1,'touch',0,e);
+  active=null;lastTouch=Date.now();
+  if(e.cancelable)e.preventDefault();
+ }
+ document.addEventListener('touchend',function(e){finishTouch(e,false)}, {capture:true,passive:false});
+ document.addEventListener('touchcancel',function(e){finishTouch(e,true)}, {capture:true,passive:false});
+ document.addEventListener('mousedown',function(e){
+  if(Date.now()-lastTouch<850||e.button!==0||mouseDown||!eligible(e.target))return;
+  active={canvas:e.target,id:'mouse'};mouseDown=true;
+  emit(active.canvas,'pointerdown',e,1,'mouse',1,e);
+ },true);
+ document.addEventListener('mousemove',function(e){
+  if(!mouseDown||!active)return;
+  emit(active.canvas,'pointermove',e,1,'mouse',1,e);
+ },true);
+ document.addEventListener('mouseup',function(e){
+  if(!mouseDown||!active)return;
+  emit(active.canvas,'pointerup',e,1,'mouse',0,e);
+  active=null;mouseDown=false;
+ },true);
+ window.addEventListener('blur',function(){
+  if(!active)return;
+  var current=active;active=null;mouseDown=false;
+  var neutral={clientX:0,clientY:0,pageX:0,pageY:0,screenX:0,screenY:0};
+  emit(current.canvas,'pointercancel',neutral,current.id==='mouse'?1:current.id+1,
+   current.id==='mouse'?'mouse':'touch',0,{cancelable:false,timeStamp:Date.now()});
+ });
+})();
+</script>
+<script>
 (()=>{
 'use strict';
 const $=id=>document.getElementById(id),key='learn-to-draw-v4';
