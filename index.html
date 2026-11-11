@@ -957,7 +957,7 @@ function balloonDent(o,angle,amount){
 function balloonPhysicsData(o){
  const r=clamp(o.radius*H,13,110),metres=.115*Math.sqrt(r/65);
  const volume=4*Math.PI*metres**3/3,air=1.225,helium=.1786;
- const latex=.0026*(metres/.115)**2,string=.00055,gas=helium*volume;
+ const latex=.0026*(metres/.115)**2,string=o.tailErased?0:.00055,gas=helium*volume;
  // Added mass: a rising flexible sphere must accelerate some surrounding air.
  const mass=latex+string+gas+.40*air*volume;
  return {r,mass,liftMass:(air-helium)*volume-latex-string,
@@ -994,6 +994,8 @@ function balloonNeck(o){
  return {x:c.x-Math.sin(a)*r,y:c.y+Math.cos(a)*r};
 }
 function balloonRope(o){
+ // Erased strings are intentionally absent; never regenerate them on reload.
+ if(o.tailErased)return [];
  if(Array.isArray(o.rope)&&o.rope.length===10&&o.rope.every(p=>Array.isArray(p)&&p.length===2&&p.every(Number.isFinite)))return o.rope.map(pointFromIso);
  const p=balloonNeck(o),length=Math.max(30,(o.stringLength||.15)*H);
  const rope=Array.from({length:10},(_,i)=>({x:p.x,y:p.y+i*length/9}));
@@ -1013,7 +1015,7 @@ function finishHeliumBalloon(){
   const t=i/9;return {x:neck.x+(tail?tail.x-neck.x:0)*t,y:neck.y+(tail?tail.y-neck.y:stringLength)*t};
  });
  const seed=Math.random()*1000;
- const o={at:pointToIso(center),radius:r/H,profile,vel:[0,0],angle:0,angularV:0,seed,sourceId:composeBalloonId||null,
+ const o={at:pointToIso(center),radius:r/H,profile,vel:[0,0],angle:0,angularV:0,seed,tailErased:false,sourceId:composeBalloonId||null,
   hue:[4,34,138,192,265,316][Math.floor(seed)%6],stringLength:stringLength/H,
   rope:rope.map(pointToIso),ropePrev:rope.map(pointToIso)};
  if(composeBalloonId)s.paperMarks=s.paperMarks.filter(m=>m.balloonId!==composeBalloonId);
@@ -1148,7 +1150,9 @@ function simulatePoppedBalloon(o,dt,bodies){
   flap.nodes=nodes.map(pointToIso);flap.previous=prev.map(pointToIso);
  }
  // The same knotted string falls with the shell and drapes across the floor.
+ // An erased tail must not be recreated by the popped-latex integrator.
  const rope=balloonRope(o);
+ if(rope.length>=2){
  const ropePrev=Array.isArray(o.ropePrev)&&o.ropePrev.length===10?
   o.ropePrev.map(pointFromIso):rope.map(p=>({...p}));
  const segment=Math.max(3,(o.stringLength||.15)*H/9);
@@ -1181,6 +1185,7 @@ function simulatePoppedBalloon(o,dt,bodies){
   ropePrev[i].x=rope[i].x-(rope[i].x-ropePrev[i].x)*.45;ropePrev[i].y=rope[i].y;
  }
  o.rope=rope.map(pointToIso);o.ropePrev=ropePrev.map(pointToIso);
+ }
  o.at=pointToIso(knot);o.vel=[(knot.x-old.x)/Math.max(.001,dt*H),(knot.y-old.y)/Math.max(.001,dt*H)];
 }
 
@@ -1192,6 +1197,7 @@ function paintBalloons(){
   if(!o?.at||!Number.isFinite(o.radius)||o.radius<=0)continue;
   const center=pointFromIso(o.at),r=o.radius*H,rope=balloonRope(o);
   // The freely hanging string is simulated independently of the envelope.
+  if(rope.length<2)continue;
   bc.save();bc.lineWidth=1.3;bc.strokeStyle='rgba(47,55,55,.72)';
   bc.lineCap='round';bc.lineJoin='round';bc.beginPath();bc.moveTo(rope[0].x,rope[0].y);
   for(let i=1;i<rope.length-1;i++){
@@ -1330,7 +1336,9 @@ function simulateBalloons(dt){
  // A physically light string, integrated with Verlet segments. Each string
  // slides along neighboring latex surfaces instead of passing through them.
  for(const body of bodies){
-  const o=body.o,rope=balloonRope(o);
+  const o=body.o;
+  if(o.tailErased)continue;
+  const rope=balloonRope(o);
   const prev=Array.isArray(o.ropePrev)&&o.ropePrev.length===10?o.ropePrev.map(pointFromIso):rope.map(p=>({...p}));
   const neck=balloonNeck({...o,at:pointToIso(body.p)}),
         segment=Math.max(3,(o.stringLength||.15)*H/9);
@@ -1398,15 +1406,24 @@ function ensureBalloonAnimation(){
  balloonFrame=requestAnimationFrame(heliumFrameTick);
 }
 function eraseHeliumBalloons(points,width){
- if(!points?.length||!s.balloons?.length)return {popped:0,removed:0};
+ if(!points?.length||!s.balloons?.length)return {popped:0,removed:0,tails:0};
  const half=width/2,hit=p=>points.length>1?polyDist(p,points):distance(p,points[0]);
- let popped=0,removed=0;
+ const touchesTail=rope=>rope.length>=2&&(
+  points.some(p=>polyDist(p,rope)<=half+3)
+  ||rope.some(p=>hit(p)<=half+3)
+ );
+ let popped=0,removed=0,tails=0;
  s.balloons=s.balloons.filter(o=>{
   if(!o?.at)return false;
+  // A tail is an independently erasable object. Checking it first also
+  // prevents the eraser from accidentally popping the latex near its knot.
+  if(!o.tailErased&&touchesTail(balloonRope(o))){
+   o.tailErased=true;o.rope=[];o.ropePrev=[];tails++;
+   return true;
+  }
   if(o.popped){
-   // A later, separate pass can erase the settled membrane and string.
-   const fragments=poppedLatexNodes(o),rope=balloonRope(o);
-   if([...fragments,...rope].some(p=>hit(p)<=half+3)){removed++;return false}
+   // A later pass can still remove the deflated membrane itself.
+   if(poppedLatexNodes(o).some(p=>hit(p)<=half+3)){removed++;return false}
    return true;
   }
   const center=pointFromIso(o.at);
@@ -1415,8 +1432,8 @@ function eraseHeliumBalloons(points,width){
   if(hit(center)<=extent+half&&popHeliumBalloon(o)){popped++;return true}
   return true;
  });
- if(popped||removed){paintBalloons();paintLens();ensureBalloonAnimation()}
- return {popped,removed};
+ if(popped||removed||tails){paintBalloons();paintLens();ensureBalloonAnimation()}
+ return {popped,removed,tails};
 }
 
 function eraserBegin(e){if(!upgradeActive('eraser'))return;
@@ -1883,7 +1900,7 @@ function preserveInterruptedStroke(){
  if(erasing&&eraserPts.length){eraseMagnification(eraserPts,eraserWidth());eraseHeliumBalloons(eraserPts,eraserWidth());s.paperMarks.push({kind:'erase',space:'iso',size:eraserWidth(),points:normalizeMark(eraserPts)})}
  drawing=false;erasing=false;$('endTurn').disabled=false;strokePts=[];eraserPts=[];activePointer=null;strokeAnchor=null;save();paintInk();paintPaper();if(pendingResize)resizePaper();
 }
-draw.addEventListener('pointerup',e=>{if(activePointer!==e.pointerId)return;e.preventDefault();const p=stablePointer(e);if(drawing){if(p)strokePts.push(p);activePointer=null;strokeAnchor=null;finishPractice()}else if(erasing){if(p)eraserPts.push(p);eraseMagnification(eraserPts,eraserWidth());eraseHeliumBalloons(eraserPts,eraserWidth());s.paperMarks.push({kind:'erase',space:'iso',size:eraserWidth(),points:normalizeMark(eraserPts)});erasing=false;eraserPts=[];activePointer=null;strokeAnchor=null;$('endTurn').disabled=false;save();paintInk();stats();$('score').textContent='Eraser used · Balloon latex falls when popped · No strokes used'}if(pendingResize)resizePaper()});
+draw.addEventListener('pointerup',e=>{if(activePointer!==e.pointerId)return;e.preventDefault();const p=stablePointer(e);if(drawing){if(p)strokePts.push(p);activePointer=null;strokeAnchor=null;finishPractice()}else if(erasing){if(p)eraserPts.push(p);eraseMagnification(eraserPts,eraserWidth());const eraseResult=eraseHeliumBalloons(eraserPts,eraserWidth());s.paperMarks.push({kind:'erase',space:'iso',size:eraserWidth(),points:normalizeMark(eraserPts)});erasing=false;eraserPts=[];activePointer=null;strokeAnchor=null;$('endTurn').disabled=false;save();paintInk();stats();$('score').textContent=eraseResult.tails?'Balloon tail erased · Balloon remains intact':eraseResult.popped?'Balloon popped · Latex falling':eraseResult.removed?'Popped latex erased':'Pencil erased · No strokes used'}if(pendingResize)resizePaper()});
 draw.addEventListener('pointercancel',e=>{if(activePointer!==e.pointerId)return;preserveInterruptedStroke();$('score').textContent='Stroke interrupted · Partial drawing saved';});
 window.addEventListener('pagehide',()=>{if(drawing||erasing)preserveInterruptedStroke()});
 function changeMode(mode){if(!upgradeActive('selector')||s.phase!=='draw'||locked||drawing)return;if(isCompositionMode(mode)&&(!(mode==='balloon'?balloonPlayable():mode==='cylinder'?cylinderPlayable():composerPlayable())||s.left<2)){$('score').textContent='Two-part drawings require the active upgrade and at least 2 strokes left';return;}if(practiceStrokes.length||isCompositionMode()&&composeStage===1){$('score').textContent='Finish the current shape before switching modes';return}if(!availableStudy(mode))return;s.studyPreference=mode;s.mode=mode;s.tool='pencil';save();stats();createPrompt()}
