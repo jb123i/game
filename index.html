@@ -675,8 +675,11 @@ function paintMagnifierLens(glass){
    const aperture=Math.max(2,edgeRadius-2.3);
    if(d>=aperture)continue;
    const u=d/aperture,u2=u*u;
-   // 1.9x at the center, smoothly blending to 1x at the rim.
-   const inv=1/zoom+(1-1/zoom)*u2*u2;
+   // Convex magnification samples a smaller field of view through the
+   // entire lens. Forcing 1x at its rim would compress the outer image
+   // into a narrow band (and even locally shrink it). Keep every part
+   // magnified, with mild radial lens distortion near the edge.
+   const inv=(1/zoom)*(1+.075*u2);
    const dispersion=u2*u*.006,o=(y*size+x)*4,glow=(1-u2)*1.4;
    output[o]=Math.min(255,sample(cx+dx*(inv-dispersion),cy+dy*(inv-dispersion),0)+glow);
    output[o+1]=Math.min(255,sample(cx+dx*inv,cy+dy*inv,1)+glow*1.15);
