@@ -124,7 +124,7 @@
 <div class="paper-tools"><div class="toolgroup hidden" id="modeTools"><span class="tiny-label">Study</span><button class="pill active" id="lineMode" type="button">Line</button><button class="pill hidden" id="triangleMode" type="button">Triangle</button><button class="pill hidden" id="squareMode" type="button">Square</button><button class="pill hidden" id="circleMode" type="button">Circle</button><button class="pill hidden" id="balloonMode" type="button">Balloon</button><button class="pill hidden" id="composeMode" type="button">Compose</button></div><div class="toolgroup hidden" id="composerOptions" aria-label="Compose your own two-part drawing"><span class="tiny-label">First</span><button class="pill" id="composeCircle" type="button">○ Circle</button><button class="pill" id="composeSquare" type="button">□ Square</button><span class="tiny-label">Then</span><button class="pill" id="composeDown" type="button">↓ Down</button><button class="pill" id="composeDiagonal" type="button">↘ Diagonal</button></div><div class="toolgroup"><span class="tiny-label">Paper</span><button class="pill hidden" id="gridSwitch" type="button" hidden aria-hidden="true">▦ Grid on</button><button class="pill hidden" id="guideSwitch" type="button" hidden aria-hidden="true">Freehand on</button><button class="pill hidden" id="pencilTool" type="button">Pencil</button><button class="pill hidden" id="eraserTool" type="button">Eraser</button><label class="eraser-size-control hidden" id="eraserSizeControl" for="eraserSize"><span>Eraser size</span><input id="eraserSize" type="range" min="8" max="64" step="2" value="30" aria-label="Eraser width"/><output id="eraserSizeValue" for="eraserSize">30 px</output></label></div></div>
 <div class="paper-area" id="paperArea"><canvas id="gridLayer" aria-hidden="true"></canvas><canvas id="inkLayer" aria-hidden="true"></canvas><canvas id="drawingLayer" aria-label="Drawing canvas. Use a mouse, stylus or finger to draw."></canvas><div id="earningPopup" class="earning-popup hidden" aria-hidden="true"></div></div>
 <div class="draw-foot"><small id="drawHint" class="hidden"></small><div class="draw-actions"><span class="score" id="score"></span><button class="action end-turn" id="endTurn" type="button">End Turn →</button></div></div></section>
-<section class="panel hidden" id="shopStage"><div class="panel-head shop-head"><div><p class="eyebrow">Between turns</p><h2 class="panel-title">Skill tree</h2><p class="panel-sub">Trace to buy.</p></div></div>
+<section class="panel hidden" id="shopStage"><div class="panel-head shop-head"><div><p class="eyebrow">Between turns</p><h2 class="panel-title">Skill tree</h2><p class="panel-sub">TRACE THE DOTTED LINES TO BUY UPGRADES</p></div></div>
 <div class="shop-tool-picker" aria-label="Skill tree tools"><button type="button" id="skillPencil" class="active" aria-pressed="true">✎ Trace</button><button type="button" id="skillEraser" class="hidden" aria-pressed="false" disabled aria-disabled="true" title="Buy Pencil Eraser to unlock">⌫ Erase</button></div>
 <div class="shop-body"><div class="skill-wrap"><div class="skill-tree" id="skillTree" aria-label="Upgrade tree">
 <svg class="branches" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
@@ -361,7 +361,7 @@ function restorePracticeDraft(){
   composeStage=isCompositionMode(d.mode)?(d.composeStage===1?1:0):0;composeScores=Array.isArray(d.composeScores)?d.composeScores.slice(0,1):[];composeTemplate=['balloon','magnifier','signpost','kite'].includes(d.composeTemplate)?d.composeTemplate:'balloon';
   composeFirstBounds=d.composeFirstBounds&&['minX','maxX','minY','maxY'].every(k=>Number.isFinite(d.composeFirstBounds[k]))?d.composeFirstBounds:null;
   practiceStrokes=d.strokes.map(pts=>pts.map(pointFromIso)).filter(pts=>pts.length>=2);
-  if(!practiceStrokes.length&&!(d.mode==='compose'&&composeStage===1))return false;
+  if(!practiceStrokes.length&&!(isCompositionMode(d.mode)&&composeStage===1))return false;
   drawing=false;locked=false;strokePts=[];
   stats();paintPaper();$('score').textContent=isCompositionMode()?'Part 2 of 2 · Finish your '+(composeTemplate==='balloon'?'balloon':composeTemplate==='signpost'?'signpost':composeTemplate==='kite'?'kite':'magnifying glass'):practiceStrokes.length+' stroke'+(practiceStrokes.length===1?'':'s')+' saved · Continue drawing';
   return true;
@@ -398,7 +398,8 @@ function createPrompt(){
   O={x:0,y:0,r,angle:composeTemplate==='kite'?nextSquareAngle():0};
   const len=randomBetween(Math.max(34,r*.72),Math.max(44,r*1.28));
   if(composeTemplate==='kite'){
-   const corner=squareCorners()[2],direction=Math.random()<.5?-1:1;
+   // Anchor the kite tail to the actual lowest corner, even when the square rotates.
+    const corner=squareCorners().reduce((lowest,p)=>p.y>lowest.y?p:lowest),direction=Math.random()<.5?-1:1;
    A={x:corner.x,y:corner.y};B={x:A.x+direction*len*.72,y:A.y+len*.78};
   }else if(composeTemplate==='signpost'){
    A={x:0,y:r+3};
