@@ -442,6 +442,15 @@ function createPrompt(){
   O={x:nx*bend,y:ny*bend};
   placePrompt([A,B,O,...curveGuide()]);
  }
+ else if(s.mode==='oval'){
+  // Distinct major and minor axes; rotating each exercise requires a new
+  // controlled hand motion rather than tracing a stretched circle template.
+  const maxMajor=Math.min(W*.22,H*.27,130);
+  const major=randomBetween(Math.max(28,maxMajor*.68),Math.max(28,maxMajor));
+  const minor=major*randomBetween(.46,.77);
+  O={x:0,y:0,rx:major,ry:minor,angle:randomBetween(-Math.PI/2,Math.PI/2)};
+  placePrompt(ovalGuide());
+ }
  else if(s.mode==='triangle'){
   const maxR=Math.min(W*.20,H*.26,112);
   const r=randomBetween(Math.max(24,maxR*.58),Math.max(24,maxR));
@@ -498,6 +507,16 @@ function curvePoint(t){
  return {x:u*u*A.x+2*u*t*O.x+t*t*B.x,y:u*u*A.y+2*u*t*O.y+t*t*B.y};
 }
 function curveGuide(){return Array.from({length:101},(_,i)=>curvePoint(i/100))}
+
+/* Rotated ellipse geometry shared by the four guide points and grading. */
+function ovalPoint(theta){
+ if(!O||!(O.rx>0)||!(O.ry>0))return null;
+ const ca=Math.cos(O.angle||0),sa=Math.sin(O.angle||0),ct=Math.cos(theta),st=Math.sin(theta);
+ return {x:O.x+O.rx*ct*ca-O.ry*st*sa,y:O.y+O.rx*ct*sa+O.ry*st*ca};
+}
+function ovalGuide(){return Array.from({length:145},(_,i)=>ovalPoint(i*2*Math.PI/144))}
+function ovalAnchors(){return [0,1,2,3].map(i=>ovalPoint(i*Math.PI/2))}
+
 function squareCorners(){
  if(!O)return [];
  const angle=Number(O.angle)||0,cos=Math.cos(angle),sin=Math.sin(angle);
@@ -521,6 +540,13 @@ function paintPaper(reveal=feedbackReveal){dc.clearRect(0,0,W,H);
    }
    for(const p of triangleCorners())circleDot(p.x,p.y);
   }
+ else if(s.mode==='oval'&&O){
+  if(reveal){
+   dc.save();dc.beginPath();dc.ellipse(O.x,O.y,O.rx,O.ry,O.angle||0,0,Math.PI*2);
+   dc.strokeStyle='#51a888';dc.lineWidth=2.4;dc.setLineDash([7,5]);dc.stroke();dc.restore();
+  }
+  for(const p of ovalAnchors())circleDot(p.x,p.y);
+ }
  else if(s.mode==='curve'&&A&&B&&O){
   dc.save();dc.beginPath();dc.moveTo(A.x,A.y);dc.quadraticCurveTo(O.x,O.y,B.x,B.y);
   dc.strokeStyle=reveal?'#51a888':'#82aa9b99';dc.lineWidth=reveal?2.4:2;
@@ -1058,6 +1084,38 @@ function curveLooksComplete(){
  const tolerance=Math.max(16,Math.min(29,ideal*.055));
  return guide.filter(p=>parts.some(pts=>polyDist(p,pts)<=tolerance)).length/guide.length>=.79;
 }
+
+function ovalAccuracy(){
+ if(!O||!(O.rx>0)||!(O.ry>0))return 0;
+ const parts=practiceStrokes.filter(pts=>pts.length>=2),points=parts.flat();
+ if(!parts.length||points.length<2)return 0;
+ const guide=ovalGuide(),anchors=ovalAnchors();
+ const travel=parts.reduce((sum,pts)=>sum+pathLength(pts),0),ideal=pathLength(guide);
+ if(travel<10)return 0;
+ const guideErrors=guide.map(p=>Math.min(...parts.map(pts=>polyDist(p,pts))));
+ const inkErrors=points.map(p=>polyDist(p,guide));
+ const anchorErrors=anchors.map(p=>Math.min(...parts.map(pts=>polyDist(p,pts))));
+ const coverage=guideErrors.reduce((sum,d)=>sum+clamp(1-d/21),0)/guideErrors.length;
+ const precision=inkErrors.reduce((sum,d)=>sum+clamp(1-d/21),0)/inkErrors.length;
+ const anchorScore=anchorErrors.reduce((sum,d)=>sum+clamp(1-d/24),0)/4;
+ const efficiency=clamp(1-Math.abs(travel-ideal)/ideal);
+ const result=Math.round(100*(.44*coverage+.30*precision+.16*anchorScore+.10*efficiency));
+ if(guideErrors.every(d=>d<=.55)&&inkErrors.every(d=>d<=.4)
+    &&anchorErrors.every(d=>d<=.55)&&Math.abs(travel-ideal)<=ideal*.002)return 100;
+ return clamp(result,0,99);
+}
+function ovalLooksComplete(){
+ if(!O||!(O.rx>0)||!(O.ry>0))return false;
+ const parts=practiceStrokes.filter(pts=>pts.length>=2);
+ if(!parts.length)return false;
+ const guide=ovalGuide(),ideal=pathLength(guide),travel=parts.reduce((sum,pts)=>sum+pathLength(pts),0);
+ if(travel<ideal*.67)return false;
+ const tolerance=Math.max(12,Math.min(24,Math.min(O.rx,O.ry)*.24));
+ const covered=guide.filter(p=>parts.some(pts=>polyDist(p,pts)<=tolerance)).length/guide.length;
+ const anchors=ovalAnchors().every(p=>parts.some(pts=>polyDist(p,pts)<=tolerance*1.25));
+ return anchors&&covered>=.82;
+}
+
 function triangleGuide(){
  const corners=triangleCorners(),guide=[];
  for(let edge=0;edge<3;edge++){
@@ -1228,6 +1286,7 @@ function circleLooksComplete(){
  );
 }
 function componentLooksComplete(){
+ if(s.mode==='oval')return ovalLooksComplete();
  if(s.mode==='curve')return curveLooksComplete();
  if(s.mode==='triangle')return triangleLooksComplete();
  if(s.mode==='circle'||isCompositionMode()&&composeStage===0&&!['signpost','kite'].includes(composeTemplate))return circleLooksComplete();
@@ -1274,7 +1333,7 @@ function showEarnings(reward,bounds){
 function finalizeShape(){
  if(locked||drawing||!practiceStrokes.length)return;
  locked=true;
- const accuracy=s.mode==='circle'?circleAccuracy():s.mode==='square'?squareAccuracy():s.mode==='triangle'?triangleAccuracy():s.mode==='curve'?curveAccuracy():lineAccuracy();
+ const accuracy=s.mode==='circle'?circleAccuracy():s.mode==='square'?squareAccuracy():s.mode==='triangle'?triangleAccuracy():s.mode==='curve'?curveAccuracy():s.mode==='oval'?ovalAccuracy():lineAccuracy();
  // Rewards scale by complexity: line 1x, triangle 1.25x, square 1.5x, circle 2x.
  // Keep balances in whole cents; accuracy remains a 0–100 percentage.
  const reward=payoutForShape(s.mode,accuracy);
@@ -1342,7 +1401,7 @@ function finishPractice(){
  if(complete||s.left<=0)finalizeShape();
  else{
   persistPracticeDraft();stats();
-  $('score').textContent='Continue '+(s.mode==='circle'?'the circle':s.mode==='square'?'the square':s.mode==='triangle'?'the triangle':s.mode==='curve'?'the curve':'the line')+' · '+s.left+' stroke'+(s.left===1?'':'s')+' left';
+  $('score').textContent='Continue '+(s.mode==='circle'?'the circle':s.mode==='square'?'the square':s.mode==='triangle'?'the triangle':s.mode==='curve'?'the curve':s.mode==='oval'?'the oval':'the line')+' · '+s.left+' stroke'+(s.left===1?'':'s')+' left';
  }
 }
 draw.addEventListener('pointerdown',e=>{if(s.phase!=='draw'||drawing||erasing||(locked&&s.tool!=='eraser')||(!e.isPrimary&&e.pointerType==='touch'))return;if(s.tool==='eraser'){e.preventDefault();$('endTurn').disabled=true;eraserBegin(e);return}const p=pointer(e,draw);
@@ -1359,7 +1418,7 @@ window.addEventListener('pagehide',()=>{if(drawing||erasing)preserveInterruptedS
 function changeMode(mode){if(!upgradeActive('selector')||s.phase!=='draw'||locked||drawing)return;if(isCompositionMode(mode)&&(!(mode==='balloon'?balloonPlayable():composerPlayable())||s.left<2)){$('score').textContent='Two-part drawings require the active upgrade and at least 2 strokes left';return;}if(practiceStrokes.length||isCompositionMode()&&composeStage===1){$('score').textContent='Finish the current shape before switching modes';return}if(!availableStudy(mode))return;s.studyPreference=mode;s.mode=mode;s.tool='pencil';save();stats();createPrompt()}
 $('lineMode').addEventListener('click',()=>changeMode('line'));
 $('triangleMode').addEventListener('click',()=>changeMode('triangle'));
-$('circleMode').addEventListener('click',()=>changeMode('circle'));$('curveMode').addEventListener('click',()=>changeMode('curve'));$('squareMode').addEventListener('click',()=>changeMode('square'));$('balloonMode').addEventListener('click',()=>changeMode('balloon'));$('composeMode').addEventListener('click',()=>changeMode('compose'));
+$('circleMode').addEventListener('click',()=>changeMode('circle'));$('ovalMode').addEventListener('click',()=>changeMode('oval'));$('curveMode').addEventListener('click',()=>changeMode('curve'));$('squareMode').addEventListener('click',()=>changeMode('square'));$('balloonMode').addEventListener('click',()=>changeMode('balloon'));$('composeMode').addEventListener('click',()=>changeMode('compose'));
 for(const [button,field,value] of [['composeCircle','composeBase','circle'],['composeSquare','composeBase','square'],['composeDown','composeLine','down'],['composeDiagonal','composeLine','diagonal']]){
  $(button).addEventListener('click',()=>{if(s.phase!=='draw'||s.mode!=='compose'||locked||drawing||practiceStrokes.length||composeStage>0||!composerPlayable())return;s[field]=value;save();createPrompt()})
 }
@@ -1392,12 +1451,17 @@ const complexBoltGuide=()=>sampleGuide([{x:58,y:9},{x:27,y:52},{x:48,y:52},{x:38
 const curveShopGuide=()=>Array.from({length:81},(_,i)=>{
  const t=i/80,u=1-t;return {x:u*u*14+2*u*t*48+t*t*82,y:u*u*69+2*u*t*6+t*t*69};
 });
+const ovalShopGuide=()=>Array.from({length:121},(_,i)=>{
+ const t=i*2*Math.PI/120,angle=-.35,x=33*Math.cos(t),y=22*Math.sin(t);
+ return {x:48+x*Math.cos(angle)-y*Math.sin(angle),y:48+x*Math.sin(angle)+y*Math.cos(angle)};
+});
 const guides={
  root:simpleBoltGuide(),
  stamina:complexBoltGuide(),
  secondWind:circleGuide(),
  circle:circleGuide(),
  curve:curveShopGuide(),
+ oval:ovalShopGuide(),
  triangle:polygonGuide(3,34,-Math.PI/2),
  square:polygonGuide(4,34,-Math.PI/4),
  // Two opposing arrows, traced to unlock switching drawing studies.
