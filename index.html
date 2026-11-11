@@ -947,6 +947,13 @@ for(const n of nodes){const id=n.dataset.id,c=n.querySelector('canvas'),ctx=c.ge
 function renderNode(id){const {ctx,strokes}=nodeCanvas[id];const guide=guides[id]||guides.circle;ctx.clearRect(0,0,96,96);const owned=s.owned[id],active=nodeActive(id);
  if(!active){ctx.globalAlpha=.36;stroke(ctx,guide,'#84ae9a',8);ctx.globalAlpha=.7;ctx.setLineDash([2,5]);stroke(ctx,guide,'#578d79',1.5);ctx.setLineDash([]);ctx.globalAlpha=1}
  const drawn=owned?decodeStrokes(s.traces[id]):strokes;
+ // Endurance I shows the built-in bolt only until the player starts
+ // tracing it. Keep the player's bolt visible during drawing and after
+ // purchase; restore the icon if an unfinished trace is cleared.
+ if(id==='root'){
+  const symbol=document.querySelector('.upgrade[data-id="root"] .node-symbol');
+  symbol?.classList.toggle('hidden',drawn.length>0||!!(tracing&&tracing.id==='root'&&tracing.tool==='trace'));
+ }
  for(const pts of drawn)stroke(ctx,pts,active?'#248269':'#233e46',active?4.1:3.5);
  if(tracing&&tracing.id===id&&tracing.tool==='trace')stroke(ctx,tracing.points,'#233e46',3.5);
  if(owned&&!drawn.length){ctx.font='700 12px system-ui';ctx.fillStyle='#ae7160';ctx.textAlign='center';ctx.fillText('OFF',48,18)}
