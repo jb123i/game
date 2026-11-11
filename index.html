@@ -517,13 +517,13 @@ function paintGrid(){gc.clearRect(0,0,W,H);if(!upgradeActive('grid')){paintLens(
 /* Preserve the outline actually drawn by the player, not the ideal guide circle.
    The shape is stored as a center and 192 polar radii in paper-relative units.
    Its silhouette can be wobbly, tilted, elliptical, or slightly off-center. */
-function captureDrawnLens(strokes){
+function captureDrawnLens(strokes,guide=O){
  const pts=strokes.filter(v=>v.length>=2).flat();
- if(pts.length<3||!O)return null;
+ if(pts.length<3||!guide)return null;
  const box=drawnBounds(strokes);
  if(!box)return null;
  const center={x:(box.minX+box.maxX)/2,y:(box.minY+box.maxY)/2};
- const nominal=Math.max(8,O.r),count=192;
+ const nominal=Math.max(8,guide.r),count=192;
  const raw=Array(count).fill(null);
  const segments=[];
  for(const path of strokes)for(let j=1;j<path.length;j++){
@@ -555,6 +555,35 @@ function captureDrawnLens(strokes){
  }
  return {at:pointToIso(center),r:nominal/Math.max(1,H),profile:raw.map(v=>Math.round(v*10000)/10000)};
 }
+
+/* Existing save files stored only an ideal center/radius. Try recovering the
+   actual inked rim from its nearby circular pencil strokes. Require broad
+   angular coverage to avoid accidentally using unrelated lines or scribbles. */
+function recoverOldLensContour(glass){
+ const center=pointFromIso(glass.at),r=glass.r*H,band=Math.max(9,r*.22);
+ if(!Number.isFinite(r)||r<8||!Array.isArray(s.paperMarks))return null;
+ const matches=[],seen=new Uint8Array(72);
+ for(const mark of s.paperMarks){
+  if(mark?.kind!=='ink'||!Array.isArray(mark.points)||mark.points.length<2)continue;
+  const points=mark.points.filter(p=>Array.isArray(p)&&p.length===2&&p.every(Number.isFinite)).map(p=>
+   mark.space==='iso'?pointFromIso(p):{x:W/2+(p[0]-.5)*(Number(s.legacyAspect)>0?s.legacyAspect:legacyPaperAspect())*H,y:p[1]*H});
+  if(points.length<2||pathLength(points)<r*.12)continue;
+  let close=0;
+  for(const p of points)if(Math.abs(distance(p,center)-r)<=band)close++;
+  if(close/points.length<.78)continue;
+  matches.push(points);
+  for(const p of points){
+   if(Math.abs(distance(p,center)-r)>band)continue;
+   const angle=(Math.atan2(p.y-center.y,p.x-center.x)+2*Math.PI)%(2*Math.PI);
+   seen[Math.floor(angle*72/(2*Math.PI))%72]=1;
+  }
+ }
+ if(seen.reduce((count,v)=>count+v,0)<50)return null;
+ const recovered=captureDrawnLens(matches,{r});
+ if(!recovered||distance(pointFromIso(recovered.at),center)>r*.30)return null;
+ return recovered;
+}
+
 function lensRadiusAt(profile,angle){
  if(!profile)return 1;
  const n=profile.length,t=((angle/(2*Math.PI)%1+1)%1)*n,
@@ -583,11 +612,18 @@ function paintLens(){
  lc.clearRect(0,0,W,H);
  if(s.phase!=='draw')return;
  // Completed lenses remain active on the sketchbook when later marks appear.
+ let upgradedOldLens=false;
  for(const glass of s.magnifiers||[]){
   if(!glass||!Array.isArray(glass.at)||glass.at.length!==2
    ||!glass.at.every(Number.isFinite)||!Number.isFinite(glass.r)||glass.r<=0)continue;
+  if(!Array.isArray(glass.profile)&&!glass.contourChecked){
+   const shape=recoverOldLensContour(glass);
+   glass.contourChecked=true;upgradedOldLens=true;
+   if(shape){glass.at=shape.at;glass.r=shape.r;glass.profile=shape.profile}
+  }
   paintMagnifierLens({...pointFromIso(glass.at),r:glass.r*H,profile:glass.profile});
  }
+ if(upgradedOldLens)save();
  // The active lens starts working after its circle is finished; avoid
  // double rendering once the completed lens is saved.
  if(isCompositionMode()&&composeTemplate==='magnifier'&&composeStage===1&&O&&!feedbackReveal)
