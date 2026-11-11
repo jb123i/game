@@ -25,7 +25,7 @@
 }
 .stat-sub{margin-top:1px;font-size:11px;color:#999e97}
 .panel{background:var(--paper);border:1px solid #dedcd2;border-radius:18px;box-shadow:var(--shadow)}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 25px 17px;border-bottom:1px solid #e9e7dd}.panel-title{font:700 25px/1.2 Georgia,serif;letter-spacing:-.6px;margin:0}.panel-sub{font-size:13px;color:#788079;margin:5px 0 0;line-height:1.55}.smalltag{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#49897a;background:#e9f2e9;border:1px solid #d8eadf;border-radius:30px;padding:7px 11px;white-space:nowrap}.hidden{display:none!important}
-.paper-tools{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:11px 18px;border-bottom:1px solid #e9e7dd;background:#faf9f4}.toolgroup{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.tiny-label{font-size:10px;letter-spacing:1px;font-weight:800;color:#919990;text-transform:uppercase;margin-right:4px}.pill{border:1px solid #dddcd2;color:#586b66;background:#fffefa;border-radius:9px;font-size:12px;font-weight:700;padding:8px 10px;cursor:pointer;transition:background .18s,border-color .18s}.pill:hover{border-color:#9ab0a8}.pill.active{background:#e2f0e8;border-color:#91bfb0;color:#246656}.pill:disabled{opacity:.35;cursor:not-allowed}.eraser-size-control{display:inline-flex;align-items:center;gap:6px;background:#f0f4ed;border:1px solid #d8e3da;padding:6px 9px;border-radius:9px;color:#35695b;font-size:11px;font-weight:800;white-space:nowrap}.eraser-size-control input{width:93px;accent-color:#327e70;touch-action:pan-x;cursor:pointer}.eraser-size-control output{min-width:38px;text-align:right;font-variant-numeric:tabular-nums}.paper-area{height:440px;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;position:relative;overflow:hidden;overflow-anchor:none;overscroll-behavior:none;contain:layout paint;background:radial-gradient(ellipse at 35% 20%,#fffefd,#fcfaf5 93%);touch-action:none;cursor:crosshair}.paper-area.eraser-cursor{cursor:cell}#gridLayer,#inkLayer,#drawingLayer,#lensLayer{position:absolute;inset:0;width:100%;height:100%;display:block}#gridLayer,#inkLayer,#lensLayer{pointer-events:none}#drawingLayer{touch-action:none;user-select:none;-webkit-user-select:none}.earning-popup{position:absolute;z-index:6;pointer-events:none;white-space:nowrap;min-width:74px;text-align:center;background:#e9f6ecf5;color:#207254;border:1px solid #91ccb0;border-radius:999px;box-shadow:0 7px 19px #224d3420;padding:8px 13px;font-size:17px;font-weight:850;font-variant-numeric:tabular-nums;letter-spacing:.01em;transform:translateX(-50%);animation:earnFloat 1.30s ease-out both}
+.paper-tools{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:11px 18px;border-bottom:1px solid #e9e7dd;background:#faf9f4}.toolgroup{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.tiny-label{font-size:10px;letter-spacing:1px;font-weight:800;color:#919990;text-transform:uppercase;margin-right:4px}.pill{border:1px solid #dddcd2;color:#586b66;background:#fffefa;border-radius:9px;font-size:12px;font-weight:700;padding:8px 10px;cursor:pointer;transition:background .18s,border-color .18s}.pill:hover{border-color:#9ab0a8}.pill.active{background:#e2f0e8;border-color:#91bfb0;color:#246656}.pill:disabled{opacity:.35;cursor:not-allowed}.eraser-size-control{display:inline-flex;align-items:center;gap:6px;background:#f0f4ed;border:1px solid #d8e3da;padding:6px 9px;border-radius:9px;color:#35695b;font-size:11px;font-weight:800;white-space:nowrap}.eraser-size-control input{width:93px;accent-color:#327e70;touch-action:pan-x;cursor:pointer}.eraser-size-control output{min-width:38px;text-align:right;font-variant-numeric:tabular-nums}.paper-area{height:440px;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;position:relative;overflow:hidden;overflow-anchor:none;overscroll-behavior:none;contain:layout paint;background:radial-gradient(ellipse at 35% 20%,#fffefd,#fcfaf5 93%);touch-action:none;cursor:crosshair}.paper-area.eraser-cursor{cursor:cell}#gridLayer,#inkLayer,#balloonLayer,#drawingLayer,#lensLayer{position:absolute;inset:0;width:100%;height:100%;display:block}#gridLayer,#inkLayer,#balloonLayer,#lensLayer{pointer-events:none}#drawingLayer{touch-action:none;user-select:none;-webkit-user-select:none}.earning-popup{position:absolute;z-index:6;pointer-events:none;white-space:nowrap;min-width:74px;text-align:center;background:#e9f6ecf5;color:#207254;border:1px solid #91ccb0;border-radius:999px;box-shadow:0 7px 19px #224d3420;padding:8px 13px;font-size:17px;font-weight:850;font-variant-numeric:tabular-nums;letter-spacing:.01em;transform:translateX(-50%);animation:earnFloat 1.30s ease-out both}
 @keyframes earnFloat{0%{opacity:0;transform:translate(-50%,8px) scale(.95)}17%{opacity:1;transform:translate(-50%,0) scale(1)}65%{opacity:1;transform:translate(-50%,-11px)}100%{opacity:0;transform:translate(-50%,-27px)}}
 @media(prefers-reduced-motion:reduce){.earning-popup{animation:earnFade 1.30s linear both}@keyframes earnFade{0%{opacity:0}18%{opacity:1}70%{opacity:1}100%{opacity:0}}}
 .draw-foot{padding:16px 22px;display:flex;justify-content:space-between;gap:12px;align-items:center;border-top:1px solid #e9e7dd;background:#faf9f4;border-radius:0 0 18px 18px}.draw-foot small{font-size:12px;color:#8a8e87}.draw-actions{display:flex;align-items:center;justify-content:flex-end;gap:11px;flex-wrap:wrap;margin-left:auto}.score{font-size:14px;font-weight:800;color:#317a69;text-align:right}.end-turn{padding:9px 14px;background:#e5eee8!important;border:1px solid #bfd6c6!important;color:#276452!important;font-size:12px!important}.end-turn:hover{background:#d1e5d9!important}.end-turn:disabled{opacity:.5;cursor:not-allowed;transform:none}.note{margin:12px 4px 0;color:#8a8f88;font-size:12px;text-align:center}
@@ -122,7 +122,7 @@
 <div class="stats" role="status" aria-label="Progress"><div class="stat"><div class="stat-label">Wallet</div><div class="stat-value money" id="wallet">$0.00</div></div><div class="stat"><div class="stat-label">Turn</div><div class="stat-value" id="turn">1</div></div><div class="stat"><div class="stat-label">Strokes left</div><div class="stat-value" id="energy">1 / 1</div></div><div class="stat"><div class="stat-label">Strokes completed</div><div class="stat-value" id="strokes">0</div></div></div>
 <section class="panel" id="playStage"><div class="panel-head"><div><p class="eyebrow hidden" id="activityTag"></p><h2 class="panel-title" id="activityHeading">Connect the points</h2><p class="panel-sub" id="instruction">Start on A, draw a continuous line, and finish on B.</p></div><span class="smalltag" id="rewardTag">UP TO $1.00</span></div>
 <div class="paper-tools"><div class="toolgroup hidden" id="modeTools"><span class="tiny-label">Study</span><button class="pill active" id="lineMode" type="button">Line</button><button class="pill hidden" id="triangleMode" type="button">Triangle</button><button class="pill hidden" id="squareMode" type="button">Square</button><button class="pill hidden" id="circleMode" type="button">Circle</button><button class="pill hidden" id="curveMode" type="button">Curve</button><button class="pill hidden" id="balloonMode" type="button">Balloon</button><button class="pill hidden" id="composeMode" type="button">Compose</button></div><div class="toolgroup hidden" id="composerOptions" aria-label="Compose your own two-part drawing"><span class="tiny-label">First</span><button class="pill" id="composeCircle" type="button">○ Circle</button><button class="pill" id="composeSquare" type="button">□ Square</button><span class="tiny-label">Then</span><button class="pill" id="composeDown" type="button">↓ Down</button><button class="pill" id="composeDiagonal" type="button">↘ Diagonal</button></div><div class="toolgroup"><span class="tiny-label">Paper</span><button class="pill hidden" id="gridSwitch" type="button" hidden aria-hidden="true">▦ Grid on</button><button class="pill hidden" id="guideSwitch" type="button" hidden aria-hidden="true">Freehand on</button><button class="pill hidden" id="pencilTool" type="button">Pencil</button><button class="pill hidden" id="eraserTool" type="button">Eraser</button><label class="eraser-size-control hidden" id="eraserSizeControl" for="eraserSize"><span>Eraser size</span><input id="eraserSize" type="range" min="8" max="64" step="2" value="30" aria-label="Eraser width"/><output id="eraserSizeValue" for="eraserSize">30 px</output></label></div></div>
-<div class="paper-area" id="paperArea"><canvas id="gridLayer" aria-hidden="true"></canvas><canvas id="inkLayer" aria-hidden="true"></canvas><canvas id="drawingLayer" aria-label="Drawing canvas. Use a mouse, stylus or finger to draw."></canvas><canvas id="lensLayer" aria-hidden="true"></canvas><div id="earningPopup" class="earning-popup hidden" aria-hidden="true"></div></div>
+<div class="paper-area" id="paperArea"><canvas id="gridLayer" aria-hidden="true"></canvas><canvas id="inkLayer" aria-hidden="true"></canvas><canvas id="balloonLayer" aria-hidden="true"></canvas><canvas id="drawingLayer" aria-label="Drawing canvas. Use a mouse, stylus or finger to draw."></canvas><canvas id="lensLayer" aria-hidden="true"></canvas><div id="earningPopup" class="earning-popup hidden" aria-hidden="true"></div></div>
 <div class="draw-foot"><small id="drawHint" class="hidden"></small><div class="draw-actions"><span class="score" id="score"></span><button class="action end-turn" id="endTurn" type="button">End Turn →</button></div></div></section>
 <section class="panel hidden" id="shopStage"><div class="panel-head shop-head"><div><p class="eyebrow">Between turns</p><h2 class="panel-title">Skill tree</h2><p class="panel-sub">TRACE THE DOTTED LINES TO BUY UPGRADES</p></div></div>
 <div class="shop-tool-picker" aria-label="Skill tree tools"><button type="button" id="skillPencil" class="active" aria-pressed="true">✎ Trace</button><button type="button" id="skillEraser" class="hidden" aria-pressed="false" disabled aria-disabled="true" title="Buy Pencil Eraser to unlock">⌫ Erase</button></div>
@@ -189,10 +189,10 @@ const defs={
  composer:{name:'Shape Composer',price:300,desc:'Choose a square or circle and combine it with a line. Each drawing requires at least 2 strokes.',cost:'$3.00'},
  dashedCircle:{name:'Dashed Circle Guide',price:500,desc:'Replace circle guide dots with a dashed outline.',cost:'$5.00'}
 };
-const blank=()=>({cash:0,turn:1,energy:1,left:1,sharedEnergyV1:true,shopRootMigrationV1:true,shopBonusEarned:false,legacyEnduranceShapes:{root:false,stamina:false},strokes:0,practiceDraft:null,phase:'draw',last:0,lastPay:0,lastKind:'line',owned:{root:false,stamina:false,secondWind:false,circle:false,curve:false,balloon:false,free:false,grid:false,eraser:false,eraserSize:false,dashedCircle:false,square:false,triangle:false,composer:false,selector:false},legacySquare:false,legacyComposer:false,legacyBalloon:false,legacyCurvePath:false,curveGateV1:true,composeBase:'circle',composeLine:'diagonal',disabled:{},traces:{},pendingTraces:{},paperMarks:[],magnifiers:[],legacyAspect:null,eraserSize:30,gridOn:true,freeOn:false,mode:'line',studyPreference:null,tool:'pencil'});
+const blank=()=>({cash:0,turn:1,energy:1,left:1,sharedEnergyV1:true,shopRootMigrationV1:true,shopBonusEarned:false,legacyEnduranceShapes:{root:false,stamina:false},strokes:0,practiceDraft:null,phase:'draw',last:0,lastPay:0,lastKind:'line',owned:{root:false,stamina:false,secondWind:false,circle:false,curve:false,balloon:false,free:false,grid:false,eraser:false,eraserSize:false,dashedCircle:false,square:false,triangle:false,composer:false,selector:false},legacySquare:false,legacyComposer:false,legacyBalloon:false,legacyCurvePath:false,curveGateV1:true,composeBase:'circle',composeLine:'diagonal',disabled:{},traces:{},pendingTraces:{},paperMarks:[],magnifiers:[],balloons:[],balloonSerial:0,legacyAspect:null,eraserSize:30,gridOn:true,freeOn:false,mode:'line',studyPreference:null,tool:'pencil'});
 let s=blank();
 try{const q=JSON.parse(localStorage.getItem(key)||'null');if(q&&Number.isFinite(q.cash)&&q.owned&&['draw','shop'].includes(q.phase)){
- s={...blank(),...q,owned:{...blank().owned,...q.owned},disabled:q.disabled&&typeof q.disabled==='object'?q.disabled:{},traces:q.traces&&typeof q.traces==='object'?q.traces:{},pendingTraces:q.pendingTraces&&typeof q.pendingTraces==='object'?q.pendingTraces:{},paperMarks:Array.isArray(q.paperMarks)?q.paperMarks:[],magnifiers:Array.isArray(q.magnifiers)?q.magnifiers:[],practiceDraft:q.practiceDraft&&typeof q.practiceDraft==='object'?q.practiceDraft:null};
+ s={...blank(),...q,owned:{...blank().owned,...q.owned},disabled:q.disabled&&typeof q.disabled==='object'?q.disabled:{},traces:q.traces&&typeof q.traces==='object'?q.traces:{},pendingTraces:q.pendingTraces&&typeof q.pendingTraces==='object'?q.pendingTraces:{},paperMarks:Array.isArray(q.paperMarks)?q.paperMarks:[],magnifiers:Array.isArray(q.magnifiers)?q.magnifiers:[],balloons:Array.isArray(q.balloons)?q.balloons.slice(0,36):[],practiceDraft:q.practiceDraft&&typeof q.practiceDraft==='object'?q.practiceDraft:null};
  // Replace an already-purchased shop gate with a real upgrade at the same
  // current $1.00 price. Existing Endurance owners receive that dollar back.
  // Run only once, without resetting cash, other abilities, or drawing progress.
@@ -310,7 +310,7 @@ function stats(){
 }
 // Grid, saved pencil marks, and temporary guides occupy separate layers.
 // The eraser only modifies saved pencil marks, never the grid or guides.
-const draw=$('drawingLayer'),grid=$('gridLayer'),ink=$('inkLayer'),lens=$('lensLayer'),dc=draw.getContext('2d'),gc=grid.getContext('2d'),ic=ink.getContext('2d'),lc=lens.getContext('2d');
+const draw=$('drawingLayer'),grid=$('gridLayer'),ink=$('inkLayer'),lens=$('lensLayer'),balloonLayer=$('balloonLayer'),dc=draw.getContext('2d'),gc=grid.getContext('2d'),ic=ink.getContext('2d'),lc=lens.getContext('2d'),bc=balloonLayer.getContext('2d');
 // The lens samples a small snapshot of the existing paper and ink layers.
 const lensSource=document.createElement('canvas'),lensSourceCtx=lensSource.getContext('2d',{willReadFrequently:true});
 const lensOutput=document.createElement('canvas'),lensOutputCtx=lensOutput.getContext('2d');
@@ -319,7 +319,7 @@ for(const name of ['touchstart','touchmove'])draw.addEventListener(name,e=>{if(e
 // Prevent page scrolling during an active touch stroke, even on older mobile browsers.
 window.addEventListener('touchmove',e=>{if(activePointer!==null&&e.cancelable)e.preventDefault()},{passive:false});
 
-let composeStage=0,composeScores=[],composeTemplate='balloon',composeFirstBounds=null,composeLensShape=null;
+let composeStage=0,composeScores=[],composeTemplate='balloon',composeFirstBounds=null,composeLensShape=null,composeBalloonOutline=null,composeBalloonId=null;
 let W=0,H=0,A=null,B=null,O=null,strokePts=[],practiceStrokes=[],drawing=false,eraserPts=[],erasing=false,locked=false,advanceTimer=null,activePointer=null,strokeAnchor=null,pendingResize=false,paintFrame=0,feedbackReveal=false;
 let lastSquareAngle=null;
 // A square has 90-degree rotational symmetry. Vary its orientation across the
@@ -336,7 +336,7 @@ function nextSquareAngle(){
  return angle;
 }
 const requestPaperPaint=()=>{if(paintFrame)return;paintFrame=requestAnimationFrame(()=>{paintFrame=0;paintPaper()})};
-function resizePaper(){if(drawing||erasing){pendingResize=true;return}pendingResize=false;const rect=$('paperArea').getBoundingClientRect(),w=Math.max(1,Math.round(rect.width)),h=Math.max(1,Math.round(rect.height));const ow=W,oh=H;if(W===w&&H===h)return;W=w;H=h;if(s.paperMarks.length&&!(Number(s.legacyAspect)>0)){s.legacyAspect=legacyPaperAspect();save()}draw.width=grid.width=ink.width=lens.width=w;draw.height=grid.height=ink.height=lens.height=h;
+function resizePaper(){if(drawing||erasing){pendingResize=true;return}pendingResize=false;const rect=$('paperArea').getBoundingClientRect(),w=Math.max(1,Math.round(rect.width)),h=Math.max(1,Math.round(rect.height));const ow=W,oh=H;if(W===w&&H===h)return;W=w;H=h;if(s.paperMarks.length&&!(Number(s.legacyAspect)>0)){s.legacyAspect=legacyPaperAspect();save()}draw.width=grid.width=ink.width=lens.width=balloonLayer.width=w;draw.height=grid.height=ink.height=lens.height=balloonLayer.height=h;
  if(ow&&oh){
   if(practiceStrokes.length||isCompositionMode()&&composeStage===1){
    const iso=p=>{p.x=w/2+(p.x-ow/2)*h/oh;p.y*=h/oh};
@@ -348,7 +348,7 @@ function resizePaper(){if(drawing||erasing){pendingResize=true;return}pendingRes
    if(O){O.x*=w/ow;O.y*=h/oh;if(Number.isFinite(O.r))O.r*=Math.min(w/ow,h/oh)}
   }
  }
- paintGrid();paintInk();paintPaper()}
+ paintGrid();paintInk();paintBalloons();paintPaper();ensureBalloonAnimation()}
 // Keep partially completed shapes between turns/reloads. Each physical stroke
 // uses one available stroke, but all strokes within one shape are graded together.
 function pointToIso(p){return [(p.x-W/2)/Math.max(1,H),p.y/Math.max(1,H)]}
@@ -358,7 +358,7 @@ function persistPracticeDraft(){
  s.practiceDraft={mode:s.mode,freeOn:!!s.freeOn,composeStage,composeScores:[...composeScores],composeTemplate,
   A:A?pointToIso(A):null,B:B?pointToIso(B):null,
   O:O?{at:pointToIso(O),r:Number(O.r||0)/Math.max(1,H),angle:Number(O.angle)||0}:null,
-  strokes:practiceStrokes.map(pts=>pts.map(pointToIso)),composeFirstBounds,composeLensShape};
+  strokes:practiceStrokes.map(pts=>pts.map(pointToIso)),composeFirstBounds,composeLensShape,composeBalloonOutline,composeBalloonId};
  save();
 }
 function restorePracticeDraft(){
@@ -371,6 +371,8 @@ function restorePracticeDraft(){
   composeStage=isCompositionMode(d.mode)?(d.composeStage===1?1:0):0;composeScores=Array.isArray(d.composeScores)?d.composeScores.slice(0,1):[];composeTemplate=['balloon','magnifier','signpost','kite'].includes(d.composeTemplate)?d.composeTemplate:'balloon';
   composeFirstBounds=d.composeFirstBounds&&['minX','maxX','minY','maxY'].every(k=>Number.isFinite(d.composeFirstBounds[k]))?d.composeFirstBounds:null;
    composeLensShape=d.composeLensShape&&Array.isArray(d.composeLensShape.profile)?d.composeLensShape:null;
+   composeBalloonOutline=Array.isArray(d.composeBalloonOutline)?d.composeBalloonOutline:null;
+   composeBalloonId=d.composeBalloonId||null;
   practiceStrokes=d.strokes.map(pts=>pts.map(pointFromIso)).filter(pts=>pts.length>=2);
   if(!practiceStrokes.length&&!(isCompositionMode(d.mode)&&composeStage===1))return false;
   drawing=false;locked=false;strokePts=[];
@@ -400,10 +402,11 @@ function createPrompt(){
  // Preserve the selected exercise and composition type; randomize each new
  // target without changing grading or already saved unfinished drawings.
  s.mode=selectedStudy();
- strokePts=[];practiceStrokes=[];s.practiceDraft=null;drawing=false;locked=false;feedbackReveal=false;composeStage=0;composeScores=[];composeFirstBounds=null;composeLensShape=null;
+ strokePts=[];practiceStrokes=[];s.practiceDraft=null;drawing=false;locked=false;feedbackReveal=false;composeStage=0;composeScores=[];composeFirstBounds=null;composeLensShape=null;composeBalloonOutline=null;composeBalloonId=null;
  A=null;B=null;O=null;
  if(isCompositionMode()){
   composeTemplate=s.mode==='balloon'?'balloon':s.composeBase==='square'?(s.composeLine==='down'?'signpost':'kite'):(s.composeLine==='down'?'balloon':'magnifier');
+  if(composeTemplate==='balloon')composeBalloonId=++s.balloonSerial;
   const maxR=Math.min(W*.14,H*.17,82),r=randomBetween(Math.max(22,maxR*.62),Math.max(22,maxR));
   const squareBased=['signpost','kite'].includes(composeTemplate);
   O={x:0,y:0,r,angle:composeTemplate==='kite'?nextSquareAngle():0};
@@ -724,7 +727,7 @@ function paintMagnifierLens(glass){
  paper.addColorStop(0,'#fffefd');paper.addColorStop(.93,'#fcfaf5');
  patch.fillStyle=paper;patch.fillRect(-2,-2,4,4);
  patch.restore();
- for(const layer of [grid,ink,draw])patch.drawImage(layer,left,top,size,size,0,0,size,size);
+ for(const layer of [grid,ink,balloonLayer,draw])patch.drawImage(layer,left,top,size,size,0,0,size,size);
  const source=patch.getImageData(0,0,size,size).data;
  if(!lensFrame||lensFrame.width!==size||lensFrame.height!==size)lensFrame=lc.createImageData(size,size);
  const output=lensFrame.data;output.fill(0);
@@ -1109,6 +1112,7 @@ function finishCompositionPart(){
  if(composeStage===0){
   composeFirstBounds=boundsToIso(drawnBounds(practiceStrokes));
   if(composeTemplate==='magnifier')composeLensShape=captureDrawnLens(practiceStrokes);
+  if(composeTemplate==='balloon')composeBalloonOutline=practiceStrokes.map(pts=>pts.map(pointToIso));
   composeStage=1;feedbackReveal=false;practiceStrokes=[];strokePts=[];persistPracticeDraft();stats();paintPaper();
   $('score').textContent=(['signpost','kite'].includes(composeTemplate)?'Square ':'Circle ')+accuracy+'% · Now draw the '+(composeTemplate==='balloon'?'string':composeTemplate==='signpost'?'post':composeTemplate==='kite'?'tail':'handle');
   // A two-part drawing may use its last stroke on the first component.
@@ -1123,6 +1127,7 @@ function finishCompositionPart(){
  const rewardBounds=unionBounds(boundsFromIso(composeFirstBounds),drawnBounds(practiceStrokes));
  s.cash+=reward;s.last=Math.round((composeScores[0]+composeScores[1])/2);s.lastPay=reward;s.lastKind=s.mode==='balloon'?'balloon':'composition';
  if(composeTemplate==='magnifier'&&O)s.magnifiers.push(composeLensShape||{at:pointToIso(O),r:O.r/Math.max(1,H)});
+ if(composeTemplate==='balloon')finishHeliumBalloon();
  s.practiceDraft=null;feedbackReveal=true;save();stats();paintPaper(true);
  $('score').textContent='Composition '+s.last+'% · +'+cash(reward);
  showEarnings(reward,rewardBounds);
@@ -1135,7 +1140,9 @@ function finishPractice(){
  const pts=strokePts.map(p=>({...p}));
  practiceStrokes.push(pts);
  // Keep each segment separate: pen lifts never create artificial connections.
- s.paperMarks.push({kind:'ink',space:'iso',points:normalizeMark(pts)});
+ const mark={kind:'ink',space:'iso',points:normalizeMark(pts)};
+ if(isCompositionMode()&&composeTemplate==='balloon'&&composeBalloonId)mark.balloonId=composeBalloonId;
+ s.paperMarks.push(mark);
  s.strokes++;s.left=Math.max(0,s.left-1);strokePts=[];
  paintInk();paintPaper();
  const complete=componentLooksComplete();
@@ -1161,10 +1168,10 @@ draw.addEventListener('pointerdown',e=>{if(s.phase!=='draw'||drawing||erasing||(
 draw.addEventListener('pointermove',e=>{if(activePointer!==e.pointerId||(!drawing&&!erasing))return;e.preventDefault();for(const sample of stableSamples(e)){const p=stablePointer(sample);if(!p)continue;const pts=drawing?strokePts:eraserPts;const last=pts[pts.length-1];if(distance(p,last)>.65)pts.push(p)}if(drawing)requestPaperPaint();if(erasing)paintInk()});
 function preserveInterruptedStroke(){
  if(drawing&&strokePts.length>1&&pathLength(strokePts)>3)s.paperMarks.push({kind:'ink',space:'iso',points:normalizeMark(strokePts)});
- if(erasing&&eraserPts.length){eraseMagnification(eraserPts,eraserWidth());s.paperMarks.push({kind:'erase',space:'iso',size:eraserWidth(),points:normalizeMark(eraserPts)})}
+ if(erasing&&eraserPts.length){eraseMagnification(eraserPts,eraserWidth());eraseHeliumBalloons(eraserPts,eraserWidth());s.paperMarks.push({kind:'erase',space:'iso',size:eraserWidth(),points:normalizeMark(eraserPts)})}
  drawing=false;erasing=false;$('endTurn').disabled=false;strokePts=[];eraserPts=[];activePointer=null;strokeAnchor=null;save();paintInk();paintPaper();if(pendingResize)resizePaper();
 }
-draw.addEventListener('pointerup',e=>{if(activePointer!==e.pointerId)return;e.preventDefault();const p=stablePointer(e);if(drawing){if(p)strokePts.push(p);activePointer=null;strokeAnchor=null;finishPractice()}else if(erasing){if(p)eraserPts.push(p);eraseMagnification(eraserPts,eraserWidth());s.paperMarks.push({kind:'erase',space:'iso',size:eraserWidth(),points:normalizeMark(eraserPts)});erasing=false;eraserPts=[];activePointer=null;strokeAnchor=null;$('endTurn').disabled=false;save();paintInk();stats();$('score').textContent='Pencil erased · No strokes used'}if(pendingResize)resizePaper()});
+draw.addEventListener('pointerup',e=>{if(activePointer!==e.pointerId)return;e.preventDefault();const p=stablePointer(e);if(drawing){if(p)strokePts.push(p);activePointer=null;strokeAnchor=null;finishPractice()}else if(erasing){if(p)eraserPts.push(p);eraseMagnification(eraserPts,eraserWidth());eraseHeliumBalloons(eraserPts,eraserWidth());s.paperMarks.push({kind:'erase',space:'iso',size:eraserWidth(),points:normalizeMark(eraserPts)});erasing=false;eraserPts=[];activePointer=null;strokeAnchor=null;$('endTurn').disabled=false;save();paintInk();stats();$('score').textContent='Pencil erased · No strokes used'}if(pendingResize)resizePaper()});
 draw.addEventListener('pointercancel',e=>{if(activePointer!==e.pointerId)return;preserveInterruptedStroke();$('score').textContent='Stroke interrupted · Partial drawing saved';});
 window.addEventListener('pagehide',()=>{if(drawing||erasing)preserveInterruptedStroke()});
 function changeMode(mode){if(!upgradeActive('selector')||s.phase!=='draw'||locked||drawing)return;if(isCompositionMode(mode)&&(!(mode==='balloon'?balloonPlayable():composerPlayable())||s.left<2)){$('score').textContent='Two-part drawings require the active upgrade and at least 2 strokes left';return;}if(practiceStrokes.length||isCompositionMode()&&composeStage===1){$('score').textContent='Finish the current shape before switching modes';return}if(!availableStudy(mode))return;s.studyPreference=mode;s.mode=mode;s.tool='pencil';save();stats();createPrompt()}
@@ -1540,7 +1547,7 @@ function openShop(newVisit=true){
  // Available strokes are shared across both screens. Only Begin Turn refills the base maximum.
  if(newVisit&&!locked&&(practiceStrokes.length||isCompositionMode()&&composeStage===1))persistPracticeDraft();
  if(newVisit){s.shopBonusEarned=upgradeActive('secondWind');if(s.shopBonusEarned)s.left=Math.min(s.energy+1,s.left+1)}
-  s.phase='shop';s.tool='pencil';closeInspector();skillTool='trace';setSkillTool('trace');save();stats();renderTree();
+  s.phase='shop';lastBalloonTime=0;s.tool='pencil';closeInspector();skillTool='trace';setSkillTool('trace');save();stats();renderTree();
  $('receipt').textContent='Turn '+s.turn+' complete · Last '+s.lastKind+': '+s.last+'% accuracy · +'+cash(s.lastPay);
  $('shopFeedback').textContent='';
 }
@@ -1552,15 +1559,15 @@ $('endTurn').addEventListener('click',()=>{
 $('nextTurn').addEventListener('click',()=>{
  clearTimeout(advanceTimer);s.turn++;s.left=s.energy;s.shopBonusEarned=false;s.phase='draw';s.tool='pencil';
  if(s.practiceDraft)s.mode=s.practiceDraft.mode;else s.mode=selectedStudy();
- save();stats();requestAnimationFrame(()=>{resizePaper();if(!restorePracticeDraft())createPrompt()});
+ save();stats();requestAnimationFrame(()=>{resizePaper();if(!restorePracticeDraft())createPrompt();paintBalloons();ensureBalloonAnimation()});
 });
-$('reset').addEventListener('click',()=>{if(!confirm('Erase all game progress and hand-drawn upgrade shapes?'))return;clearTimeout(advanceTimer);s=blank();practiceStrokes=[];skillTool='trace';for(const id in nodeCanvas)nodeCanvas[id].strokes=[];setSkillTool('trace');strokePts=[];eraserPts=[];save();stats();resizePaper();createPrompt();renderTree()});
+$('reset').addEventListener('click',()=>{if(!confirm('Erase all game progress and hand-drawn upgrade shapes?'))return;clearTimeout(advanceTimer);s=blank();practiceStrokes=[];lastBalloonTime=0;balloonClock=0;paintBalloons();skillTool='trace';for(const id in nodeCanvas)nodeCanvas[id].strokes=[];setSkillTool('trace');strokePts=[];eraserPts=[];save();stats();resizePaper();createPrompt();renderTree()});
 window.addEventListener('resize',()=>{if(s.phase==='draw')resizePaper()});
 if(s.phase==='draw'&&s.left<=0)openShop(true);
  // Preserve incomplete old-save drawings. For a fresh prompt, stop older
  // saved mode choices bypassing the newly purchasable selector.
  if(s.phase==='draw'&&!s.practiceDraft)s.mode=selectedStudy();
- stats();renderTree();requestAnimationFrame(()=>{resizePaper();if(s.phase==='shop')openShop(false);else if(!restorePracticeDraft())createPrompt()});
+ stats();renderTree();requestAnimationFrame(()=>{resizePaper();if(s.phase==='shop')openShop(false);else if(!restorePracticeDraft())createPrompt();paintBalloons();ensureBalloonAnimation()});
 })();
 </script>
 </body>
