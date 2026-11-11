@@ -357,7 +357,7 @@ function nextSquareAngle(){
 const requestPaperPaint=()=>{if(paintFrame)return;paintFrame=requestAnimationFrame(()=>{paintFrame=0;paintPaper()})};
 function resizePaper(){if(drawing||erasing){pendingResize=true;return}pendingResize=false;const rect=$('paperArea').getBoundingClientRect(),w=Math.max(1,Math.round(rect.width)),h=Math.max(1,Math.round(rect.height));const ow=W,oh=H;if(W===w&&H===h)return;W=w;H=h;if(s.paperMarks.length&&!(Number(s.legacyAspect)>0)){s.legacyAspect=legacyPaperAspect();save()}draw.width=grid.width=ink.width=lens.width=balloonLayer.width=w;draw.height=grid.height=ink.height=lens.height=balloonLayer.height=h;
  if(ow&&oh){
-  if(practiceStrokes.length||isCompositionMode()&&composeStage===1){
+  if(practiceStrokes.length||isCompositionMode()&&composeStage>0){
    const iso=p=>{p.x=w/2+(p.x-ow/2)*h/oh;p.y*=h/oh};
    for(const p of [A,B,...strokePts,...practiceStrokes.flat()].filter(Boolean))iso(p);
    if(O){iso(O);if(Number.isFinite(O.r))O.r*=h/oh;if(Number.isFinite(O.rx))O.rx*=h/oh;if(Number.isFinite(O.ry))O.ry*=h/oh;if(Number.isFinite(O.bodyHeight))O.bodyHeight*=h/oh;if(Number.isFinite(O.bodyLean))O.bodyLean*=h/oh}
@@ -379,7 +379,7 @@ function persistPracticeDraft(){
  if(!practiceStrokes.length&&!(isCompositionMode()&&composeStage>0)){s.practiceDraft=null;save();return}
  s.practiceDraft={mode:s.mode,freeOn:!!s.freeOn,composeStage,composeScores:[...composeScores],composeTemplate,
   A:A?pointToIso(A):null,B:B?pointToIso(B):null,
-  O:O?{at:pointToIso(O),r:Number(O.r||0)/Math.max(1,H),rx:Number(O.rx||0)/Math.max(1,H),ry:Number(O.ry||0)/Math.max(1,H),bodyHeight:Number(O.bodyHeight||0)/Math.max(1,H),bodyLean:Number(O.bodyLean||0)/Math.max(1,H),angle:Number(O.angle)||0}:null,
+  O:O?{at:pointToIso(O),r:Number(O.r||0)/Math.max(1,H),rx:Number(O.rx||0)/Math.max(1,H),ry:Number(O.ry||0)/Math.max(1,H),bodyHeight:Number(O.bodyHeight||0)/Math.max(1,H),bodyLean:Number(O.bodyLean||0)/Math.max(1,H),angle:Number(O.angle)||0,lightAngle:Number(O.lightAngle)||0,lightElevation:Number(O.lightElevation)||0}:null,
   strokes:practiceStrokes.map(pts=>pts.map(pointToIso)),composeFirstBounds,composeLensShape,composeBalloonOutline,composeBalloonId};
  save();
 }
@@ -399,22 +399,24 @@ function discardFinishedBalloonDraft(){
 function restorePracticeDraft(){
  discardFinishedBalloonDraft();
  const d=s.practiceDraft;
- if(s.phase!=='draw'||!d||!Array.isArray(d.strokes)||(!d.strokes.length&&!(isCompositionMode(d.mode)&&d.composeStage===1))||s.left<1||d.mode!==s.mode||(d.mode==='line'&&!!d.freeOn!==!!s.freeOn))return false;
- if((d.mode==='circle'||d.mode==='square'||d.mode==='triangle')&&!d.O||d.mode==='line'&&!d.freeOn&&(!d.A||!d.B)||d.mode==='curve'&&(!d.A||!d.B||!d.O)||d.mode==='oval'&&(!d.O||!(d.O.rx>0)||!(d.O.ry>0))||d.mode==='cylinder'&&(!d.O||!(d.O.rx>0)||!(d.O.ry>0)||!(d.O.bodyHeight>0)||!d.A||!d.B)||isCompositionMode(d.mode)&&(!d.O||!d.A||!d.B))return false;
+ if(s.phase!=='draw'||!d||!Array.isArray(d.strokes)||(!d.strokes.length&&!(isCompositionMode(d.mode)&&d.composeStage>0))||s.left<1||d.mode!==s.mode||(d.mode==='line'&&!!d.freeOn!==!!s.freeOn))return false;
+ if((d.mode==='circle'||d.mode==='square'||d.mode==='triangle')&&!d.O||d.mode==='line'&&!d.freeOn&&(!d.A||!d.B)||d.mode==='curve'&&(!d.A||!d.B||!d.O)||d.mode==='oval'&&(!d.O||!(d.O.rx>0)||!(d.O.ry>0))||d.mode==='cylinder'&&(!d.O||!(d.O.rx>0)||!(d.O.ry>0)||!(d.O.bodyHeight>0)||!d.A||!d.B)||d.mode==='sphere'&&(!d.O||!(d.O.r>0)||!Number.isFinite(d.O.lightAngle)||!Number.isFinite(d.O.lightElevation))||isCompositionMode(d.mode)&&(!d.O||!d.A||!d.B))return false;
  try{
   A=d.A?pointFromIso(d.A):null;B=d.B?pointFromIso(d.B):null;
-  O=d.O?{...pointFromIso(d.O.at),r:d.O.r*H,rx:(Number(d.O.rx)||0)*H,ry:(Number(d.O.ry)||0)*H,bodyHeight:(Number(d.O.bodyHeight)||0)*H,bodyLean:(Number(d.O.bodyLean)||0)*H,angle:Number.isFinite(d.O.angle)?d.O.angle:0}:null;
-  composeStage=isCompositionMode(d.mode)?(d.composeStage===1?1:0):0;composeScores=Array.isArray(d.composeScores)?d.composeScores.slice(0,1):[];composeTemplate=['balloon','magnifier','signpost','kite','cylinder'].includes(d.composeTemplate)?d.composeTemplate:'balloon';
+  O=d.O?{...pointFromIso(d.O.at),r:d.O.r*H,rx:(Number(d.O.rx)||0)*H,ry:(Number(d.O.ry)||0)*H,bodyHeight:(Number(d.O.bodyHeight)||0)*H,bodyLean:(Number(d.O.bodyLean)||0)*H,angle:Number.isFinite(d.O.angle)?d.O.angle:0,lightAngle:Number(d.O.lightAngle)||0,lightElevation:Number(d.O.lightElevation)||0}:null;
+  composeStage=isCompositionMode(d.mode)?(d.mode==='sphere'?clamp(Math.floor(Number(d.composeStage)||0),0,3):d.composeStage===1?1:0):0;composeScores=Array.isArray(d.composeScores)?d.composeScores.slice(0,d.mode==='sphere'?3:1):[];composeTemplate=['balloon','magnifier','signpost','kite','cylinder','sphere'].includes(d.composeTemplate)?d.composeTemplate:'balloon';
   composeFirstBounds=d.composeFirstBounds&&['minX','maxX','minY','maxY'].every(k=>Number.isFinite(d.composeFirstBounds[k]))?d.composeFirstBounds:null;
    composeLensShape=d.composeLensShape&&Array.isArray(d.composeLensShape.profile)?d.composeLensShape:null;
    composeBalloonOutline=Array.isArray(d.composeBalloonOutline)?d.composeBalloonOutline:null;
    composeBalloonId=d.composeBalloonId||null;
   practiceStrokes=d.strokes.map(pts=>pts.map(pointFromIso)).filter(pts=>pts.length>=2);
-  if(!practiceStrokes.length&&!(isCompositionMode(d.mode)&&composeStage===1))return false;
+  if(!practiceStrokes.length&&!(isCompositionMode(d.mode)&&composeStage>0))return false;
   drawing=false;locked=false;strokePts=[];
   stats();paintPaper();
-  const objectName=composeTemplate==='cylinder'?'cylinder':composeTemplate==='balloon'?'balloon':composeTemplate==='signpost'?'signpost':composeTemplate==='kite'?'kite':'magnifying glass';
-  $('score').textContent=isCompositionMode()
+  const objectName=composeTemplate==='sphere'?'sphere':composeTemplate==='cylinder'?'cylinder':composeTemplate==='balloon'?'balloon':composeTemplate==='signpost'?'signpost':composeTemplate==='kite'?'kite':'magnifying glass';
+  $('score').textContent=s.mode==='sphere'
+   ?'Part '+(composeStage+1)+' of 4 · '+(practiceStrokes.length?'Continue ':'Draw ')+sphereStageNames[composeStage]+' · '+s.left+' stroke'+(s.left===1?'':'s')+' available'
+   :isCompositionMode()
    ?composeStage===1
     ?'Part 2 of 2 · Draw the '+(composeTemplate==='cylinder'?'body':composeTemplate==='balloon'?'string':'line')+' from A to B to finish your '+objectName+' · '+s.left+' stroke'+(s.left===1?'':'s')+' available'
     :'Part 1 of 2 · Continue the '+(composeTemplate==='cylinder'?'oval':['signpost','kite'].includes(composeTemplate)?'square':'circle')+' for your '+objectName
@@ -446,7 +448,16 @@ function createPrompt(){
  s.mode=selectedStudy();
  strokePts=[];practiceStrokes=[];s.practiceDraft=null;drawing=false;locked=false;feedbackReveal=false;composeStage=0;composeScores=[];composeFirstBounds=null;composeLensShape=null;composeBalloonOutline=null;composeBalloonId=null;
  A=null;B=null;O=null;
- if(s.mode==='cylinder'){
+ if(s.mode==='sphere'){
+  composeTemplate='sphere';
+  const largest=Math.max(27,Math.min(W*.145,H*.165,85));
+  O={x:0,y:0,r:randomBetween(largest*.74,largest),lightAngle:randomBetween(-2.55,-.59),lightElevation:randomBetween(.36,.55)};
+  const light=sphereLightVector(),m=Math.hypot(light.x,light.y)||1;
+  A={x:0,y:0};B={x:0,y:0};
+  placePrompt([...sphereContourGuide(),...sphereTerminatorGuide(),...sphereShadeGuide(),...sphereShadowGuide(),
+   {x:light.x/m*(O.r+40),y:light.y/m*(O.r+40)}]);
+ }
+ else if(s.mode==='cylinder'){
   composeTemplate='cylinder';
   const maximum=Math.max(26,Math.min(W*.16,H*.14,92));
   const rx=randomBetween(maximum*.73,maximum),ry=rx*randomBetween(.34,.58);
@@ -741,7 +752,8 @@ function squareCorners(){
 // Keep the completed ideal outline on screen until the next prompt. A queued
 // animation frame or a responsive resize must not erase scoring feedback.
 function paintPaper(reveal=feedbackReveal){dc.clearRect(0,0,W,H);
- if(s.mode==='cylinder'&&O){
+ if(s.mode==='sphere'&&O){paintSphereStudy(reveal)}
+ else if(s.mode==='cylinder'&&O){
   if(composeStage===0){
    if(reveal){dc.save();dc.beginPath();dc.ellipse(O.x,O.y,O.rx,O.ry,O.angle||0,0,2*Math.PI);
     dc.strokeStyle='#51a888';dc.lineWidth=2.4;dc.setLineDash([7,5]);dc.stroke();dc.restore()}
@@ -1897,6 +1909,7 @@ function circleLooksComplete(){
  );
 }
 function componentLooksComplete(){
+ if(s.mode==='sphere')return sphereStageLooksComplete();
  if(s.mode==='cylinder')return composeStage===0?ovalLooksComplete():cylinderBodyLooksComplete();
  if(s.mode==='oval')return ovalLooksComplete();
  if(s.mode==='curve')return curveLooksComplete();
@@ -2016,11 +2029,11 @@ function finishPractice(){
  if(isCompositionMode()){
   // Reserve one stroke for the second component. With Endurance II, any
   // spare strokes can repair an unfinished circle or an unfinished handle.
-  const reserve=composeStage===0?1:0;
+  const reserve=s.mode==='sphere'?3-composeStage:composeStage===0?1:0;
   if(complete||s.left<=reserve)finishCompositionPart();
   else{
    persistPracticeDraft();stats();
-   $('score').textContent='Continue '+(composeStage===0?(composeTemplate==='cylinder'?'the top oval':['signpost','kite'].includes(composeTemplate)?'the square':'the circle'):composeTemplate==='cylinder'?'the body':composeTemplate==='balloon'?'the string':composeTemplate==='signpost'?'the post':'the handle')+' · '+s.left+' stroke'+(s.left===1?'':'s')+' left';
+   $('score').textContent='Continue '+(s.mode==='sphere'?sphereStageNames[composeStage]:composeStage===0?(composeTemplate==='cylinder'?'the top oval':['signpost','kite'].includes(composeTemplate)?'the square':'the circle'):composeTemplate==='cylinder'?'the body':composeTemplate==='balloon'?'the string':composeTemplate==='signpost'?'the post':'the handle')+' · '+s.left+' stroke'+(s.left===1?'':'s')+' left';
   }
   return;
  }
@@ -2041,10 +2054,10 @@ function preserveInterruptedStroke(){
 draw.addEventListener('pointerup',e=>{if(activePointer!==e.pointerId)return;e.preventDefault();const p=stablePointer(e);if(drawing){if(p)strokePts.push(p);activePointer=null;strokeAnchor=null;finishPractice()}else if(erasing){if(p)eraserPts.push(p);eraseMagnification(eraserPts,eraserWidth());const eraseResult=eraseHeliumBalloons(eraserPts,eraserWidth());s.paperMarks.push({kind:'erase',space:'iso',size:eraserWidth(),points:normalizeMark(eraserPts)});erasing=false;eraserPts=[];activePointer=null;strokeAnchor=null;$('endTurn').disabled=false;save();paintInk();stats();$('score').textContent=eraseResult.tails?'Balloon tail erased · Balloon remains intact':eraseResult.popped?'Balloon popped · Latex falling':eraseResult.removed?'Popped latex erased':'Pencil erased · No strokes used'}if(pendingResize)resizePaper()});
 draw.addEventListener('pointercancel',e=>{if(activePointer!==e.pointerId)return;preserveInterruptedStroke();$('score').textContent='Stroke interrupted · Partial drawing saved';});
 window.addEventListener('pagehide',()=>{if(drawing||erasing)preserveInterruptedStroke()});
-function changeMode(mode){if(!upgradeActive('selector')||s.phase!=='draw'||locked||drawing)return;if(isCompositionMode(mode)&&(!(mode==='balloon'?balloonPlayable():mode==='cylinder'?cylinderPlayable():composerPlayable())||s.left<2)){$('score').textContent='Two-part drawings require the active upgrade and at least 2 strokes left';return;}if(practiceStrokes.length||isCompositionMode()&&composeStage===1){$('score').textContent='Finish the current shape before switching modes';return}if(!availableStudy(mode))return;s.studyPreference=mode;s.mode=mode;s.tool='pencil';save();stats();createPrompt()}
+function changeMode(mode){if(!upgradeActive('selector')||s.phase!=='draw'||locked||drawing)return;if(isCompositionMode(mode)&&(!(mode==='sphere'?spherePlayable():mode==='balloon'?balloonPlayable():mode==='cylinder'?cylinderPlayable():composerPlayable())||s.left<requiredStudyStrokes(mode))){$('score').textContent=mode==='sphere'?'Sphere Studies requires four strokes and both prerequisites':'Two-part drawings require the active upgrade and at least 2 strokes left';return;}if(practiceStrokes.length||isCompositionMode()&&composeStage>0){$('score').textContent='Finish the current shape before switching modes';return}if(!availableStudy(mode))return;s.studyPreference=mode;s.mode=mode;s.tool='pencil';save();stats();createPrompt()}
 $('lineMode').addEventListener('click',()=>changeMode('line'));
 $('triangleMode').addEventListener('click',()=>changeMode('triangle'));
-$('circleMode').addEventListener('click',()=>changeMode('circle'));$('ovalMode').addEventListener('click',()=>changeMode('oval'));$('cylinderMode').addEventListener('click',()=>changeMode('cylinder'));$('curveMode').addEventListener('click',()=>changeMode('curve'));$('squareMode').addEventListener('click',()=>changeMode('square'));$('balloonMode').addEventListener('click',()=>changeMode('balloon'));$('composeMode').addEventListener('click',()=>changeMode('compose'));
+$('circleMode').addEventListener('click',()=>changeMode('circle'));$('ovalMode').addEventListener('click',()=>changeMode('oval'));$('cylinderMode').addEventListener('click',()=>changeMode('cylinder'));$('sphereMode').addEventListener('click',()=>changeMode('sphere'));$('curveMode').addEventListener('click',()=>changeMode('curve'));$('squareMode').addEventListener('click',()=>changeMode('square'));$('balloonMode').addEventListener('click',()=>changeMode('balloon'));$('composeMode').addEventListener('click',()=>changeMode('compose'));
 for(const [button,base,line] of [['composeMagnifier','circle','diagonal'],['composeSignpost','square','down'],['composeKite','square','diagonal']]){
  $(button).addEventListener('click',()=>{
   if(s.phase!=='draw'||s.mode!=='compose'||locked||drawing||practiceStrokes.length||composeStage>0||!composerPlayable())return;
@@ -2054,7 +2067,7 @@ for(const [button,base,line] of [['composeMagnifier','circle','diagonal'],['comp
 // Grid activation is controlled only by erasing / retracing its owned skill-tree shape.
 // Freehand activation is controlled only by erasing / retracing its owned skill-tree shape.
 $('pencilTool').addEventListener('click',()=>{s.tool='pencil';save();stats()});
-$('eraserTool').addEventListener('click',()=>{if(practiceStrokes.length||isCompositionMode()&&composeStage===1){$('score').textContent='Finish the current shape before erasing';return}s.tool='eraser';save();stats()});
+$('eraserTool').addEventListener('click',()=>{if(practiceStrokes.length||isCompositionMode()&&composeStage>0){$('score').textContent='Finish the current shape before erasing';return}s.tool='eraser';save();stats()});
 $('eraserSize').addEventListener('input',e=>{if(!upgradeActive('eraserSize'))return;s.eraserSize=Math.round(Math.min(64,Math.max(8,Number(e.target.value)||30))/2)*2;$('eraserSizeValue').textContent=s.eraserSize+' px';save()});
 // Each upgrade has its own canvas. Unfinished work consists of separate strokes;
 // lifting a finger never connects strokes with a straight line or loses progress.
@@ -2084,6 +2097,12 @@ const ovalShopGuide=()=>Array.from({length:121},(_,i)=>{
  const t=i*2*Math.PI/120,angle=-.35,x=33*Math.cos(t),y=22*Math.sin(t);
  return {x:48+x*Math.cos(angle)-y*Math.sin(angle),y:48+x*Math.sin(angle)+y*Math.cos(angle)};
 });
+const sphereShopGuide=()=>{
+ const circle=Array.from({length:101},(_,i)=>{const t=2*Math.PI*i/100;return {x:48+31*Math.cos(t),y:43+31*Math.sin(t)}});
+ const boundary=Array.from({length:41},(_,i)=>{const t=Math.PI*i/40;return {x:48+14*Math.sin(t),y:43+31*Math.cos(t)}});
+ const shadow=Array.from({length:45},(_,i)=>{const t=2*Math.PI*i/44;return {x:60+25*Math.cos(t),y:81+8*Math.sin(t)}});
+ return [...circle,...boundary,...shadow];
+};
 const cylinderShopGuide=()=>{
  const pts=[],cx=48,ty=27,rx=27,ry=10;
  // Start/end the top oval at its left edge so the body can join smoothly.
@@ -2104,6 +2123,7 @@ const guides={
  curve:curveShopGuide(),
  oval:ovalShopGuide(),
  cylinder:cylinderShopGuide(),
+ sphere:sphereShopGuide(),
  triangle:polygonGuide(3,34,-Math.PI/2),
  square:polygonGuide(4,34,-Math.PI/4),
  // Two opposing arrows, traced to unlock switching drawing studies.
