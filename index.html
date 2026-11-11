@@ -1020,6 +1020,169 @@ function finishHeliumBalloon(){
  if(s.balloons.length>36)s.balloons.shift();
  paintInk();paintBalloons();ensureBalloonAnimation();
 }
+
+/* Popped balloons become lightweight, flexible latex with the original string
+   still attached. All dynamic nodes are saved in paper-normalized coordinates. */
+function popHeliumBalloon(o){
+ if(!o?.at||o.popped)return false;
+ const center=pointFromIso(o.at),neck=balloonNeck(o),radius=clamp(o.radius*H,13,110);
+ const angle=Number(o.angle)||0,vx=(o.vel?.[0]||0)*H,vy=(o.vel?.[1]||0)*H;
+ const flaps=[];
+ for(let k=0;k<3;k++){
+  const nodes=[],previous=[],lengths=[];
+  for(let i=0;i<9;i++){
+   const t=i/8;let p={...neck};
+   if(i&&k===2)p={x:neck.x+radius*.14*Math.sin(t*Math.PI),y:neck.y-2*radius*t};
+   else if(i){
+    const theta=Math.PI/2+(k===0?1:-1)*Math.PI*t,rr=balloonRenderedRadius(o,theta),a=theta+angle;
+    p={x:center.x+rr*Math.cos(a),y:center.y+rr*Math.sin(a)};
+   }
+   const fling=(k===0?-1:k===1?1:.3)*Math.sin(Math.PI*t)*70;
+   nodes.push(pointToIso(p));
+   previous.push(pointToIso({x:p.x-(vx+fling)*.022,y:p.y-(vy-32*t)*.022}));
+   if(i)lengths.push(Math.max(3,distance(p,pointFromIso(nodes[i-1]))*.72)/H);
+  }
+  flaps.push({nodes,previous,lengths});
+ }
+ const rope=balloonRope(o);
+ if(rope.length===10){rope[0]={...neck};o.rope=rope.map(pointToIso);o.ropePrev=rope.map(pointToIso)}
+ o.popped=true;
+ o.popState={knot:pointToIso(neck),knotPrev:pointToIso({x:neck.x-vx*.022,y:neck.y-vy*.022}),age:0,flaps};
+ o.dents=[];return true;
+}
+function poppedLatexNodes(o){
+ if(!Array.isArray(o.popState?.flaps))return [];
+ return o.popState.flaps.flatMap(f=>Array.isArray(f.nodes)?
+  f.nodes.filter(p=>Array.isArray(p)&&p.length===2&&p.every(Number.isFinite)).map(pointFromIso):[]);
+}
+function paintPoppedLatex(o){
+ const state=o.popState;if(!state||!Array.isArray(state.flaps)||!Array.isArray(state.knot))return;
+ const size=clamp(o.radius*H,13,110),hue=Number.isFinite(o.hue)?o.hue:190;
+ bc.save();bc.lineJoin='round';bc.lineCap='round';
+ for(let k=0;k<state.flaps.length;k++){
+  const flap=state.flaps[k];if(!Array.isArray(flap.nodes)||flap.nodes.length<3)continue;
+  const points=flap.nodes.map(pointFromIso);
+  if(!points.every(p=>Number.isFinite(p.x)&&Number.isFinite(p.y)))continue;
+  const left=[],right=[];
+  for(let i=0;i<points.length;i++){
+   const before=points[Math.max(0,i-1)],after=points[Math.min(points.length-1,i+1)],p=points[i];
+   const dx=after.x-before.x,dy=after.y-before.y,len=Math.hypot(dx,dy)||1,t=i/(points.length-1);
+   const width=size*(.07+.11*Math.sin(Math.PI*Math.pow(t,.72)))*(1-.38*t);
+   const fold=1+.18*Math.sin(17*t+k*1.8+state.age*1.3);
+   const nx=-dy/len*width*fold,ny=dx/len*width*fold;
+   left.push({x:p.x+nx,y:p.y+ny});right.push({x:p.x-nx*.7,y:p.y-ny*.7});
+  }
+  bc.beginPath();bc.moveTo(left[0].x,left[0].y);
+  for(const p of left.slice(1))bc.lineTo(p.x,p.y);
+  for(let i=right.length-1;i>=0;i--)bc.lineTo(right[i].x,right[i].y);
+  bc.closePath();
+  const grad=bc.createLinearGradient(points[0].x-size*.1,points[0].y-size*.1,points.at(-1).x+size*.1,points.at(-1).y+size*.1);
+  grad.addColorStop(0,`hsla(${hue},65%,39%,.96)`);
+  grad.addColorStop(.43,`hsla(${hue},73%,62%,.92)`);
+  grad.addColorStop(.73,`hsla(${hue},68%,46%,.94)`);
+  grad.addColorStop(1,`hsla(${hue},70%,34%,.99)`);
+  bc.fillStyle=grad;bc.fill();bc.strokeStyle=`hsla(${hue},45%,25%,.8)`;bc.lineWidth=1.1;bc.stroke();
+  bc.beginPath();
+  for(let i=1;i<points.length-1;i++){bc.moveTo(points[i].x,points[i].y);bc.lineTo(left[i].x,left[i].y)}
+  bc.strokeStyle='rgba(255,255,255,.25)';bc.lineWidth=.65;bc.stroke();
+ }
+ const knot=pointFromIso(state.knot);
+ bc.beginPath();bc.moveTo(knot.x-4,knot.y-2);bc.lineTo(knot.x,knot.y+5);bc.lineTo(knot.x+4,knot.y-2);bc.closePath();
+ bc.fillStyle=`hsla(${hue},69%,38%,.98)`;bc.fill();
+ bc.strokeStyle='rgba(42,42,42,.6)';bc.lineWidth=.9;bc.stroke();bc.restore();
+}
+function simulatePoppedBalloon(o,dt,bodies){
+ const state=o.popState;
+ if(!Array.isArray(state?.knot)||!Array.isArray(state.flaps))return;
+ state.age=Math.min(3600,(Number(state.age)||0)+dt);
+ const ground=H-4,g=9.81*65,damping=Math.pow(.945,dt*30),wind=7*Math.sin(balloonClock*.65+(Number(o.seed)||0)*.1);
+ const knot=pointFromIso(state.knot);
+ const former=Array.isArray(state.knotPrev)?pointFromIso(state.knotPrev):{...knot};
+ const old={...knot};
+ knot.x+=clamp((knot.x-former.x)*damping+wind*dt*dt,-205*dt,205*dt);
+ knot.y+=clamp((knot.y-former.y)*damping+g*dt*dt,-205*dt,205*dt);
+ const nextPrev={...old};
+ if(knot.y>ground){const impact=Math.max(0,knot.y-old.y);knot.y=ground;nextPrev.y=ground+impact*.07;nextPrev.x=knot.x-(knot.x-old.x)*.65}
+ knot.x=clamp(knot.x,3,W-3);knot.y=clamp(knot.y,3,ground);
+ state.knot=pointToIso(knot);state.knotPrev=pointToIso(nextPrev);
+ // Thin strips are Verlet particles linked by damped tensile constraints.
+ // Their tips flutter, fold and settle without rigid-body balloon behavior.
+ for(const flap of state.flaps){
+  if(!Array.isArray(flap.nodes)||flap.nodes.length!==9)continue;
+  const nodes=flap.nodes.map(pointFromIso);
+  const prev=Array.isArray(flap.previous)&&flap.previous.length===9?
+   flap.previous.map(pointFromIso):nodes.map(p=>({...p}));
+  for(let i=1;i<nodes.length;i++){
+   const p=nodes[i],q=prev[i]||p,oldPoint={...p};
+   const turbulence=(wind*.7+Math.sin(state.age*12+i*1.3+(Number(o.seed)||0))*12*Math.exp(-state.age*2))*dt*dt;
+   p.x+=clamp((p.x-q.x)*damping+turbulence,-260*dt,260*dt);
+   p.y+=clamp((p.y-q.y)*damping+g*(.7+i*.026)*dt*dt,-245*dt,245*dt);
+   prev[i]=oldPoint;
+  }
+  for(let pass=0;pass<7;pass++){
+   nodes[0]={...knot};
+   for(let i=1;i<nodes.length;i++){
+    const a=nodes[i-1],b=nodes[i],dx=b.x-a.x,dy=b.y-a.y,dist=Math.hypot(dx,dy)||.001;
+    const segment=clamp((Number(flap.lengths?.[i-1])||.02)*H,2.5,90);
+    const excess=(dist-segment)/dist;
+    if(i===1){b.x-=dx*excess*.88;b.y-=dy*excess*.88}
+    else{a.x+=dx*excess*.35;a.y+=dy*excess*.35;b.x-=dx*excess*.55;b.y-=dy*excess*.55}
+   }
+   for(let i=1;i<nodes.length;i++){
+    const p=nodes[i];
+    // Draping over still-inflated neighbors.
+    for(const b of bodies){
+     const dx=p.x-b.p.x,dy=p.y-b.p.y,dist=Math.hypot(dx,dy);
+     if(dist>b.r*1.9+3)continue;
+     const radius=balloonContactRadius(b.o,Math.atan2(dy,dx))+1;
+     if(dist<radius){const nx=dist>.001?dx/dist:1,ny=dist>.001?dy/dist:0;p.x=b.p.x+nx*radius;p.y=b.p.y+ny*radius}
+    }
+    p.x=clamp(p.x,2,W-2);p.y=clamp(p.y,2,ground);
+   }
+  }
+  nodes[0]={...knot};prev[0]={...nextPrev};
+  for(let i=1;i<nodes.length;i++)if(nodes[i].y>=ground-.3){
+   prev[i].x=nodes[i].x-(nodes[i].x-prev[i].x)*.36;prev[i].y=nodes[i].y;
+  }
+  flap.nodes=nodes.map(pointToIso);flap.previous=prev.map(pointToIso);
+ }
+ // The same knotted string falls with the shell and drapes across the floor.
+ const rope=balloonRope(o);
+ const ropePrev=Array.isArray(o.ropePrev)&&o.ropePrev.length===10?
+  o.ropePrev.map(pointFromIso):rope.map(p=>({...p}));
+ const segment=Math.max(3,(o.stringLength||.15)*H/9);
+ for(let i=1;i<rope.length;i++){
+  const p=rope[i],prev=ropePrev[i]||p,oldPoint={...p};
+  p.x+=clamp((p.x-prev.x)*.957+wind*dt*dt*.65,-240*dt,240*dt);
+  p.y+=clamp((p.y-prev.y)*.957+g*dt*dt*.77,-240*dt,240*dt);
+  ropePrev[i]=oldPoint;
+ }
+ for(let pass=0;pass<6;pass++){
+  rope[0]={...knot};
+  for(let i=1;i<rope.length;i++){
+   const a=rope[i-1],b=rope[i],dx=b.x-a.x,dy=b.y-a.y,len=Math.hypot(dx,dy)||.001,diff=(len-segment)/len;
+   if(i===1){b.x-=dx*diff;b.y-=dy*diff}
+   else{a.x+=dx*diff*.42;a.y+=dy*diff*.42;b.x-=dx*diff*.55;b.y-=dy*diff*.55}
+  }
+  for(let i=1;i<rope.length;i++){
+   const p=rope[i];
+   for(const b of bodies){
+    const dx=p.x-b.p.x,dy=p.y-b.p.y,dist=Math.hypot(dx,dy);
+    if(dist>b.r*1.9+3)continue;
+    const rad=balloonContactRadius(b.o,Math.atan2(dy,dx))+1.3;
+    if(dist<rad){const nx=dist>.001?dx/dist:1,ny=dist>.001?dy/dist:0;p.x=b.p.x+nx*rad;p.y=b.p.y+ny*rad}
+   }
+   p.x=clamp(p.x,2,W-2);p.y=clamp(p.y,2,ground);
+  }
+ }
+ rope[0]={...knot};ropePrev[0]={...nextPrev};
+ for(let i=1;i<rope.length;i++)if(rope[i].y>=ground-.3){
+  ropePrev[i].x=rope[i].x-(rope[i].x-ropePrev[i].x)*.45;ropePrev[i].y=rope[i].y;
+ }
+ o.rope=rope.map(pointToIso);o.ropePrev=ropePrev.map(pointToIso);
+ o.at=pointToIso(knot);o.vel=[(knot.x-old.x)/Math.max(.001,dt*H),(knot.y-old.y)/Math.max(.001,dt*H)];
+}
+
 function paintBalloons(){
  if(!W||!H)return;
  bc.clearRect(0,0,W,H);
