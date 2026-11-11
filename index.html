@@ -2127,10 +2127,13 @@ const ovalShopGuide=()=>Array.from({length:121},(_,i)=>{
  return {x:48+x*Math.cos(angle)-y*Math.sin(angle),y:48+x*Math.sin(angle)+y*Math.cos(angle)};
 });
 const sphereShopGuide=()=>{
- const circle=Array.from({length:101},(_,i)=>{const t=2*Math.PI*i/100;return {x:48+31*Math.cos(t),y:43+31*Math.sin(t)}});
- const boundary=Array.from({length:41},(_,i)=>{const t=Math.PI*i/40;return {x:48+14*Math.sin(t),y:43+31*Math.cos(t)}});
- const shadow=Array.from({length:45},(_,i)=>{const t=2*Math.PI*i/44;return {x:60+25*Math.cos(t),y:81+8*Math.sin(t)}});
- return [...circle,...boundary,...shadow];
+ // One continuous, traceable outline. The extra return arc follows the
+ // sphere's already visible rim instead of crossing it with phantom lines.
+ const circle=Array.from({length:101},(_,i)=>{const t=Math.PI/2+2*Math.PI*i/100;return {x:48+30*Math.cos(t),y:40+30*Math.sin(t)}});
+ const terminator=Array.from({length:49},(_,i)=>{const t=Math.PI*i/48;return {x:48+13*Math.sin(t),y:40+30*Math.cos(t)}});
+ const rim=Array.from({length:49},(_,i)=>{const t=Math.PI*i/48;return {x:48-30*Math.sin(t),y:40-30*Math.cos(t)}});
+ const cast=Array.from({length:65},(_,i)=>{const t=-Math.PI/2+2*Math.PI*i/64;return {x:55+22*Math.cos(t),y:81+8*Math.sin(t)}});
+ return [...circle,...terminator.slice(1),...rim.slice(1),...cast];
 };
 const cylinderShopGuide=()=>{
  const pts=[],cx=48,ty=27,rx=27,ry=10;
