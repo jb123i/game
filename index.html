@@ -293,7 +293,8 @@ function guideFadeStrength(key=guideStudyKey()){
  return clamp((mean-72)/23)*clamp((history.length-2)/3);
 }
 function recordGuideAccuracy(score,key=guideStudyKey()){
- if(!Number.isFinite(score))return;
+ // New owners always begin fully guided, even if they mastered an exercise earlier.
+ if(!adaptiveGuidesPlayable()||!Number.isFinite(score))return;
  if(!s.guideMastery||typeof s.guideMastery!=='object'||Array.isArray(s.guideMastery))s.guideMastery={};
  const history=guideHistory(key);
  history.push(Math.round(clamp(score,0,100)));
@@ -319,7 +320,7 @@ function refreshGuideUI(){
 }
 $('showGuides').addEventListener('click',()=>{
  if(!adaptiveGuidesPlayable()||s.phase!=='draw'||guideFadeOpacity()>=.995)return;
- showFullGuides=!showFullGuides;refreshGuideUI();paintPaper();
+ showFullGuides=!showFullGuides;stats();paintPaper();
 });
 
 function reconcileUpgradeEffects(){
