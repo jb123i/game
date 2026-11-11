@@ -636,6 +636,49 @@ function lensOutlinePath(ctx,glass,inset=0,begin=0,end=Math.PI*2){
    Composite the exact grid, ink and moving pencil beneath it. Its clear aperture
    samples this image with smooth convex-lens magnification, radial refraction,
    and subtle wavelength dispersion. The hand-drawn rim stays unwarped. */
+
+// Apply erasing to the optical effect as well as pencil ink. Each lens owns
+// its own mask: future lenses are not damaged by eraser marks made earlier.
+function eraseMagnification(points,width){
+ if(!Array.isArray(points)||!points.length)return;
+ const erase={points:normalizeMark(points),size:width};
+ const within=glass=>{
+  if(!glass||!Array.isArray(glass.at)||!Number.isFinite(glass.r))return false;
+  const center=pointFromIso(glass.at);
+  const extent=glass.r*H*(Array.isArray(glass.profile)&&glass.profile.length?Math.max(...glass.profile):1);
+  return (points.length>1?polyDist(center,points):distance(center,points[0]))<=extent+width/2+3;
+ };
+ for(const glass of s.magnifiers||[]){
+  if(within(glass)){if(!Array.isArray(glass.erasures))glass.erasures=[];glass.erasures.push(erase)}
+ }
+ if(isCompositionMode()&&composeTemplate==='magnifier'&&composeStage===1&&O){
+  if(!composeLensShape)composeLensShape={at:pointToIso(O),r:O.r/H};
+  if(within(composeLensShape)){if(!Array.isArray(composeLensShape.erasures))composeLensShape.erasures=[];composeLensShape.erasures.push(erase);persistPracticeDraft()}
+ }
+}
+function paintLensErasures(glass){
+ const masks=Array.isArray(glass.erasures)?glass.erasures:[];
+ if(!masks.length&&(!erasing||eraserPts.length===0))return;
+ lc.save();lc.globalCompositeOperation='destination-out';
+ function wipe(points,width){
+  if(!points.length)return;
+  lc.lineWidth=width;lc.lineCap='round';lc.lineJoin='round';
+  lc.strokeStyle='#000';lc.fillStyle='#000';
+  if(points.length===1){lc.beginPath();lc.arc(points[0].x,points[0].y,width/2,0,Math.PI*2);lc.fill();return}
+  lc.beginPath();lc.moveTo(points[0].x,points[0].y);
+  for(let i=1;i<points.length;i++)lc.lineTo(points[i].x,points[i].y);
+  lc.stroke();
+ }
+ for(const mark of masks){
+  if(!mark||!Array.isArray(mark.points))continue;
+  const points=mark.points.filter(p=>Array.isArray(p)&&p.length===2&&p.every(Number.isFinite)).map(pointFromIso);
+  wipe(points,clamp(Number(mark.size)||30,8,64));
+ }
+ // Show the current eraser stroke live, without saving it until pointerup.
+ if(erasing&&eraserPts.length)wipe(eraserPts,eraserWidth());
+ lc.restore();
+}
+
 function paintLens(){
  if(!W||!H)return;
  lc.clearRect(0,0,W,H);
@@ -650,13 +693,13 @@ function paintLens(){
    glass.contourChecked=true;upgradedOldLens=true;
    if(shape){glass.at=shape.at;glass.r=shape.r;glass.profile=shape.profile}
   }
-  paintMagnifierLens({...pointFromIso(glass.at),r:glass.r*H,profile:glass.profile});
+  paintMagnifierLens({...pointFromIso(glass.at),r:glass.r*H,profile:glass.profile,erasures:glass.erasures});
  }
  if(upgradedOldLens)save();
  // The active lens starts working after its circle is finished; avoid
  // double rendering once the completed lens is saved.
  if(isCompositionMode()&&composeTemplate==='magnifier'&&composeStage===1&&O&&!feedbackReveal)
-  paintMagnifierLens(composeLensShape?{...pointFromIso(composeLensShape.at),r:composeLensShape.r*H,profile:composeLensShape.profile}:O);
+  paintMagnifierLens(composeLensShape?{...pointFromIso(composeLensShape.at),r:composeLensShape.r*H,profile:composeLensShape.profile,erasures:composeLensShape.erasures}:O);
 }
 function paintMagnifierLens(glass){
  // Old save files contain round lenses; new ones have an exact hand-drawn
@@ -739,7 +782,7 @@ function paintMagnifierLens(glass){
  lc.strokeStyle='rgba(255,255,255,.72)';lc.lineWidth=2;lc.stroke();
  lensOutlinePath(lc,glass,4,.35,1.85);
  lc.strokeStyle='rgba(53,108,110,.14)';lc.lineWidth=1.3;lc.stroke();
- lc.restore();
+ lc.restore(); paintLensErasures(glass);
 }
 
 function eraserBegin(e){if(!upgradeActive('eraser'))return;
@@ -1117,10 +1160,10 @@ draw.addEventListener('pointerdown',e=>{if(s.phase!=='draw'||drawing||erasing||(
 draw.addEventListener('pointermove',e=>{if(activePointer!==e.pointerId||(!drawing&&!erasing))return;e.preventDefault();for(const sample of stableSamples(e)){const p=stablePointer(sample);if(!p)continue;const pts=drawing?strokePts:eraserPts;const last=pts[pts.length-1];if(distance(p,last)>.65)pts.push(p)}if(drawing)requestPaperPaint();if(erasing)paintInk()});
 function preserveInterruptedStroke(){
  if(drawing&&strokePts.length>1&&pathLength(strokePts)>3)s.paperMarks.push({kind:'ink',space:'iso',points:normalizeMark(strokePts)});
- if(erasing&&eraserPts.length)s.paperMarks.push({kind:'erase',space:'iso',size:eraserWidth(),points:normalizeMark(eraserPts)});
+ if(erasing&&eraserPts.length){eraseMagnification(eraserPts,eraserWidth());s.paperMarks.push({kind:'erase',space:'iso',size:eraserWidth(),points:normalizeMark(eraserPts)})}
  drawing=false;erasing=false;$('endTurn').disabled=false;strokePts=[];eraserPts=[];activePointer=null;strokeAnchor=null;save();paintInk();paintPaper();if(pendingResize)resizePaper();
 }
-draw.addEventListener('pointerup',e=>{if(activePointer!==e.pointerId)return;e.preventDefault();const p=stablePointer(e);if(drawing){if(p)strokePts.push(p);activePointer=null;strokeAnchor=null;finishPractice()}else if(erasing){if(p)eraserPts.push(p);s.paperMarks.push({kind:'erase',space:'iso',size:eraserWidth(),points:normalizeMark(eraserPts)});erasing=false;eraserPts=[];activePointer=null;strokeAnchor=null;$('endTurn').disabled=false;save();paintInk();stats();$('score').textContent='Pencil erased · No strokes used'}if(pendingResize)resizePaper()});
+draw.addEventListener('pointerup',e=>{if(activePointer!==e.pointerId)return;e.preventDefault();const p=stablePointer(e);if(drawing){if(p)strokePts.push(p);activePointer=null;strokeAnchor=null;finishPractice()}else if(erasing){if(p)eraserPts.push(p);eraseMagnification(eraserPts,eraserWidth());s.paperMarks.push({kind:'erase',space:'iso',size:eraserWidth(),points:normalizeMark(eraserPts)});erasing=false;eraserPts=[];activePointer=null;strokeAnchor=null;$('endTurn').disabled=false;save();paintInk();stats();$('score').textContent='Pencil erased · No strokes used'}if(pendingResize)resizePaper()});
 draw.addEventListener('pointercancel',e=>{if(activePointer!==e.pointerId)return;preserveInterruptedStroke();$('score').textContent='Stroke interrupted · Partial drawing saved';});
 window.addEventListener('pagehide',()=>{if(drawing||erasing)preserveInterruptedStroke()});
 function changeMode(mode){if(!upgradeActive('selector')||s.phase!=='draw'||locked||drawing)return;if(isCompositionMode(mode)&&(!(mode==='balloon'?balloonPlayable():composerPlayable())||s.left<2)){$('score').textContent='Two-part drawings require the active upgrade and at least 2 strokes left';return;}if(practiceStrokes.length||isCompositionMode()&&composeStage===1){$('score').textContent='Finish the current shape before switching modes';return}if(!availableStudy(mode))return;s.studyPreference=mode;s.mode=mode;s.tool='pencil';save();stats();createPrompt()}
