@@ -775,11 +775,14 @@ function paintSphereStudy(reveal){
  const dx=light.x/len,dy=light.y/len,r=O.r;
  // A fixed reference for the current light source, outside the sphere.
  const lamp={x:O.x+dx*(r+29),y:O.y+dy*(r+29)};
+ const fadedAlpha=dc.globalAlpha;
+ dc.globalAlpha=1; // The light-source direction must remain legible even in advanced exercises.
  dc.save();dc.beginPath();dc.arc(lamp.x,lamp.y,7,0,2*Math.PI);
  dc.fillStyle='#e5b85b';dc.fill();dc.strokeStyle='#99753b';dc.lineWidth=1.6;dc.stroke();
  dc.beginPath();dc.moveTo(lamp.x-dx*11,lamp.y-dy*11);
  dc.lineTo(lamp.x-dx*31,lamp.y-dy*31);
  dc.strokeStyle='#c99c54';dc.setLineDash([3,4]);dc.stroke();dc.restore();
+ dc.globalAlpha=fadedAlpha;
  if(composeStage===0){
   if(reveal){dc.save();dc.beginPath();dc.arc(O.x,O.y,r,0,2*Math.PI);dc.setLineDash([7,5]);dc.strokeStyle='#51a888';dc.lineWidth=2.3;dc.stroke();dc.restore()}
   for(const angle of [0,Math.PI/2,Math.PI,Math.PI*1.5]){
@@ -813,6 +816,8 @@ function squareCorners(){
 // Keep the completed ideal outline on screen until the next prompt. A queued
 // animation frame or a responsive resize must not erase scoring feedback.
 function paintPaper(reveal=feedbackReveal){dc.clearRect(0,0,W,H);
+ // Only the temporary targets fade; pencil ink and earned feedback never do.
+ dc.save();dc.globalAlpha=displayedGuideOpacity(reveal);
  if(s.mode==='sphere'&&O){paintSphereStudy(reveal)}
  else if(s.mode==='cylinder'&&O){
   if(composeStage===0){
@@ -860,7 +865,7 @@ function paintPaper(reveal=feedbackReveal){dc.clearRect(0,0,W,H);
  else if((s.mode==='square'||isCompositionMode()&&composeStage===0&&['signpost','kite'].includes(composeTemplate))&&O){for(const p of squareCorners())circleDot(p.x,p.y)}
  else if((s.mode==='circle'||isCompositionMode()&&composeStage===0)&&O){if(upgradeActive('dashedCircle')){dc.beginPath();dc.arc(O.x,O.y,O.r,0,Math.PI*2);dc.strokeStyle='#82aa9b99';dc.lineWidth=2;dc.setLineDash([5,7]);dc.stroke();dc.setLineDash([])}else{circleDot(O.x,O.y,true);for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]])circleDot(O.x+dx*O.r,O.y+dy*O.r)}if(reveal){dc.beginPath();dc.arc(O.x,O.y,O.r,0,Math.PI*2);dc.strokeStyle='#73a891';dc.lineWidth=1.2;dc.stroke()}}
  else if(A&&B){if(reveal){dc.save();dc.beginPath();dc.moveTo(A.x,A.y);dc.lineTo(B.x,B.y);dc.strokeStyle='#51a888';dc.lineWidth=2.4;dc.setLineDash([7,5]);dc.shadowColor='rgba(69,153,118,.35)';dc.shadowBlur=3;dc.stroke();dc.restore()}dot(A,'A','#468d7c');dot(B,'B','#d9835e')}
- stroke(dc,strokePts,'#243941',3.2);paintLens()}
+ dc.restore();stroke(dc,strokePts,'#243941',3.2);paintLens()}
 // Keep ink in height-relative, centered coordinates. That preserves circles and
 // eraser paths even if a desktop layout change dramatically widens the paper.
 const legacyPaperAspect=()=>{
@@ -2211,15 +2216,11 @@ const cylinderShopGuide=()=>{
 };
 const enduranceThreeGuide=()=>sampleGuide([{x:57,y:7},{x:24,y:46},{x:47,y:46},{x:35,y:71},{x:49,y:71},{x:39,y:90},{x:80,y:39},{x:57,y:39},{x:70,y:20},{x:51,y:20},{x:57,y:7}]);
 const guideFadeShopGuide=()=>{
- const path=[];
- for(let j=0;j<3;j++){
-  const opacity=.95-j*.31,x=19+j*11;
-  for(let i=0;i<=28;i++){
-   const t=2*Math.PI*i/28,r=29-3*j;
-   path.push({x:48+r*Math.cos(t)*opacity+(x-19)*.05,y:48+r*Math.sin(t)*opacity});
-  }
- }
- return path;
+ // Three continuous inward spiral turns; no invisible jumps to trace.
+ return Array.from({length:181},(_,i)=>{
+  const t=6*Math.PI*i/180,r=35-17*i/180;
+  return {x:48+r*Math.cos(t),y:48+r*Math.sin(t)};
+ });
 };
 const guides={
  root:simpleBoltGuide(),
