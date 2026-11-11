@@ -447,7 +447,7 @@ function specialEligibility(id){
  return '';
 }
 function recordSpecialTrial(kind,score){
- if(score<80||s.specialTrials.indexOf(kind)>=0)return;
+ if(!s.owned.composer||score<80||s.specialTrials.indexOf(kind)>=0)return;
  if(['line','triangle','square','circle','curve','oval','balloon','composition','cylinder','sphere'].indexOf(kind)>=0)s.specialTrials.push(kind);
 }
 const nodeActive=id=>isSpecialBranch(id)?specialPlayable(id):id==='staminaIII'?enduranceThreePlayable():id==='composer'?composerPlayable():id==='balloon'?balloonPlayable():id==='triangle'?trianglePlayable():id==='square'?squarePlayable():id==='circle'?circlePlayable():id==='curve'?curvePlayable():id==='guideFade'?adaptiveGuidesPlayable():id==='oval'?ovalPlayable():id==='cylinder'?cylinderPlayable():id==='sphere'?spherePlayable():upgradeActive(id);
@@ -2989,7 +2989,13 @@ function specialCommitPerspective(pts){
   const direct=specialDist(start,guide.a)*.8+specialDist(end,guide.b);
   const backwards=specialDist(end,guide.a)*.8+specialDist(start,guide.b);
   const penalty=Math.min(direct,backwards);
-  const score=Math.max(0,Math.round(100-penalty*.82));
+  let deviation=0;
+  for(const point of pts)deviation+=lineDistance(point,guide.a,guide.b);
+  deviation/=Math.max(1,pts.length);
+  let length=0;for(let j=1;j<pts.length;j++)length+=specialDist(pts[j-1],pts[j]);
+  const desired=specialDist(guide.a,guide.b);
+  const excess=Math.max(0,length-desired*1.35);
+  const score=Math.max(0,Math.round(100-penalty*.65-deviation*.7-excess*.24));
   if(score>bestScore){bestScore=score;best=i}
  }
  if(best<0)return;
@@ -3021,6 +3027,7 @@ function specialStep(dt){
   b.vy+=(b.kind==='balloon'?-g*.7:g)*dt;
   b.vx*=.998;b.vy*=.999;
   b.x+=b.vx*dt;b.y+=b.vy*dt;
+  if(b.kind!=='balloon')b.angle+=(b.vx/Math.max(10,b.r))*dt*.25;
   const r=b.r;
   if(b.x<r){b.x=r;b.vx=Math.abs(b.vx)*.45}
   if(b.x>SCW-r){b.x=SCW-r;b.vx=-Math.abs(b.vx)*.45}
@@ -3145,6 +3152,8 @@ function specialPaint(){
 }
 
 function resetAllProgress(){
+ specialOpen=false;specialRunning=false;specialStroke=null;specialPointer=null;
+ if(specialFrame)cancelAnimationFrame(specialFrame);specialFrame=0;
  // Clear timers and cached drawing work before recreating the blank save.
  // A resize alone does NOT clear the ink if the paper dimensions are unchanged.
  clearTimeout(advanceTimer);advanceTimer=null;
