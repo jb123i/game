@@ -78,20 +78,21 @@
 <header class="brand"><div class="brandmark"><div class="logo" aria-hidden="true">✎</div><div><p class="eyebrow">An incremental sketchbook</p><h1>Learn to Draw</h1></div></div><div class="series">STUDY / 001</div></header>
 <div class="stats" role="status" aria-label="Progress"><div class="stat"><div class="stat-label">Wallet</div><div class="stat-value money" id="wallet">$0.00</div><div class="stat-sub">Available funds</div></div><div class="stat"><div class="stat-label">Turn</div><div class="stat-value" id="turn">1</div><div class="stat-sub">Practice rounds</div></div><div class="stat"><div class="stat-label">Hand energy</div><div class="stat-value" id="energy">1 / 1</div><div class="stat-sub">Strokes remaining</div></div><div class="stat"><div class="stat-label">Strokes</div><div class="stat-value" id="strokes">0</div><div class="stat-sub">Completed</div></div></div>
 <section class="panel" id="playStage"><div class="panel-head"><div><p class="eyebrow hidden" id="activityTag"></p><h2 class="panel-title" id="activityHeading">Connect the points</h2><p class="panel-sub" id="instruction">Start on A, draw a continuous line, and finish on B.</p></div><span class="smalltag" id="rewardTag">UP TO $1.00</span></div>
-<div class="paper-tools"><div class="toolgroup hidden" id="modeTools"><span class="tiny-label">Study</span><button class="pill active" id="lineMode" type="button">Line</button><button class="pill hidden" id="squareMode" type="button">Square</button><button class="pill hidden" id="circleMode" type="button">Circle</button><button class="pill hidden" id="composeMode" type="button">Compose</button></div><div class="toolgroup"><span class="tiny-label">Paper</span><button class="pill hidden" id="gridSwitch" type="button" hidden aria-hidden="true">▦ Grid on</button><button class="pill hidden" id="guideSwitch" type="button" hidden aria-hidden="true">Freehand on</button><button class="pill hidden" id="pencilTool" type="button">Pencil</button><button class="pill hidden" id="eraserTool" type="button">Eraser</button><label class="eraser-size-control hidden" id="eraserSizeControl" for="eraserSize"><span>Eraser size</span><input id="eraserSize" type="range" min="8" max="64" step="2" value="30" aria-label="Eraser width"/><output id="eraserSizeValue" for="eraserSize">30 px</output></label></div></div>
+<div class="paper-tools"><div class="toolgroup hidden" id="modeTools"><span class="tiny-label">Study</span><button class="pill active" id="lineMode" type="button">Line</button><button class="pill hidden" id="triangleMode" type="button">Triangle</button><button class="pill hidden" id="squareMode" type="button">Square</button><button class="pill hidden" id="circleMode" type="button">Circle</button><button class="pill hidden" id="composeMode" type="button">Compose</button></div><div class="toolgroup"><span class="tiny-label">Paper</span><button class="pill hidden" id="gridSwitch" type="button" hidden aria-hidden="true">▦ Grid on</button><button class="pill hidden" id="guideSwitch" type="button" hidden aria-hidden="true">Freehand on</button><button class="pill hidden" id="pencilTool" type="button">Pencil</button><button class="pill hidden" id="eraserTool" type="button">Eraser</button><label class="eraser-size-control hidden" id="eraserSizeControl" for="eraserSize"><span>Eraser size</span><input id="eraserSize" type="range" min="8" max="64" step="2" value="30" aria-label="Eraser width"/><output id="eraserSizeValue" for="eraserSize">30 px</output></label></div></div>
 <div class="paper-area" id="paperArea"><canvas id="gridLayer" aria-hidden="true"></canvas><canvas id="inkLayer" aria-hidden="true"></canvas><canvas id="drawingLayer" aria-label="Drawing canvas. Use a mouse, stylus or finger to draw."></canvas><div id="earningPopup" class="earning-popup hidden" aria-hidden="true"></div></div>
 <div class="draw-foot"><small id="drawHint" class="hidden"></small><div class="draw-actions"><span class="score" id="score">Ready to draw</span></div></div></section>
 <section class="panel hidden" id="shopStage"><div class="panel-head shop-head"><div><p class="eyebrow">Between turns</p><h2 class="panel-title">Skill tree</h2><p class="panel-sub">Buy by tracing. To switch off an owned upgrade, choose Erase and rub out its shape. Redraw it to switch back on for free.</p></div><span class="smalltag" id="shopLevel">1 AVAILABLE</span></div>
 <div class="shop-tool-picker" aria-label="Skill tree tools"><button type="button" id="skillPencil" class="active" aria-pressed="true">✎ Trace</button><button type="button" id="skillEraser" class="hidden" aria-pressed="false" disabled aria-disabled="true" title="Buy Pencil Eraser to unlock">⌫ Erase</button></div>
 <div class="shop-body"><div class="skill-wrap"><div class="skill-tree" id="skillTree" aria-label="Upgrade tree">
 <svg class="branches" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-<line id="link-stamina" x1="40" y1="51" x2="15" y2="51"/><line id="link-circle" x1="65" y1="21" x2="40" y2="21"/><line id="link-free" x1="40" y1="51" x2="65" y2="51"/><line id="link-grid" x1="40" y1="51" x2="40" y2="82"/><line id="link-eraser" x1="40" y1="82" x2="65" y2="82"/><path id="link-dashedCircle" d="M40 21 L40 6 L88 6 L88 21"/><line id="link-eraserSize" x1="65" y1="82" x2="88" y2="82"/><line id="link-square" x1="40" y1="51" x2="65" y2="21"/><path id="link-selector" d="M65 21 L88 51"/><line id="link-composer" x1="40" y1="21" x2="15" y2="21"/><line id="link-composer-stamina" x1="15" y1="51" x2="15" y2="21"/>
+<line id="link-stamina" x1="40" y1="51" x2="15" y2="51"/><line id="link-circle" x1="65" y1="21" x2="40" y2="21"/><line id="link-free" x1="40" y1="51" x2="65" y2="51"/><line id="link-grid" x1="40" y1="51" x2="40" y2="82"/><line id="link-eraser" x1="40" y1="82" x2="65" y2="82"/><path id="link-dashedCircle" d="M40 21 L40 6 L88 6 L88 21"/><line id="link-eraserSize" x1="65" y1="82" x2="88" y2="82"/><line id="link-triangle" x1="40" y1="51" x2="52.5" y2="36"/><line id="link-square" x1="52.5" y1="36" x2="65" y2="21"/><line id="link-square-legacy" x1="40" y1="51" x2="65" y2="21"/><path id="link-selector" d="M65 21 L88 51"/><line id="link-composer" x1="40" y1="21" x2="15" y2="21"/><line id="link-composer-stamina" x1="15" y1="51" x2="15" y2="21"/>
 </svg>
 <div class="upgrade" data-id="root" style="left:40%;top:51%;" tabindex="0" aria-label="Better Endurance, fifty cents"><canvas width="192" height="192"></canvas><span class="node-symbol">△</span><span class="node-price">$0.50</span><span class="node-name">Endurance I</span><span class="tip"><strong>Better Endurance</strong>Get 2 strokes per turn instead of 1.<span class="tip-cost">$0.50 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="stamina" style="left:15%;top:51%;" tabindex="0" aria-label="Endurance II, two dollars"><canvas width="192" height="192"></canvas><span class="node-symbol">★</span><span class="node-price">$2.00</span><span class="node-name">Endurance II</span><span class="tip"><strong>Endurance II</strong>Increase Hand Energy from 2 to 3 strokes per turn.<span class="tip-cost">$2.00 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="circle" style="left:40%;top:21%;" tabindex="0" aria-label="Circle Studies, two dollars"><canvas width="192" height="192"></canvas><span class="node-symbol">○</span><span class="node-price">$2.00</span><span class="node-name">Circles</span><span class="tip"><strong>Circle Studies</strong>Draw circles. Perfect accuracy earns $2.00.<span class="tip-cost">$2.00 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="free" style="left:65%;top:51%;" tabindex="0" aria-label="Freehand Lines, one dollar fifty"><canvas width="192" height="192"></canvas><span class="node-symbol">⬟</span><span class="node-price">$1.50</span><span class="node-name">Free lines</span><span class="tip"><strong>Freehand Lines</strong>Draw straight lines without A and B guide points.<span class="tip-cost">$1.50 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="grid" style="left:40%;top:82%;" tabindex="0" aria-label="Grid Paper, one dollar"><canvas width="192" height="192"></canvas><span class="node-symbol">□</span><span class="node-price">$1.00</span><span class="node-name">Grid</span><span class="tip"><strong>Grid Paper</strong>Add a grid to your drawing paper.<span class="tip-cost">$1.00 · Trace to buy</span></span></div>
+<div class="upgrade off" data-id="triangle" style="left:52.5%;top:36%;" tabindex="0" aria-label="Triangle Studies, one dollar"><canvas width="192" height="192"></canvas><span class="node-symbol">▴</span><span class="node-price">$1.00</span><span class="node-name">Triangles</span><span class="tip"><strong>Triangle Studies</strong>Connect three points to draw triangles. Perfect accuracy earns $1.25.<span class="tip-cost">$1.00 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="square" style="left:65%;top:21%;" tabindex="0" aria-label="Square Studies, one dollar fifty"><canvas width="192" height="192"></canvas><span class="node-symbol">▢</span><span class="node-price">$1.50</span><span class="node-name">Squares</span><span class="tip"><strong>Square Studies</strong>Connect four corner points to draw squares. Perfect accuracy earns $1.50.<span class="tip-cost">$1.50 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="selector" style="left:88%;top:51%;" tabindex="0" aria-label="Study Selector, one dollar twenty five"><canvas width="192" height="192"></canvas><span class="node-symbol">⇄</span><span class="node-price">$1.25</span><span class="node-name">Study Selector</span><span class="tip"><strong>Study Selector</strong>Switch between your unlocked drawing studies.<span class="tip-cost">$1.25 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="composer" style="left:15%;top:21%;" tabindex="0" aria-label="Shape Composer, three dollars"><canvas width="192" height="192"></canvas><span class="node-symbol">♧</span><span class="node-price">$3.00</span><span class="node-name">Composer</span><span class="tip"><strong>Shape Composer</strong>Combine squares or circles with lines into two-part objects.<span class="tip-cost">$3.00 · Trace to buy</span></span></div>
@@ -112,6 +113,7 @@ const defs={
  root:{name:'Better Endurance',price:50,desc:'Increase Hand Energy from 1 to 2 strokes per turn.',cost:'$0.50'},
  stamina:{name:'Endurance II',price:200,desc:'Increase Hand Energy from 2 to 3 strokes per turn.',cost:'$2.00'},
  circle:{name:'Circle Studies',price:200,desc:'Draw circles. Perfect accuracy earns $2.00.',cost:'$2.00'},
+ triangle:{name:'Triangle Studies',price:100,desc:'Connect three points to draw triangles. Perfect accuracy earns $1.25.',cost:'$1.00'},
  square:{name:'Square Studies',price:150,desc:'Connect four corner points to draw squares. Perfect accuracy earns $1.50.',cost:'$1.50'},
  selector:{name:'Study Selector',price:125,desc:'Switch between unlocked drawing studies.',cost:'$1.25'},
  free:{name:'Freehand Lines',price:150,desc:'Draw straight lines without A and B guide points.',cost:'$1.50'},
@@ -121,10 +123,12 @@ const defs={
  composer:{name:'Shape Composer',price:300,desc:'Combine squares or circles with lines into two-part objects. Each uses two Hand Energy; payouts reflect the component shapes.',cost:'$3.00'},
  dashedCircle:{name:'Dashed Circle Guide',price:500,desc:'Replace circle guide dots with a dashed outline.',cost:'$5.00'}
 };
-const blank=()=>({cash:0,turn:1,energy:1,left:1,strokes:0,practiceDraft:null,phase:'draw',last:0,lastPay:0,lastKind:'line',owned:{root:false,stamina:false,circle:false,free:false,grid:false,eraser:false,eraserSize:false,dashedCircle:false,square:false,composer:false,selector:false},legacyComposer:false,disabled:{},traces:{},pendingTraces:{},paperMarks:[],legacyAspect:null,eraserSize:30,gridOn:true,freeOn:false,mode:'line',studyPreference:null,tool:'pencil'});
+const blank=()=>({cash:0,turn:1,energy:1,left:1,strokes:0,practiceDraft:null,phase:'draw',last:0,lastPay:0,lastKind:'line',owned:{root:false,stamina:false,circle:false,free:false,grid:false,eraser:false,eraserSize:false,dashedCircle:false,square:false,triangle:false,composer:false,selector:false},legacySquare:false,legacyComposer:false,disabled:{},traces:{},pendingTraces:{},paperMarks:[],legacyAspect:null,eraserSize:30,gridOn:true,freeOn:false,mode:'line',studyPreference:null,tool:'pencil'});
 let s=blank();
 try{const q=JSON.parse(localStorage.getItem(key)||'null');if(q&&Number.isFinite(q.cash)&&q.owned&&['draw','shop'].includes(q.phase)){
  s={...blank(),...q,owned:{...blank().owned,...q.owned},disabled:q.disabled&&typeof q.disabled==='object'?q.disabled:{},traces:q.traces&&typeof q.traces==='object'?q.traces:{},pendingTraces:q.pendingTraces&&typeof q.pendingTraces==='object'?q.pendingTraces:{},paperMarks:Array.isArray(q.paperMarks)?q.paperMarks:[],practiceDraft:q.practiceDraft&&typeof q.practiceDraft==='object'?q.practiceDraft:null};
+ // Pre-triangle Square purchases keep working without forcing a second purchase.
+ if(q.owned.square&&!Object.prototype.hasOwnProperty.call(q.owned,'triangle'))s.legacySquare=true;
  // Preserve previously bought Composer even when Square Studies did not yet exist.
  if(q.owned.composer&&!Object.prototype.hasOwnProperty.call(q.owned,'square'))s.legacyComposer=true;
  // Migrate legacy play-mode toggles once; from now on only erasing/retracing shop shapes changes activation.
@@ -136,17 +140,18 @@ const upgradeActive=id=>!!s.owned[id]&&!s.disabled[id];
 // Existing Circle owners retain their purchased ability. New Circle
 // purchases require Square Studies first. Deactivating a purchased Square
 // disables the later Circle branch until it is retraced.
-const squarePlayable=()=>upgradeActive('square');
+const trianglePlayable=()=>upgradeActive('triangle');
+const squarePlayable=()=>upgradeActive('square')&&(s.legacySquare||trianglePlayable());
 const circlePlayable=()=>upgradeActive('circle')&&(!s.owned.square||squarePlayable());
 // Legacy Composer purchases remain usable with their original Endurance
 // parent; new purchases require active Endurance II and Circle Studies.
 const composerPlayable=()=>upgradeActive('composer')&&circlePlayable()&&(s.legacyComposer?(s.owned.stamina?upgradeActive('stamina'):upgradeActive('root')):upgradeActive('stamina'));
-const nodeActive=id=>id==='composer'?composerPlayable():id==='square'?squarePlayable():id==='circle'?circlePlayable():upgradeActive(id);
+const nodeActive=id=>id==='composer'?composerPlayable():id==='triangle'?trianglePlayable():id==='square'?squarePlayable():id==='circle'?circlePlayable():upgradeActive(id);
 // Without Study Selector, automatically practice the newest available shape.
 // The newest shape does not permanently replace earlier exercises: purchasing
 // Study Selector lets players deliberately return to any unlocked study.
-const availableStudy=mode=>mode==='line'||mode==='square'&&squarePlayable()||mode==='circle'&&circlePlayable()||mode==='compose'&&composerPlayable();
-const automaticStudy=()=>composerPlayable()&&s.left>=2?'compose':circlePlayable()?'circle':squarePlayable()?'square':'line';
+const availableStudy=mode=>mode==='line'||mode==='triangle'&&trianglePlayable()||mode==='square'&&squarePlayable()||mode==='circle'&&circlePlayable()||mode==='compose'&&composerPlayable();
+const automaticStudy=()=>composerPlayable()&&s.left>=2?'compose':circlePlayable()?'circle':squarePlayable()?'square':trianglePlayable()?'triangle':'line';
 const selectedStudy=()=>upgradeActive('selector')&&availableStudy(s.studyPreference)&&!(s.studyPreference==='compose'&&s.left<2)?s.studyPreference:automaticStudy();
 const eraserWidth=()=>upgradeActive('eraserSize')?s.eraserSize:30;
 function reconcileUpgradeEffects(){
@@ -158,7 +163,7 @@ function reconcileUpgradeEffects(){
 }
 const cash=c=>'$'+(c/100).toFixed(2),clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
 function payoutForShape(mode,accuracy){
- const scale=mode==='circle'?2:mode==='square'?1.5:1;
+ const scale=mode==='circle'?2:mode==='square'?1.5:mode==='triangle'?1.25:1;
  return Math.round(Math.max(0,Math.min(100,accuracy))*scale);
 }
 const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
@@ -192,14 +197,14 @@ function stableSamples(e){const samples=typeof e.getCoalescedEvents==='function'
 function stats(){
  $('wallet').textContent=cash(s.cash);$('turn').textContent=s.turn;$('energy').textContent=s.left+' / '+s.energy;$('strokes').textContent=s.strokes;
  $('playStage').classList.toggle('hidden',s.phase!=='draw');$('shopStage').classList.toggle('hidden',s.phase!=='shop');
- $('modeTools').classList.toggle('hidden',!upgradeActive('selector')||!squarePlayable());$('circleMode').classList.toggle('hidden',!circlePlayable());$('squareMode').classList.toggle('hidden',!squarePlayable());$('composeMode').classList.toggle('hidden',!composerPlayable());$('gridSwitch').classList.add('hidden');$('guideSwitch').classList.add('hidden');$('pencilTool').classList.toggle('hidden',!upgradeActive('eraser'));$('eraserTool').classList.toggle('hidden',!upgradeActive('eraser'));$('eraserSizeControl').classList.toggle('hidden',!upgradeActive('eraser')||!upgradeActive('eraserSize'));$('eraserSize').value=s.eraserSize;$('eraserSizeValue').textContent=s.eraserSize+' px';
- $('lineMode').classList.toggle('active',s.mode==='line');$('circleMode').classList.toggle('active',s.mode==='circle');$('squareMode').classList.toggle('active',s.mode==='square');$('composeMode').classList.toggle('active',s.mode==='compose');$('gridSwitch').textContent=s.gridOn?'▦ Grid on':'▦ Grid off';$('gridSwitch').classList.toggle('active',s.gridOn);$('guideSwitch').textContent=s.freeOn?'Freehand on':'Guided on';$('guideSwitch').classList.toggle('active',s.freeOn);$('pencilTool').classList.toggle('active',s.tool==='pencil');$('eraserTool').classList.toggle('active',s.tool==='eraser');
- const circle=s.mode==='circle',square=s.mode==='square',compose=s.mode==='compose';
- $('activityHeading').textContent=compose?(composeTemplate==='balloon'?'Draw a balloon':composeTemplate==='signpost'?'Draw a signpost':'Draw a magnifying glass'):circle?'Draw a circle':square?'Draw a square':s.freeOn?'Draw a straight line':'Connect the points';
- $('instruction').textContent=compose?(composeStage===0?(composeTemplate==='signpost'?'Part 1 of 2: Draw the square sign. Every stroke costs one Hand Energy.':'Part 1 of 2: Draw the circular outline. Every stroke costs one Hand Energy.'):'Part 2 of 2: Connect A to B to finish your object.'):circle?(upgradeActive('dashedCircle')?'Trace the dashed circular guide. With Endurance, you can finish it using multiple strokes.':'Use the center dot and four surrounding dots to draw a circle.'):square?'Connect the four corner points with straight sides. With Endurance, you can lift and continue.':s.freeOn?'Start anywhere and draw one smooth, straight line.':'Start on A, draw a continuous line, and finish on B.';
- const maxReward=compose?(composeTemplate==='signpost'?250:300):circle?200:square?150:100;
+ $('modeTools').classList.toggle('hidden',!upgradeActive('selector')||!squarePlayable());$('circleMode').classList.toggle('hidden',!circlePlayable());$('triangleMode').classList.toggle('hidden',!trianglePlayable());$('squareMode').classList.toggle('hidden',!squarePlayable());$('composeMode').classList.toggle('hidden',!composerPlayable());$('gridSwitch').classList.add('hidden');$('guideSwitch').classList.add('hidden');$('pencilTool').classList.toggle('hidden',!upgradeActive('eraser'));$('eraserTool').classList.toggle('hidden',!upgradeActive('eraser'));$('eraserSizeControl').classList.toggle('hidden',!upgradeActive('eraser')||!upgradeActive('eraserSize'));$('eraserSize').value=s.eraserSize;$('eraserSizeValue').textContent=s.eraserSize+' px';
+ $('lineMode').classList.toggle('active',s.mode==='line');$('triangleMode').classList.toggle('active',s.mode==='triangle');$('circleMode').classList.toggle('active',s.mode==='circle');$('squareMode').classList.toggle('active',s.mode==='square');$('composeMode').classList.toggle('active',s.mode==='compose');$('gridSwitch').textContent=s.gridOn?'▦ Grid on':'▦ Grid off';$('gridSwitch').classList.toggle('active',s.gridOn);$('guideSwitch').textContent=s.freeOn?'Freehand on':'Guided on';$('guideSwitch').classList.toggle('active',s.freeOn);$('pencilTool').classList.toggle('active',s.tool==='pencil');$('eraserTool').classList.toggle('active',s.tool==='eraser');
+ const circle=s.mode==='circle',square=s.mode==='square',triangle=s.mode==='triangle',compose=s.mode==='compose';
+ $('activityHeading').textContent=compose?(composeTemplate==='balloon'?'Draw a balloon':composeTemplate==='signpost'?'Draw a signpost':'Draw a magnifying glass'):circle?'Draw a circle':square?'Draw a square':triangle?'Draw a triangle':s.freeOn?'Draw a straight line':'Connect the points';
+ $('instruction').textContent=compose?(composeStage===0?(composeTemplate==='signpost'?'Part 1 of 2: Draw the square sign. Every stroke costs one Hand Energy.':'Part 1 of 2: Draw the circular outline. Every stroke costs one Hand Energy.'):'Part 2 of 2: Connect A to B to finish your object.'):circle?(upgradeActive('dashedCircle')?'Trace the dashed circular guide. With Endurance, you can finish it using multiple strokes.':'Use the center dot and four surrounding dots to draw a circle.'):square?'Connect the four corner points with straight sides. With Endurance, you can lift and continue.':triangle?'Connect three points to form a triangle. You can use multiple strokes with Endurance.':s.freeOn?'Start anywhere and draw one smooth, straight line.':'Start on A, draw a continuous line, and finish on B.';
+ const maxReward=compose?(composeTemplate==='signpost'?250:300):circle?200:square?150:triangle?125:100;
  $('rewardTag').textContent='UP TO '+cash(maxReward);
- $('drawHint').textContent=compose?'Square $1.50 / Circle $2.00 + Line $1.00':circle?'100% = $2.00':square?'100% = $1.50':'';$('drawHint').classList.toggle('hidden',!compose&&!circle&&!square);$('activityTag').textContent=compose?'Composition · Part '+(composeStage+1)+'/2':circle?'Circle study':square?'Square study':s.freeOn?'Freehand study':'';$('activityTag').classList.toggle('hidden',!compose&&!circle&&!square&&!s.freeOn);$('paperArea').classList.toggle('eraser-cursor',s.tool==='eraser');
+ $('drawHint').textContent=compose?'Square $1.50 / Circle $2.00 + Line $1.00':circle?'100% = $2.00':square?'100% = $1.50':triangle?'100% = $1.25':'';$('drawHint').classList.toggle('hidden',!compose&&!circle&&!square&&!triangle);$('activityTag').textContent=compose?'Composition · Part '+(composeStage+1)+'/2':circle?'Circle study':square?'Square study':triangle?'Triangle study':s.freeOn?'Freehand study':'';$('activityTag').classList.toggle('hidden',!compose&&!circle&&!square&&!triangle&&!s.freeOn);$('paperArea').classList.toggle('eraser-cursor',s.tool==='eraser');
  $('nextTurn').textContent='Begin turn '+(s.turn+1)+' →';const available=Object.keys(defs).filter(visibleNode).length;$('shopLevel').textContent=available===1?'1 NODE':available+' NODES';
 }
 // Grid, saved pencil marks, and temporary guides occupy separate layers.
@@ -254,7 +259,7 @@ function persistPracticeDraft(){
 function restorePracticeDraft(){
  const d=s.practiceDraft;
  if(s.phase!=='draw'||!d||!Array.isArray(d.strokes)||(!d.strokes.length&&!(d.mode==='compose'&&d.composeStage===1))||s.left<1||d.mode!==s.mode||!!d.freeOn!==!!s.freeOn)return false;
- if((d.mode==='circle'||d.mode==='square')&&!d.O||d.mode==='line'&&!d.freeOn&&(!d.A||!d.B)||d.mode==='compose'&&(!d.O||!d.A||!d.B))return false;
+ if((d.mode==='circle'||d.mode==='square'||d.mode==='triangle')&&!d.O||d.mode==='line'&&!d.freeOn&&(!d.A||!d.B)||d.mode==='compose'&&(!d.O||!d.A||!d.B))return false;
  try{
   A=d.A?pointFromIso(d.A):null;B=d.B?pointFromIso(d.B):null;
   O=d.O?{...pointFromIso(d.O.at),r:d.O.r*H,angle:Number.isFinite(d.O.angle)?d.O.angle:0}:null;
@@ -287,6 +292,11 @@ function createPrompt(){
    const diag=r*Math.SQRT1_2;A={x:O.x+diag,y:O.y+diag};B={x:Math.min(W-20,A.x+Math.max(60,r*.92)),y:Math.min(H-20,A.y+Math.max(60,r*.92))};
   }
  }
+ else if(s.mode==='triangle'){
+  const r=Math.max(35,Math.min(W*.20,H*.26,112)),angle=(Math.random()*2-1)*Math.PI/3;
+  const pad=r+24;
+  O={x:pad+Math.random()*Math.max(0,W-2*pad),y:pad+Math.random()*Math.max(0,H-2*pad),r,angle};A=null;B=null;
+ }
  else if(s.mode==='square'){
   const r=Math.max(31,Math.min(W*.22,H*.27,108)),angle=nextSquareAngle();
   // A rotated square's axis-aligned half-span can reach r*sqrt(2).
@@ -301,6 +311,14 @@ function createPrompt(){
  $('score').textContent='Ready to draw';save();stats();paintPaper()}
 function circleDot(x,y,center=false){dc.beginPath();dc.arc(x,y,center?4.4:5.6,0,2*Math.PI);dc.fillStyle='#fffefa';dc.fill();dc.strokeStyle='#59917e';dc.lineWidth=1.8;dc.stroke();dc.beginPath();dc.arc(x,y,center?2.4:3.3,0,2*Math.PI);dc.fillStyle='#417d6b';dc.fill()}
 function dot(p,label,color){dc.beginPath();dc.arc(p.x,p.y,10,0,Math.PI*2);dc.fillStyle='#fffefa';dc.fill();dc.lineWidth=1.8;dc.strokeStyle=color;dc.stroke();dc.beginPath();dc.arc(p.x,p.y,3,0,Math.PI*2);dc.fillStyle=color;dc.fill();dc.font='700 13px system-ui';dc.textAlign='center';dc.fillText(label,p.x,p.y-20)}
+function triangleCorners(){
+ if(!O)return [];
+ const angle=Number(O.angle)||0;
+ return [0,1,2].map(i=>{
+  const a=angle-Math.PI/2+i*2*Math.PI/3;
+  return {x:O.x+O.r*Math.cos(a),y:O.y+O.r*Math.sin(a)};
+ });
+}
 function squareCorners(){
  if(!O)return [];
  const angle=Number(O.angle)||0,cos=Math.cos(angle),sin=Math.sin(angle);
@@ -311,7 +329,8 @@ function squareCorners(){
 // Keep the completed ideal outline on screen until the next prompt. A queued
 // animation frame or a responsive resize must not erase scoring feedback.
 function paintPaper(reveal=feedbackReveal){dc.clearRect(0,0,W,H);
- if((s.mode==='square'||s.mode==='compose'&&composeStage===0&&composeTemplate==='signpost')&&O){for(const p of squareCorners())circleDot(p.x,p.y)}
+ if(s.mode==='triangle'&&O){for(const p of triangleCorners())circleDot(p.x,p.y)}
+ else if((s.mode==='square'||s.mode==='compose'&&composeStage===0&&composeTemplate==='signpost')&&O){for(const p of squareCorners())circleDot(p.x,p.y)}
  else if((s.mode==='circle'||s.mode==='compose'&&composeStage===0)&&O){if(upgradeActive('dashedCircle')){dc.beginPath();dc.arc(O.x,O.y,O.r,0,Math.PI*2);dc.strokeStyle='#82aa9b99';dc.lineWidth=2;dc.setLineDash([5,7]);dc.stroke();dc.setLineDash([])}else{circleDot(O.x,O.y,true);for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]])circleDot(O.x+dx*O.r,O.y+dy*O.r)}if(reveal){dc.beginPath();dc.arc(O.x,O.y,O.r,0,Math.PI*2);dc.strokeStyle='#73a891';dc.lineWidth=1.2;dc.stroke()}}
  else if(A&&B){if(reveal){dc.save();dc.beginPath();dc.moveTo(A.x,A.y);dc.lineTo(B.x,B.y);dc.strokeStyle='#51a888';dc.lineWidth=2.4;dc.setLineDash([7,5]);dc.shadowColor='rgba(69,153,118,.35)';dc.shadowBlur=3;dc.stroke();dc.restore()}dot(A,'A','#d9835e');dot(B,'B','#468d7c')}
  stroke(dc,strokePts,'#243941',3.2)}
@@ -388,6 +407,46 @@ function lineAccuracy(forceGuided=false){
  const v=.49*coverage+.26*precision+.2*ends+.05*eff;
  if(toA<=.55&&toB<=.55&&pixelPerfectLine(segments,points,start,end,travel))return 100;
  return clamp(Math.round(100*v),0,99);
+}
+function triangleGuide(){
+ const corners=triangleCorners(),guide=[];
+ for(let edge=0;edge<3;edge++){
+  const a=corners[edge],b=corners[(edge+1)%3];
+  for(let i=0;i<36;i++){
+   const t=i/36;guide.push({x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t});
+  }
+ }
+ return guide;
+}
+function triangleAccuracy(){
+ if(!O)return 0;
+ const segments=practiceStrokes.filter(pts=>pts.length>=2),points=segments.flat();
+ if(!segments.length||points.length<2)return 0;
+ const ideal=3*Math.sqrt(3)*O.r,travel=segments.reduce((sum,pts)=>sum+pathLength(pts),0);
+ if(travel<10)return 0;
+ const c=triangleCorners(),guide=triangleGuide();
+ const errors=points.map(p=>Math.min(...[0,1,2].map(i=>lineDistance(p,c[i],c[(i+1)%3]))));
+ const guideErrors=guide.map(p=>Math.min(...segments.map(pts=>polyDist(p,pts))));
+ const corners=c.map(p=>Math.min(...segments.map(pts=>polyDist(p,pts))));
+ const coverage=guideErrors.reduce((v,d)=>v+clamp(1-d/20),0)/guideErrors.length;
+ const precision=errors.reduce((v,d)=>v+clamp(1-d/20),0)/errors.length;
+ const cornerScore=corners.reduce((v,d)=>v+clamp(1-d/25),0)/3;
+ const efficiency=clamp(1-Math.abs(travel-ideal)/ideal);
+ const result=Math.round(100*(.44*coverage+.30*precision+.16*cornerScore+.10*efficiency));
+ if(corners.every(d=>d<=.55)&&guideErrors.every(d=>d<=.55)&&errors.every(d=>d<=.4)&&Math.abs(travel-ideal)<ideal*.002)return 100;
+ return clamp(result,0,99);
+}
+function triangleLooksComplete(){
+ if(!O)return false;
+ const segments=practiceStrokes.filter(pts=>pts.length>=2);
+ if(!segments.length)return false;
+ const travel=segments.reduce((v,pts)=>v+pathLength(pts),0),ideal=3*Math.sqrt(3)*O.r;
+ if(travel<ideal*.68)return false;
+ const tol=Math.max(12,Math.min(24,O.r*.18));
+ const guide=triangleGuide();
+ const near=guide.filter(p=>segments.some(pts=>polyDist(p,pts)<=tol)).length/guide.length;
+ const corners=triangleCorners().every(p=>segments.some(pts=>polyDist(p,pts)<=tol*1.2));
+ return corners&&near>=.84;
 }
 function squareGuide(){
  const c=squareCorners(),guide=[];
@@ -519,6 +578,7 @@ function circleLooksComplete(){
  );
 }
 function componentLooksComplete(){
+ if(s.mode==='triangle')return triangleLooksComplete();
  if(s.mode==='circle'||s.mode==='compose'&&composeStage===0&&composeTemplate!=='signpost')return circleLooksComplete();
  if(s.mode==='square'||s.mode==='compose'&&composeStage===0&&composeTemplate==='signpost')return squareLooksComplete();
  return lineLooksComplete(s.mode==='compose');
@@ -563,8 +623,8 @@ function showEarnings(reward,bounds){
 function finalizeShape(){
  if(locked||drawing||!practiceStrokes.length)return;
  locked=true;
- const accuracy=s.mode==='circle'?circleAccuracy():s.mode==='square'?squareAccuracy():lineAccuracy();
- // Rewards scale by complexity: line 1x, square 1.5x, circle 2x.
+ const accuracy=s.mode==='circle'?circleAccuracy():s.mode==='square'?squareAccuracy():s.mode==='triangle'?triangleAccuracy():lineAccuracy();
+ // Rewards scale by complexity: line 1x, triangle 1.25x, square 1.5x, circle 2x.
  // Keep balances in whole cents; accuracy remains a 0–100 percentage.
  const reward=payoutForShape(s.mode,accuracy);
  const rewardBounds=drawnBounds(practiceStrokes);
@@ -622,7 +682,7 @@ function finishPractice(){
  if(complete||s.left<=0)finalizeShape();
  else{
   persistPracticeDraft();stats();
-  $('score').textContent='Continue '+(s.mode==='circle'?'the circle':s.mode==='square'?'the square':'the line')+' · '+s.left+' stroke'+(s.left===1?'':'s')+' left';
+  $('score').textContent='Continue '+(s.mode==='circle'?'the circle':s.mode==='square'?'the square':s.mode==='triangle'?'the triangle':'the line')+' · '+s.left+' stroke'+(s.left===1?'':'s')+' left';
  }
 }
 draw.addEventListener('pointerdown',e=>{if(s.phase!=='draw'||drawing||erasing||(locked&&s.tool!=='eraser')||(!e.isPrimary&&e.pointerType==='touch'))return;if(s.tool==='eraser'){e.preventDefault();eraserBegin(e);return}const p=pointer(e,draw);
@@ -638,6 +698,7 @@ draw.addEventListener('pointercancel',e=>{if(activePointer!==e.pointerId)return;
 window.addEventListener('pagehide',()=>{if(drawing||erasing)preserveInterruptedStroke()});
 function changeMode(mode){if(!upgradeActive('selector')||s.phase!=='draw'||locked||drawing)return;if(mode==='compose'&&(!composerPlayable()||s.left<2)){$('score').textContent='Shape Composer needs its active upgrade and at least 2 Hand Energy';return;}if(practiceStrokes.length||s.mode==='compose'&&composeStage===1){$('score').textContent='Finish the current shape before switching modes';return}if(!availableStudy(mode))return;s.studyPreference=mode;s.mode=mode;s.tool='pencil';save();stats();createPrompt()}
 $('lineMode').addEventListener('click',()=>changeMode('line'));
+$('triangleMode').addEventListener('click',()=>changeMode('triangle'));
 $('circleMode').addEventListener('click',()=>changeMode('circle'));$('squareMode').addEventListener('click',()=>changeMode('square'));$('composeMode').addEventListener('click',()=>changeMode('compose'));
 // Grid activation is controlled only by erasing / retracing its owned skill-tree shape.
 // Freehand activation is controlled only by erasing / retracing its owned skill-tree shape.
@@ -661,6 +722,7 @@ const guides={
  root:polygonGuide(3,35,-Math.PI/2),
  stamina:starGuide(5,36,16,-Math.PI/2),
  circle:circleGuide(),
+ triangle:polygonGuide(3,34,-Math.PI/2),
  square:polygonGuide(4,34,-Math.PI/4),
  // Two opposing arrows, traced to unlock switching drawing studies.
  selector:sampleGuide([{x:21,y:31},{x:75,y:31},{x:63,y:19},{x:75,y:31},{x:63,y:43},
@@ -821,7 +883,7 @@ function renderNode(id){const {ctx,strokes}=nodeCanvas[id];const guide=guides[id
 // For junctions such as Composer, either purchased parent reveals the node;
 // buying it still requires all of its active prerequisites.
 const treeParents={
- root:[],stamina:['root'],square:['root'],free:['root'],grid:['root'],selector:['square'],
+ root:[],stamina:['root'],triangle:['root'],square:['triangle'],free:['root'],grid:['root'],selector:['square'],
  circle:['square'],composer:['stamina','circle'],dashedCircle:['circle'],
  eraser:['grid'],eraserSize:['eraser']
 };
@@ -829,6 +891,8 @@ function visibleNode(id){
  return id==='root'||!!s.owned[id]||(treeParents[id]||[]).some(parent=>!!s.owned[parent]);
 }
 function prerequisites(id){
+ if(id==='triangle')return ['root'];
+ if(id==='square')return ['triangle'];
  if(id==='circle')return ['square'];
  if(id==='composer')return ['stamina','circle'];
  return [];
@@ -854,12 +918,15 @@ function renderTree(){
   renderNode(id);
  }
  // Draw each connection only after its source upgrade has been purchased.
- const linkParents={stamina:'root',circle:'square',free:'root',grid:'root',eraser:'grid',dashedCircle:'circle',eraserSize:'eraser',square:'root',composer:'circle',selector:'square'};
+ const linkParents={stamina:'root',triangle:'root',circle:'square',free:'root',grid:'root',eraser:'grid',dashedCircle:'circle',eraserSize:'eraser',square:'triangle',composer:'circle',selector:'square'};
  for(const [id,parent] of Object.entries(linkParents)){
   const link=$('link-'+id);
   link.style.display=visibleNode(id)&&s.owned[parent]?'':'none';
-  link.classList.toggle('live',id==='composer'?circlePlayable():id==='selector'?squarePlayable():id==='circle'?squarePlayable():id==='square'?upgradeActive('root'):id==='eraserSize'?upgradeActive('eraser'):id==='eraser'?upgradeActive('grid'):id==='dashedCircle'?circlePlayable():upgradeActive(id));
+  link.classList.toggle('live',id==='composer'?circlePlayable():id==='selector'?squarePlayable():id==='circle'?squarePlayable():id==='square'?trianglePlayable():id==='triangle'?upgradeActive('root'):id==='eraserSize'?upgradeActive('eraser'):id==='eraser'?upgradeActive('grid'):id==='dashedCircle'?circlePlayable():upgradeActive(id));
  }
+ const legacy=$('link-square-legacy');
+ legacy.style.display=s.legacySquare&&s.owned.square&&!s.owned.triangle&&s.owned.root?'':'none';
+ legacy.classList.toggle('live',s.legacySquare&&s.owned.root&&upgradeActive('root'));
  const stamina=$('link-composer-stamina');
  stamina.style.display=visibleNode('composer')&&s.owned.stamina?'':'none';
  stamina.classList.toggle('live',upgradeActive('stamina'));
