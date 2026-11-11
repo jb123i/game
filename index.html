@@ -1140,7 +1140,7 @@ function renderTree(){
    n.querySelector('.node-name').dataset.hint=!parentReady&&!missing.length?'REACTIVATE SKILLS':'';
    n.setAttribute('aria-label',defs[id].name+', '+defs[id].cost+'. '+(missing.length?'Requires '+missing.map(x=>defs[x].name).join(' and ')+'.':!parentReady?'Reactivate prerequisite upgrades.':'Ready to trace.'));
   }
-  n.querySelector('.node-price').textContent=s.owned[id]?(nodeActive(id)?'ON · OWNED':'OFF · OWNED'):defs[id].cost;
+  n.querySelector('.node-price').textContent=s.owned[id]?'':defs[id].cost;
   renderNode(id);
  }
  // Show a dotted half-connection toward an unpurchased prerequisite, starting
