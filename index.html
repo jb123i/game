@@ -1147,7 +1147,7 @@ function renderTree(){
  // at the visible child. Once the prerequisite is purchased, show the full link.
  const linkParents={stamina:'root',secondWind:'stamina',triangle:'root',circle:'square',free:'root',grid:'root',eraser:'root',dashedCircle:'circle',eraserSize:'eraser',square:'triangle',balloon:'circle',composer:'balloon',selector:'square'};
  for(const [id,parent] of Object.entries(linkParents)){
-  drawBranch('link-'+id,id,parent,id==='composer'?balloonPlayable():id==='balloon'?circlePlayable():id==='selector'?squarePlayable():id==='circle'?squarePlayable():id==='square'?trianglePlayable():id==='triangle'?upgradeActive('root'):id==='eraserSize'?upgradeActive('eraser'):id==='eraser'?upgradeActive('root'):id==='dashedCircle'?circlePlayable():upgradeActive(id));
+  drawBranch('link-'+id,id,parent,id==='composer'?balloonPlayable():id==='balloon'?circlePlayable():id==='selector'?squarePlayable():id==='circle'?squarePlayable():id==='square'?trianglePlayable():id==='triangle'?upgradeActive('root'):id==='eraserSize'?upgradeActive('eraser'):id==='eraser'?upgradeActive('root'):id==='dashedCircle'?circlePlayable():upgradeActive(parent));
  }
  const legacy=$('link-square-legacy');
  legacy.style.display=s.legacySquare&&s.owned.square&&!s.owned.triangle&&s.owned.root?'':'none';
