@@ -186,10 +186,10 @@ const defs={
  composer:{name:'Shape Composer',price:300,desc:'Choose a square or circle and combine it with a line. Each drawing requires at least 2 strokes.',cost:'$3.00'},
  dashedCircle:{name:'Dashed Circle Guide',price:500,desc:'Replace circle guide dots with a dashed outline.',cost:'$5.00'}
 };
-const blank=()=>({cash:0,turn:1,energy:1,left:1,sharedEnergyV1:true,shopRootMigrationV1:true,shopBonusEarned:false,legacyEnduranceShapes:{root:false,stamina:false},strokes:0,practiceDraft:null,phase:'draw',last:0,lastPay:0,lastKind:'line',owned:{root:false,stamina:false,secondWind:false,circle:false,balloon:false,free:false,grid:false,eraser:false,eraserSize:false,dashedCircle:false,square:false,triangle:false,composer:false,selector:false},legacySquare:false,legacyComposer:false,legacyBalloon:false,composeBase:'circle',composeLine:'diagonal',disabled:{},traces:{},pendingTraces:{},paperMarks:[],legacyAspect:null,eraserSize:30,gridOn:true,freeOn:false,mode:'line',studyPreference:null,tool:'pencil'});
+const blank=()=>({cash:0,turn:1,energy:1,left:1,sharedEnergyV1:true,shopRootMigrationV1:true,shopBonusEarned:false,legacyEnduranceShapes:{root:false,stamina:false},strokes:0,practiceDraft:null,phase:'draw',last:0,lastPay:0,lastKind:'line',owned:{root:false,stamina:false,secondWind:false,circle:false,balloon:false,free:false,grid:false,eraser:false,eraserSize:false,dashedCircle:false,square:false,triangle:false,composer:false,selector:false},legacySquare:false,legacyComposer:false,legacyBalloon:false,composeBase:'circle',composeLine:'diagonal',disabled:{},traces:{},pendingTraces:{},paperMarks:[],magnifiers:[],legacyAspect:null,eraserSize:30,gridOn:true,freeOn:false,mode:'line',studyPreference:null,tool:'pencil'});
 let s=blank();
 try{const q=JSON.parse(localStorage.getItem(key)||'null');if(q&&Number.isFinite(q.cash)&&q.owned&&['draw','shop'].includes(q.phase)){
- s={...blank(),...q,owned:{...blank().owned,...q.owned},disabled:q.disabled&&typeof q.disabled==='object'?q.disabled:{},traces:q.traces&&typeof q.traces==='object'?q.traces:{},pendingTraces:q.pendingTraces&&typeof q.pendingTraces==='object'?q.pendingTraces:{},paperMarks:Array.isArray(q.paperMarks)?q.paperMarks:[],practiceDraft:q.practiceDraft&&typeof q.practiceDraft==='object'?q.practiceDraft:null};
+ s={...blank(),...q,owned:{...blank().owned,...q.owned},disabled:q.disabled&&typeof q.disabled==='object'?q.disabled:{},traces:q.traces&&typeof q.traces==='object'?q.traces:{},pendingTraces:q.pendingTraces&&typeof q.pendingTraces==='object'?q.pendingTraces:{},paperMarks:Array.isArray(q.paperMarks)?q.paperMarks:[],magnifiers:Array.isArray(q.magnifiers)?q.magnifiers:[],practiceDraft:q.practiceDraft&&typeof q.practiceDraft==='object'?q.practiceDraft:null};
  // Replace an already-purchased shop gate with a real upgrade at the same
  // current $1.00 price. Existing Endurance owners receive that dollar back.
  // Run only once, without resetting cash, other abilities, or drawing progress.
@@ -307,6 +307,7 @@ function stats(){
 const draw=$('drawingLayer'),grid=$('gridLayer'),ink=$('inkLayer'),lens=$('lensLayer'),dc=draw.getContext('2d'),gc=grid.getContext('2d'),ic=ink.getContext('2d'),lc=lens.getContext('2d');
 // The lens samples a small snapshot of the existing paper and ink layers.
 const lensSource=document.createElement('canvas'),lensSourceCtx=lensSource.getContext('2d',{willReadFrequently:true});
+const lensOutput=document.createElement('canvas'),lensOutputCtx=lensOutput.getContext('2d');
 let lensFrame=null;
 for(const name of ['touchstart','touchmove'])draw.addEventListener(name,e=>{if(e.cancelable)e.preventDefault()},{passive:false});
 // Prevent page scrolling during an active touch stroke, even on older mobile browsers.
@@ -518,10 +519,21 @@ function paintGrid(){gc.clearRect(0,0,W,H);if(!upgradeActive('grid')){paintLens(
 function paintLens(){
  if(!W||!H)return;
  lc.clearRect(0,0,W,H);
- // No pre-drawn lens: the effect turns on only after drawing its circular frame.
- if(s.phase!=='draw'||!isCompositionMode()||composeTemplate!=='magnifier'||composeStage!==1||!O)return;
- const radius=Math.max(4,O.r),size=Math.ceil(radius*2+14);
- const left=Math.floor(O.x-size/2),top=Math.floor(O.y-size/2);
+ if(s.phase!=='draw')return;
+ // Completed lenses remain active on the sketchbook when later marks appear.
+ for(const glass of s.magnifiers||[]){
+  if(!glass||!Array.isArray(glass.at)||glass.at.length!==2
+   ||!glass.at.every(Number.isFinite)||!Number.isFinite(glass.r)||glass.r<=0)continue;
+  paintMagnifierLens({...pointFromIso(glass.at),r:glass.r*H});
+ }
+ // The active lens starts working after its circle is finished; avoid
+ // double rendering once the completed lens is saved.
+ if(isCompositionMode()&&composeTemplate==='magnifier'&&composeStage===1&&O&&!feedbackReveal)
+  paintMagnifierLens(O);
+}
+function paintMagnifierLens(glass){
+ const radius=Math.max(4,glass.r),size=Math.ceil(radius*2+14);
+ const left=Math.floor(glass.x-size/2),top=Math.floor(glass.y-size/2);
  if(lensSource.width!==size||lensSource.height!==size){
   lensSource.width=size;lensSource.height=size;lensFrame=null;
  }
@@ -540,7 +552,7 @@ function paintLens(){
  const source=patch.getImageData(0,0,size,size).data;
  if(!lensFrame||lensFrame.width!==size||lensFrame.height!==size)lensFrame=lc.createImageData(size,size);
  const output=lensFrame.data;output.fill(0);
- const cx=O.x-left,cy=O.y-top,aperture=radius-3.5,zoom=1.9;
+ const cx=glass.x-left,cy=glass.y-top,aperture=radius-3.5,zoom=1.9;
  // Bilinear sampling avoids pixel stair-stepping at fractional magnification.
  function sample(x,y,channel){
   const fx=clamp(x,0,size-1.001),fy=clamp(y,0,size-1.001);
@@ -565,23 +577,27 @@ function paintLens(){
    output[o+3]=255;
   }
  }
- lc.putImageData(lensFrame,left,top);
+ // Composite each lens using its alpha mask, including overlapping lenses.
+ // Direct putImageData would erase earlier lenses outside the new aperture.
+ if(lensOutput.width!==size||lensOutput.height!==size){lensOutput.width=size;lensOutput.height=size}
+ lensOutputCtx.putImageData(lensFrame,0,0);
+ lc.drawImage(lensOutput,left,top);
  // Quiet specular highlight and faint rim, preserving the user's pencil outline.
- lc.save();lc.beginPath();lc.arc(O.x,O.y,aperture,0,Math.PI*2);lc.clip();
- const sheen=lc.createLinearGradient(O.x-radius,O.y-radius,O.x+radius,O.y+radius);
+ lc.save();lc.beginPath();lc.arc(glass.x,glass.y,aperture,0,Math.PI*2);lc.clip();
+ const sheen=lc.createLinearGradient(glass.x-radius,glass.y-radius,glass.x+radius,glass.y+radius);
  sheen.addColorStop(0,'rgba(255,255,255,.18)');
  sheen.addColorStop(.32,'rgba(255,255,255,.02)');
  sheen.addColorStop(.68,'rgba(205,231,229,.015)');
  sheen.addColorStop(1,'rgba(95,150,155,.07)');
- lc.fillStyle=sheen;lc.fillRect(O.x-radius,O.y-radius,2*radius,2*radius);
+ lc.fillStyle=sheen;lc.fillRect(glass.x-radius,glass.y-radius,2*radius,2*radius);
  lc.restore();
- lc.save();lc.beginPath();lc.arc(O.x,O.y,radius-2.5,0,Math.PI*2);
+ lc.save();lc.beginPath();lc.arc(glass.x,glass.y,radius-2.5,0,Math.PI*2);
  lc.strokeStyle='rgba(58,102,106,.4)';lc.lineWidth=1.5;
  lc.shadowColor='rgba(30,64,67,.3)';lc.shadowBlur=4;lc.stroke();
  lc.shadowBlur=0;
- lc.beginPath();lc.arc(O.x,O.y,radius-6,-2.55,-.85);
+ lc.beginPath();lc.arc(glass.x,glass.y,radius-6,-2.55,-.85);
  lc.strokeStyle='rgba(255,255,255,.72)';lc.lineWidth=2;lc.stroke();
- lc.beginPath();lc.arc(O.x,O.y,radius-5,.35,1.85);
+ lc.beginPath();lc.arc(glass.x,glass.y,radius-5,.35,1.85);
  lc.strokeStyle='rgba(53,108,110,.14)';lc.lineWidth=1.3;lc.stroke();
  lc.restore();
 }
@@ -890,6 +906,7 @@ function finishCompositionPart(){
  const reward=payoutForShape(firstMode,composeScores[0])+payoutForShape('line',composeScores[1]);
  const rewardBounds=unionBounds(boundsFromIso(composeFirstBounds),drawnBounds(practiceStrokes));
  s.cash+=reward;s.last=Math.round((composeScores[0]+composeScores[1])/2);s.lastPay=reward;s.lastKind=s.mode==='balloon'?'balloon':'composition';
+ if(composeTemplate==='magnifier'&&O)s.magnifiers.push({at:pointToIso(O),r:O.r/Math.max(1,H)});
  s.practiceDraft=null;feedbackReveal=true;save();stats();paintPaper(true);
  $('score').textContent='Composition '+s.last+'% · +'+cash(reward);
  showEarnings(reward,rewardBounds);
