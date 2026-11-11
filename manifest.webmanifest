@@ -1,0 +1,12 @@
+{
+  "name": "Learn to Draw — Incremental Sketchbook",
+  "short_name": "Learn to Draw",
+  "description": "Practice drawing, unlock studies, and build your sketchbook without internet access.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f6f2e9",
+  "theme_color": "#f6f2e9",
+  "orientation": "any",
+  "lang": "en"
+}
