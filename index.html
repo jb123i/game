@@ -2921,8 +2921,8 @@ if(typeof window.PointerEvent==='function'){
  // iPad mini 2 / iOS 12 Touch Events. Never depend on PointerEvent.
  const eventOptions={passive:false};
  specialCanvas.addEventListener('touchstart',e=>{if(e.touches.length!==1)return;e.preventDefault();specialBegin(specialPoint(e.changedTouches[0]),e.changedTouches[0].identifier)},eventOptions);
- specialCanvas.addEventListener('touchmove',e=>{if(specialPointer!==null){e.preventDefault();for(const touch of e.changedTouches)if(touch.identifier===specialPointer)specialMove(specialPoint(touch),touch.identifier)}},eventOptions);
- specialCanvas.addEventListener('touchend',e=>{if(specialPointer!==null){e.preventDefault();for(const touch of e.changedTouches)if(touch.identifier===specialPointer)specialEnd(specialPoint(touch),touch.identifier)}},eventOptions);
+ specialCanvas.addEventListener('touchmove',e=>{if(specialPointer!==null){e.preventDefault();for(let i=0;i<e.changedTouches.length;i++){const touch=e.changedTouches[i];if(touch.identifier===specialPointer)specialMove(specialPoint(touch),touch.identifier)}}},eventOptions);
+ specialCanvas.addEventListener('touchend',e=>{if(specialPointer!==null){e.preventDefault();for(let i=0;i<e.changedTouches.length;i++){const touch=e.changedTouches[i];if(touch.identifier===specialPointer)specialEnd(specialPoint(touch),touch.identifier)}}},eventOptions);
  specialCanvas.addEventListener('touchcancel',()=>{specialPointer=null;specialStroke=null;specialPaint()},eventOptions);
  let mousePainting=false;
  specialCanvas.addEventListener('mousedown',e=>{if(e.button!==0)return;mousePainting=true;specialBegin(specialPoint(e),'mouse')});
