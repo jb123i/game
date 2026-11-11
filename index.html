@@ -970,8 +970,10 @@ function renderNode(id){const {ctx,strokes,symbol}=nodeCanvas[id];const guide=gu
  // every upgrade. Keep the faint guide available until the upgrade is active.
  // Restore the default symbol only when no player-drawn strokes remain.
  symbol?.classList.toggle('hidden',drawn.length>0||!!(tracing&&tracing.id===id&&tracing.tool==='trace'));
- for(const pts of drawn)stroke(ctx,pts,active?'#248269':'#233e46',active?4.1:3.5);
- if(tracing&&tracing.id===id&&tracing.tool==='trace')stroke(ctx,tracing.points,'#233e46',3.5);
+ // Shop pencil: dark graphite with a subtle green undertone.
+ const shopPencilColor='#414a45';
+ for(const pts of drawn)stroke(ctx,pts,shopPencilColor,active?4.1:3.5);
+ if(tracing&&tracing.id===id&&tracing.tool==='trace')stroke(ctx,tracing.points,shopPencilColor,3.5);
  if(owned&&!drawn.length){ctx.font='700 12px system-ui';ctx.fillStyle='#ae7160';ctx.textAlign='center';ctx.fillText('OFF',48,18)}
 }
 // Reveal only the next upgrade(s) directly connected to a purchased skill.
