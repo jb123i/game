@@ -593,6 +593,138 @@ function cylinderBodyAnchors(){
  return g.length?[g[0],g[30],g[66],g[102],g[g.length-1]]:[];
 }
 
+
+/* Sphere shading uses an orthographic Lambertian model. Light vector L is
+   unit length, and the visible surface normal N=(u,v,sqrt(1-u²-v²)).
+   The shadow boundary is exactly N·L=0, not an arbitrary decorative arc.
+   Each stage reuses the same randomized lighting and projected sphere. */
+const sphereStageNames=['contour','shadow boundary','tone','cast shadow'];
+function sphereLightVector(){
+ const direction=Number(O?.lightAngle)||-Math.PI/2,elevation=clamp(Number(O?.lightElevation)||.5,.28,.68);
+ const length=Math.sqrt(1-elevation*elevation);
+ return {x:Math.cos(direction)*length,y:Math.sin(direction)*length,z:elevation};
+}
+function sphereLightAtPoint(p){
+ if(!O||!(O.r>0))return 1;
+ const x=(p.x-O.x)/O.r,y=(p.y-O.y)/O.r,d2=x*x+y*y;
+ if(d2>1.002)return 1;
+ const light=sphereLightVector();
+ return x*light.x+y*light.y+Math.sqrt(Math.max(0,1-d2))*light.z;
+}
+function sphereContourGuide(){
+ if(!O||!(O.r>0))return [];
+ return Array.from({length:145},(_,i)=>{
+  const t=2*Math.PI*i/144;
+  return {x:O.x+O.r*Math.cos(t),y:O.y+O.r*Math.sin(t)};
+ });
+}
+function sphereTerminatorGuide(){
+ if(!O||!(O.r>0))return [];
+ const light=sphereLightVector(),len=Math.hypot(light.x,light.y)||1;
+ const dx=light.x/len,dy=light.y/len,perpX=-dy,perpY=dx;
+ return Array.from({length:113},(_,i)=>{
+  const t=Math.PI*i/112;
+  return {x:O.x+O.r*(perpX*Math.cos(t)-light.z*dx*Math.sin(t)),
+   y:O.y+O.r*(perpY*Math.cos(t)-light.z*dy*Math.sin(t))};
+ });
+}
+function sphereShadeGuide(){
+ if(!O||!(O.r>0))return [];
+ const light=sphereLightVector(),len=Math.hypot(light.x,light.y)||1;
+ const dx=light.x/len,dy=light.y/len,px=-dy,py=dx;
+ const out=[];
+ // A continuous, tapered zigzag hatch within the unlit hemisphere.
+ for(let row=0;row<7;row++){
+  const u=-.82+row*.0605,halfWidth=Math.min(.40,Math.sqrt(Math.max(.01,1-u*u))*.73);
+  const start=row%2?-halfWidth:halfWidth,end=-start;
+  const steps=24;
+  for(let j=0;j<=steps;j++){
+   const v=start+(end-start)*j/steps;
+   out.push({x:O.x+O.r*(u*dx+v*px),y:O.y+O.r*(u*dy+v*py)});
+  }
+ }
+ return out;
+}
+function sphereShadowGuide(){
+ if(!O||!(O.r>0))return [];
+ const light=sphereLightVector(),r=O.r,dx=light.x,dy=light.y;
+ const cx=O.x-dx*r*.77,cy=O.y+r*.98-dy*r*.41,rx=r*.89,ry=r*.20,rotation=dx*.10;
+ const ca=Math.cos(rotation),sa=Math.sin(rotation);
+ return Array.from({length:105},(_,i)=>{
+  const a=2*Math.PI*i/104,x=rx*Math.cos(a),y=ry*Math.sin(a);
+  return {x:cx+x*ca-y*sa,y:cy+x*sa+y*ca};
+ });
+}
+function sphereGuide(stage=composeStage){
+ return stage===0?sphereContourGuide():stage===1?sphereTerminatorGuide():stage===2?sphereShadeGuide():sphereShadowGuide();
+}
+// Geometry, coverage, efficient use of ink and placement within the physically
+// shadowed hemisphere all influence accuracy. Reversing the light direction
+// cannot earn the same shading score.
+function sphereStageAccuracy(stage=composeStage){
+ const parts=practiceStrokes.filter(p=>p.length>=2),points=parts.flat();
+ const guide=sphereGuide(stage);if(!parts.length||guide.length<2)return 0;
+ if(stage===0)return circleAccuracy();
+ const ideal=pathLength(guide),travel=parts.reduce((v,p)=>v+pathLength(p),0);
+ if(ideal<1||travel<7)return 0;
+ const guideErrors=guide.map(p=>Math.min(...parts.map(q=>polyDist(p,q))));
+ const drawnErrors=points.map(p=>polyDist(p,guide));
+ const coverage=guideErrors.reduce((n,d)=>n+clamp(1-d/17),0)/guideErrors.length;
+ const precision=drawnErrors.reduce((n,d)=>n+clamp(1-d/17),0)/drawnErrors.length;
+ const lengthScore=clamp(1-Math.abs(travel-ideal)/ideal);
+ const landmarks=[guide[0],guide[Math.floor(guide.length/2)],guide.at(-1)];
+ const landmarkScore=landmarks.reduce((n,p)=>n+clamp(1-Math.min(...parts.map(q=>polyDist(p,q)))/20),0)/landmarks.length;
+ const shadowConsistency=stage===2?points.filter(p=>sphereLightAtPoint(p)<=.16).length/points.length:1;
+ const score=Math.round(100*(.42*coverage+.31*precision+.17*landmarkScore+.10*lengthScore)*(.76+.24*shadowConsistency));
+ const perfect=guideErrors.every(d=>d<=.6)&&drawnErrors.every(d=>d<=.45)
+  &&Math.abs(travel-ideal)<=ideal*.003&&shadowConsistency>=.999;
+ return perfect?100:clamp(score,0,99);
+}
+function sphereStageLooksComplete(stage=composeStage){
+ if(stage===0)return circleLooksComplete();
+ const parts=practiceStrokes.filter(pts=>pts.length>=2),guide=sphereGuide(stage);
+ if(!parts.length||guide.length<2)return false;
+ const ideal=pathLength(guide),travel=parts.reduce((v,p)=>v+pathLength(p),0);
+ if(travel<ideal*.66)return false;
+ const tol=Math.max(12,Math.min(24,O.r*.22));
+ const coverage=guide.filter(p=>parts.some(pts=>polyDist(p,pts)<=tol)).length/guide.length;
+ const anchors=[guide[0],guide[Math.floor(guide.length/2)],guide.at(-1)];
+ return coverage>=.83&&anchors.every(p=>parts.some(pts=>polyDist(p,pts)<=tol*1.25));
+}
+function paintSphereStudy(reveal){
+ if(!O)return;
+ const light=sphereLightVector(),len=Math.hypot(light.x,light.y)||1;
+ const dx=light.x/len,dy=light.y/len,r=O.r;
+ // A fixed reference for the current light source, outside the sphere.
+ const lamp={x:O.x+dx*(r+29),y:O.y+dy*(r+29)};
+ dc.save();dc.beginPath();dc.arc(lamp.x,lamp.y,7,0,2*Math.PI);
+ dc.fillStyle='#e5b85b';dc.fill();dc.strokeStyle='#99753b';dc.lineWidth=1.6;dc.stroke();
+ dc.beginPath();dc.moveTo(lamp.x-dx*11,lamp.y-dy*11);
+ dc.lineTo(lamp.x-dx*31,lamp.y-dy*31);
+ dc.strokeStyle='#c99c54';dc.setLineDash([3,4]);dc.stroke();dc.restore();
+ if(composeStage===0){
+  if(reveal){dc.save();dc.beginPath();dc.arc(O.x,O.y,r,0,2*Math.PI);dc.setLineDash([7,5]);dc.strokeStyle='#51a888';dc.lineWidth=2.3;dc.stroke();dc.restore()}
+  for(const angle of [0,Math.PI/2,Math.PI,Math.PI*1.5]){
+   circleDot(O.x+r*Math.cos(angle),O.y+r*Math.sin(angle));
+  }
+  return;
+ }
+ const guide=sphereGuide();
+ if(!guide.length)return;
+ dc.save();dc.beginPath();dc.moveTo(guide[0].x,guide[0].y);
+ for(let i=1;i<guide.length;i++)dc.lineTo(guide[i].x,guide[i].y);
+ dc.strokeStyle=reveal?'#51a888':'#82aa9b99';
+ dc.lineWidth=reveal?2.4:1.8;dc.setLineDash(reveal?[7,5]:[4,6]);dc.stroke();dc.restore();
+ if(composeStage===2){
+  // A reference crescent shows which hemisphere receives the graphite tone.
+  const shade=guide[Math.floor(guide.length/2)];
+  dc.save();dc.beginPath();dc.arc(shade.x,shade.y,4,0,2*Math.PI);
+  dc.fillStyle='rgba(53,88,77,.38)';dc.fill();dc.restore();
+ }
+ circleDot(guide[0].x,guide[0].y);
+ circleDot(guide.at(-1).x,guide.at(-1).y);
+}
+
 function squareCorners(){
  if(!O)return [];
  const angle=Number(O.angle)||0,cos=Math.cos(angle),sin=Math.sin(angle);
