@@ -419,7 +419,16 @@ function createPrompt(){
  s.mode=selectedStudy();
  strokePts=[];practiceStrokes=[];s.practiceDraft=null;drawing=false;locked=false;feedbackReveal=false;composeStage=0;composeScores=[];composeFirstBounds=null;composeLensShape=null;composeBalloonOutline=null;composeBalloonId=null;
  A=null;B=null;O=null;
- if(isCompositionMode()){
+ if(s.mode==='cylinder'){
+  composeTemplate='cylinder';
+  const maximum=Math.max(26,Math.min(W*.16,H*.14,92));
+  const rx=randomBetween(maximum*.73,maximum),ry=rx*randomBetween(.34,.58);
+  O={x:0,y:0,rx,ry,angle:randomBetween(-.20,.20),
+    bodyHeight:randomBetween(rx*1.25,rx*1.95),bodyLean:randomBetween(-rx*.23,rx*.23)};
+  const ends=cylinderSideAnchors();A={...ends.left};B={...ends.right};
+  placePrompt([...ovalGuide(),...cylinderBodyGuide()]);
+ }
+ else if(isCompositionMode()){
   composeTemplate=s.mode==='balloon'?'balloon':s.composeBase==='square'?(s.composeLine==='down'?'signpost':'kite'):(s.composeLine==='down'?'balloon':'magnifier');
   if(composeTemplate==='balloon')composeBalloonId=++s.balloonSerial;
   const maxR=Math.min(W*.14,H*.17,82),r=randomBetween(Math.max(22,maxR*.62),Math.max(22,maxR));
@@ -528,6 +537,39 @@ function ovalPoint(theta){
 function ovalGuide(){return Array.from({length:145},(_,i)=>ovalPoint(i*2*Math.PI/144))}
 function ovalAnchors(){return [0,1,2,3].map(i=>ovalPoint(i*Math.PI/2))}
 
+
+/* Two-dimensional projected cylinder: tilted elliptical top, parallel sloping
+   sides, and visible lower half-ellipse. The contour is traced continuously
+   from the upper-left rim (A), through the base, to the upper-right rim (B). */
+function cylinderSideAnchors(){
+ const top=ovalGuide();
+ return {left:{...top.reduce((a,p)=>p.x<a.x?p:a)},right:{...top.reduce((a,p)=>p.x>a.x?p:a)}};
+}
+function cylinderBodyGuide(){
+ if(!O||!(O.bodyHeight>0))return [];
+ const {left,right}=cylinderSideAnchors();
+ const bottomLeft={x:left.x+O.bodyLean,y:left.y+O.bodyHeight},
+       bottomRight={x:right.x+O.bodyLean,y:right.y+O.bodyHeight};
+ const guide=[];
+ for(let i=0;i<=30;i++){
+  const t=i/30;guide.push({x:left.x+(bottomLeft.x-left.x)*t,y:left.y+(bottomLeft.y-left.y)*t});
+ }
+ const control={x:(bottomLeft.x+bottomRight.x)/2,y:(bottomLeft.y+bottomRight.y)/2+O.ry*2.05};
+ for(let i=1;i<=72;i++){
+  const t=i/72,u=1-t;
+  guide.push({x:u*u*bottomLeft.x+2*u*t*control.x+t*t*bottomRight.x,
+   y:u*u*bottomLeft.y+2*u*t*control.y+t*t*bottomRight.y});
+ }
+ for(let i=1;i<=30;i++){
+  const t=i/30;guide.push({x:bottomRight.x+(right.x-bottomRight.x)*t,y:bottomRight.y+(right.y-bottomRight.y)*t});
+ }
+ return guide;
+}
+function cylinderBodyAnchors(){
+ const g=cylinderBodyGuide();
+ return g.length?[g[0],g[30],g[66],g[102],g[g.length-1]]:[];
+}
+
 function squareCorners(){
  if(!O)return [];
  const angle=Number(O.angle)||0,cos=Math.cos(angle),sin=Math.sin(angle);
@@ -538,7 +580,24 @@ function squareCorners(){
 // Keep the completed ideal outline on screen until the next prompt. A queued
 // animation frame or a responsive resize must not erase scoring feedback.
 function paintPaper(reveal=feedbackReveal){dc.clearRect(0,0,W,H);
- if(s.mode==='triangle'&&O){
+ if(s.mode==='cylinder'&&O){
+  if(composeStage===0){
+   if(reveal){dc.save();dc.beginPath();dc.ellipse(O.x,O.y,O.rx,O.ry,O.angle||0,0,2*Math.PI);
+    dc.strokeStyle='#51a888';dc.lineWidth=2.4;dc.setLineDash([7,5]);dc.stroke();dc.restore()}
+   for(const p of ovalAnchors())circleDot(p.x,p.y);
+  }else{
+   const path=cylinderBodyGuide();
+   if(path.length){
+    dc.save();dc.beginPath();dc.moveTo(path[0].x,path[0].y);
+    for(let i=1;i<path.length;i++)dc.lineTo(path[i].x,path[i].y);
+    dc.strokeStyle=reveal?'#51a888':'#82aa9b99';dc.lineWidth=reveal?2.4:2;
+    dc.setLineDash(reveal?[7,5]:[5,7]);dc.stroke();dc.restore();
+    for(const p of cylinderBodyAnchors().slice(1,-1))circleDot(p.x,p.y);
+    dot(A,'A','#468d7c');dot(B,'B','#d9835e');
+   }
+  }
+ }
+ else if(s.mode==='triangle'&&O){
    if(reveal){
     // Show the exact triangle used for accuracy grading, like the dashed
     // correct line revealed after a line exercise.
@@ -1127,6 +1186,40 @@ function ovalLooksComplete(){
  return anchors&&covered>=.82;
 }
 
+
+function cylinderBodyAccuracy(){
+ const parts=practiceStrokes.filter(pts=>pts.length>=2),points=parts.flat();
+ if(!parts.length||points.length<2)return 0;
+ const guide=cylinderBodyGuide();
+ if(guide.length<3)return 0;
+ const travel=parts.reduce((sum,pts)=>sum+pathLength(pts),0),ideal=pathLength(guide);
+ if(travel<10)return 0;
+ const guideErrors=guide.map(p=>Math.min(...parts.map(pts=>polyDist(p,pts))));
+ const inkErrors=points.map(p=>polyDist(p,guide));
+ const anchors=cylinderBodyAnchors();
+ const anchorErrors=anchors.map(p=>Math.min(...parts.map(pts=>polyDist(p,pts))));
+ const coverage=guideErrors.reduce((v,d)=>v+clamp(1-d/19),0)/guideErrors.length;
+ const precision=inkErrors.reduce((v,d)=>v+clamp(1-d/19),0)/inkErrors.length;
+ const anchorScore=anchorErrors.reduce((v,d)=>v+clamp(1-d/24),0)/anchorErrors.length;
+ const efficiency=clamp(1-Math.abs(travel-ideal)/ideal);
+ const score=.44*coverage+.29*precision+.18*anchorScore+.09*efficiency;
+ if(guideErrors.every(d=>d<=.55)&&inkErrors.every(d=>d<=.4)
+    &&anchorErrors.every(d=>d<=.55)&&Math.abs(travel-ideal)<=ideal*.002)return 100;
+ return clamp(Math.round(score*100),0,99);
+}
+function cylinderBodyLooksComplete(){
+ const parts=practiceStrokes.filter(pts=>pts.length>=2);
+ if(!parts.length)return false;
+ const guide=cylinderBodyGuide();
+ if(guide.length<3)return false;
+ const travel=parts.reduce((v,pts)=>v+pathLength(pts),0),ideal=pathLength(guide);
+ if(travel<ideal*.66)return false;
+ const tol=Math.max(13,Math.min(27,O.rx*.26));
+ const coverage=guide.filter(p=>parts.some(pts=>polyDist(p,pts)<=tol)).length/guide.length;
+ const anchors=cylinderBodyAnchors().every(p=>parts.some(pts=>polyDist(p,pts)<=tol*1.25));
+ return anchors&&coverage>=.82;
+}
+
 function triangleGuide(){
  const corners=triangleCorners(),guide=[];
  for(let edge=0;edge<3;edge++){
@@ -1297,6 +1390,7 @@ function circleLooksComplete(){
  );
 }
 function componentLooksComplete(){
+ if(s.mode==='cylinder')return composeStage===0?ovalLooksComplete():cylinderBodyLooksComplete();
  if(s.mode==='oval')return ovalLooksComplete();
  if(s.mode==='curve')return curveLooksComplete();
  if(s.mode==='triangle')return triangleLooksComplete();
@@ -1373,14 +1467,14 @@ function alignBalloonStringToDrawnOutline(){
  B={x:end.x+dx,y:end.y+dy};
 }
 function finishCompositionPart(){
- const accuracy=composeStage===0?(['signpost','kite'].includes(composeTemplate)?squareAccuracy():circleAccuracy()):lineAccuracy(true);
+ const accuracy=composeTemplate==='cylinder'?(composeStage===0?ovalAccuracy():cylinderBodyAccuracy()):composeStage===0?(['signpost','kite'].includes(composeTemplate)?squareAccuracy():circleAccuracy()):lineAccuracy(true);
  composeScores.push(accuracy);
  if(composeStage===0){
   composeFirstBounds=boundsToIso(drawnBounds(practiceStrokes));
   if(composeTemplate==='magnifier')composeLensShape=captureDrawnLens(practiceStrokes);
   if(composeTemplate==='balloon'){composeBalloonOutline=practiceStrokes.map(pts=>pts.map(pointToIso));alignBalloonStringToDrawnOutline()}
   composeStage=1;feedbackReveal=false;practiceStrokes=[];strokePts=[];persistPracticeDraft();stats();paintPaper();
-  $('score').textContent=(['signpost','kite'].includes(composeTemplate)?'Square ':'Circle ')+accuracy+'% · Now draw the '+(composeTemplate==='balloon'?'string':composeTemplate==='signpost'?'post':composeTemplate==='kite'?'tail':'handle');
+  $('score').textContent=(composeTemplate==='cylinder'?'Oval ':['signpost','kite'].includes(composeTemplate)?'Square ':'Circle ')+accuracy+'% · Now draw the '+(composeTemplate==='cylinder'?'body':composeTemplate==='balloon'?'string':composeTemplate==='signpost'?'post':composeTemplate==='kite'?'tail':'handle');
   // A two-part drawing may use its last stroke on the first component.
   // Save the second stage and enter the shop after showing the feedback.
   if(s.left<=0){clearTimeout(advanceTimer);advanceTimer=setTimeout(()=>{if(s.phase==='draw'&&composeStage===1&&s.left<=0)openShop()},1370)}
@@ -1389,9 +1483,9 @@ function finishCompositionPart(){
  locked=true;
  // Each component is paid at its study rate: square/circle plus a line.
  const firstMode=['signpost','kite'].includes(composeTemplate)?'square':'circle';
- const reward=payoutForShape(firstMode,composeScores[0])+payoutForShape('line',composeScores[1]);
+ const reward=composeTemplate==='cylinder'?payoutForShape('oval',composeScores[0])+payoutForShape('curve',composeScores[1]):payoutForShape(firstMode,composeScores[0])+payoutForShape('line',composeScores[1]);
  const rewardBounds=unionBounds(boundsFromIso(composeFirstBounds),drawnBounds(practiceStrokes));
- s.cash+=reward;s.last=Math.round((composeScores[0]+composeScores[1])/2);s.lastPay=reward;s.lastKind=s.mode==='balloon'?'balloon':'composition';
+ s.cash+=reward;s.last=Math.round((composeScores[0]+composeScores[1])/2);s.lastPay=reward;s.lastKind=composeTemplate==='cylinder'?'cylinder':s.mode==='balloon'?'balloon':'composition';
  if(composeTemplate==='magnifier'&&O)s.magnifiers.push(composeLensShape||{at:pointToIso(O),r:O.r/Math.max(1,H)});
  if(composeTemplate==='balloon')finishHeliumBalloon();
  s.practiceDraft=null;feedbackReveal=true;save();stats();paintPaper(true);
@@ -1419,7 +1513,7 @@ function finishPractice(){
   if(complete||s.left<=reserve)finishCompositionPart();
   else{
    persistPracticeDraft();stats();
-   $('score').textContent='Continue '+(composeStage===0?(['signpost','kite'].includes(composeTemplate)?'the square':'the circle'):composeTemplate==='balloon'?'the string':composeTemplate==='signpost'?'the post':'the handle')+' · '+s.left+' stroke'+(s.left===1?'':'s')+' left';
+   $('score').textContent='Continue '+(composeStage===0?(composeTemplate==='cylinder'?'the top oval':['signpost','kite'].includes(composeTemplate)?'the square':'the circle'):composeTemplate==='cylinder'?'the body':composeTemplate==='balloon'?'the string':composeTemplate==='signpost'?'the post':'the handle')+' · '+s.left+' stroke'+(s.left===1?'':'s')+' left';
   }
   return;
  }
@@ -1480,6 +1574,16 @@ const ovalShopGuide=()=>Array.from({length:121},(_,i)=>{
  const t=i*2*Math.PI/120,angle=-.35,x=33*Math.cos(t),y=22*Math.sin(t);
  return {x:48+x*Math.cos(angle)-y*Math.sin(angle),y:48+x*Math.sin(angle)+y*Math.cos(angle)};
 });
+const cylinderShopGuide=()=>{
+ const pts=[],cx=48,ty=27,rx=27,ry=10;
+ // Start/end the top oval at its left edge so the body can join smoothly.
+ for(let i=0;i<=80;i++){const t=Math.PI+2*Math.PI*i/80;pts.push({x:cx+rx*Math.cos(t),y:ty+ry*Math.sin(t)})}
+ const left={x:cx-rx,y:ty},right={x:cx+rx,y:ty},bl={x:left.x-2,y:73},br={x:right.x-2,y:73};
+ for(let i=1;i<=18;i++){const t=i/18;pts.push({x:left.x+(bl.x-left.x)*t,y:left.y+(bl.y-left.y)*t})}
+ for(let i=1;i<=44;i++){const t=i/44,u=1-t;pts.push({x:u*u*bl.x+2*u*t*47+t*t*br.x,y:u*u*bl.y+2*u*t*95+t*t*br.y})}
+ for(let i=1;i<=18;i++){const t=i/18;pts.push({x:br.x+(right.x-br.x)*t,y:br.y+(right.y-br.y)*t})}
+ return pts;
+};
 const guides={
  root:simpleBoltGuide(),
  stamina:complexBoltGuide(),
@@ -1487,6 +1591,7 @@ const guides={
  circle:circleGuide(),
  curve:curveShopGuide(),
  oval:ovalShopGuide(),
+ cylinder:cylinderShopGuide(),
  triangle:polygonGuide(3,34,-Math.PI/2),
  square:polygonGuide(4,34,-Math.PI/4),
  // Two opposing arrows, traced to unlock switching drawing studies.
