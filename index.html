@@ -92,6 +92,18 @@
   #playStage .paper-area{flex:1 1 0;min-height:clamp(220px,35svh,440px)}
   #playStage .draw-foot{flex-shrink:0;position:sticky;bottom:0;z-index:3}
 }
+/* On large monitors, reduce the sketchbook footprint by roughly 30%
+   without using CSS transforms/zoom that would offset drawing coordinates. */
+@media(min-width:1500px) and (min-height:850px){
+  #app{width:70%;max-width:1400px}
+  #app:has(#playStage:not(.hidden)){
+    height:70dvh;
+    margin-top:15dvh;
+    margin-bottom:15dvh;
+  }
+  /* Let the drawing surface contract so End Turn remains in the viewport. */
+  #playStage .paper-area{min-height:200px}
+}
 @media(max-width:780px){
   #app{display:block;min-height:0;padding:14px 12px 28px}
   #playStage:not(.hidden){display:block}
