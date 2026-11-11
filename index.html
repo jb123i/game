@@ -1170,6 +1170,15 @@ function simulateBalloons(dt){
   const prev=Array.isArray(o.ropePrev)&&o.ropePrev.length===10?o.ropePrev.map(pointFromIso):rope.map(p=>({...p}));
   const neck=balloonNeck({...o,at:pointToIso(body.p)}),
         segment=Math.max(3,(o.stringLength||.15)*H/9);
+  // Broad-phase: only nearby envelopes can touch this string. A paper with
+  // 36 balloons should not run 36 body tests for each string segment.
+  const reach=Math.max(30,(o.stringLength||.15)*H)+body.r+12;
+  const nearbyBalloons=bodies.filter(other=>{
+   if(other===body)return false;
+   const dx=other.p.x-body.p.x,dy=other.p.y-body.p.y;
+   const limit=reach+other.r*1.9;
+   return dx*dx+dy*dy<limit*limit;
+  });
   const seed=Number.isFinite(o.seed)?o.seed:0;
   for(let i=1;i<rope.length;i++){
    const p=rope[i],old={...p},last=prev[i]||p;
@@ -1187,9 +1196,11 @@ function simulateBalloons(dt){
    }
    for(let i=1;i<rope.length;i++){
     const p=rope[i];
-    for(const obstacle of bodies){
-     if(obstacle===body)continue;
-     const dx=p.x-obstacle.p.x,dy=p.y-obstacle.p.y,dist=Math.hypot(dx,dy),theta=Math.atan2(dy,dx);
+    for(const obstacle of nearbyBalloons){
+     const dx=p.x-obstacle.p.x,dy=p.y-obstacle.p.y;
+     const far=(obstacle.r*1.9+2)**2;
+     if(dx*dx+dy*dy>far)continue;
+     const dist=Math.hypot(dx,dy),theta=Math.atan2(dy,dx);
      const radius=balloonContactRadius(obstacle.o,theta)+1.5;
      if(dist>=radius)continue;
      const normalX=dist>.001?dx/dist:Math.cos(i),normalY=dist>.001?dy/dist:Math.sin(i);
