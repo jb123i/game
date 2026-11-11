@@ -231,8 +231,8 @@ try{const q=JSON.parse(localStorage.getItem(key)||'null');if(q&&Number.isFinite(
  delete s.owned.access;delete s.disabled.access;delete s.traces.access;delete s.pendingTraces.access;
   // Preserve legacy hand-drawn triangle and star artwork, including partially traced outlines.
   if(!q.legacyEnduranceShapes)s.legacyEnduranceShapes={
-   root:!!s.owned.root||!!decodeSafeLegacy(q.pendingTraces?.root),
-   stamina:!!s.owned.stamina||!!decodeSafeLegacy(q.pendingTraces?.stamina)
+   root:!!s.owned.root||!!decodeSafeLegacy((q.pendingTraces && q.pendingTraces.root)),
+   stamina:!!s.owned.stamina||!!decodeSafeLegacy((q.pendingTraces && q.pendingTraces.stamina))
   };
   s.shopBonusEarned=q.shopBonusEarned===true&&s.phase==='shop';
  s.shopRootMigrationV1=true;
@@ -247,7 +247,7 @@ try{const q=JSON.parse(localStorage.getItem(key)||'null');if(q&&Number.isFinite(
  // Migrate legacy play-mode toggles once; from now on only erasing/retracing shop shapes changes activation.
  if(!q.disabled){if(s.owned.grid&&!q.gridOn)s.disabled.grid=true;if(s.owned.free&&!q.freeOn)s.disabled.free=true}
  s.eraserSize=Number.isFinite(Number(s.eraserSize))?Math.round(Math.min(64,Math.max(8,Number(s.eraserSize)))/2)*2:30;s.cash=Math.max(0,Math.floor(s.cash));s.energy=1+((s.owned.root&&!s.disabled.root)?1:0)+((s.owned.stamina&&!s.disabled.stamina)?1:0)+((s.owned.staminaIII&&!s.disabled.staminaIII&&s.owned.stamina&&!s.disabled.stamina)?1:0);s.left=Math.max(0,Math.min(s.energy+(s.shopBonusEarned&&s.owned.secondWind&&!s.disabled.secondWind?1:0),Number(s.left)||0));if(q.sharedEnergyV1!==true&&s.phase==='shop'&&Number.isFinite(q.shopLeft))s.left=Math.max(0,Math.min(s.energy,q.shopLeft));delete s.shopLeft;s.sharedEnergyV1=true;if((!s.owned.circle||s.disabled.circle||(s.owned.square&&s.disabled.square))&&s.mode==='circle')s.mode='line';if(s.mode==='square'&&(!s.owned.square||s.disabled.square))s.mode='line';if(s.mode==='compose'&&(!s.owned.composer||s.disabled.composer||!s.owned.circle||s.disabled.circle||(s.owned.square&&s.disabled.square)||(s.legacyComposer?(s.owned.stamina?!!s.disabled.stamina:!s.owned.root||!!s.disabled.root):!s.owned.stamina||!!s.disabled.stamina)))s.mode='line';if(!s.owned.eraser||s.disabled.eraser)s.tool='pencil';s.freeOn=!!(s.owned.free&&!s.disabled.free);s.gridOn=!!(s.owned.grid&&!s.disabled.grid);
- }else if(!q){const old=JSON.parse(localStorage.getItem('learn-to-draw-playable-v3')||'null');if(old&&Number.isFinite(old.cash)){s.cash=Math.max(0,Math.floor(old.cash));s.turn=old.turn||1;s.strokes=old.lines||0;s.last=old.last||0;s.owned.root=!!old.upgraded;s.energy=s.owned.root?2:1;s.left=Math.max(0,Math.min(s.energy,old.left??s.energy));s.phase=old.phase==='shop'?'shop':'draw';}}}catch{}
+ }else if(!q){const old=JSON.parse(localStorage.getItem('learn-to-draw-playable-v3')||'null');if(old&&Number.isFinite(old.cash)){s.cash=Math.max(0,Math.floor(old.cash));s.turn=old.turn||1;s.strokes=old.lines||0;s.last=old.last||0;s.owned.root=!!old.upgraded;s.energy=s.owned.root?2:1;s.left=Math.max(0,Math.min(s.energy,(old.left==null?s.energy:old.left)));s.phase=old.phase==='shop'?'shop':'draw';}}}catch{}
 const save=()=>{try{localStorage.setItem(key,JSON.stringify(s))}catch{}};
 const upgradeActive=id=>!!s.owned[id]&&!s.disabled[id];
 // Existing Circle owners retain their purchased ability. New Circle
@@ -286,7 +286,7 @@ function guideStudyKey(mode=s.mode,stage=composeStage){
  return isCompositionMode(mode)?mode+':'+stage:mode;
 }
 function guideHistory(key=guideStudyKey()){
- const raw=s.guideMastery?.[key];
+ const raw=(s.guideMastery && s.guideMastery[key]);
  return Array.isArray(raw)?raw.filter(v=>Number.isFinite(v)&&v>=0&&v<=100).slice(-5):[];
 }
 function guideFadeStrength(key=guideStudyKey()){
@@ -371,8 +371,8 @@ function stableSamples(e){const samples=typeof e.getCoalescedEvents==='function'
 // Keep the first upgrade's availability pulse synchronized with currency,
 // remaining strokes, and purchase state, including mid-shop updates.
 function refreshFirstUpgradeReady(){
- const first=$('skillTree')?.querySelector('.upgrade[data-id="root"]');
- first?.classList.toggle('first-ready',s.phase==='shop'&&!s.owned.root&&s.cash>=defs.root.price&&s.left>=1);
+ const first=$('skillTree') && $('skillTree').querySelector('.upgrade[data-id="root"]');
+ if(first)first.classList.toggle('first-ready',s.phase==='shop'&&!s.owned.root&&s.cash>=defs.root.price&&s.left>=1);
 }
 function stats(){
  $('wallet').textContent=cash(s.cash);refreshWalletWarning();refreshFirstUpgradeReady();$('turn').textContent=s.turn;$('energy').textContent=s.left+' / '+(s.energy+(s.phase==='shop'&&s.shopBonusEarned&&upgradeActive('secondWind')?1:0));$('strokes').textContent=s.strokes;
@@ -683,7 +683,7 @@ function cylinderBodyAnchors(){
    Each stage reuses the same randomized lighting and projected sphere. */
 const sphereStageNames=['contour','shadow boundary','tone','cast shadow'];
 function sphereLightVector(){
- const direction=Number(O?.lightAngle)||-Math.PI/2,elevation=clamp(Number(O?.lightElevation)||.5,.28,.68);
+ const direction=Number((O && O.lightAngle))||-Math.PI/2,elevation=clamp(Number((O && O.lightElevation))||.5,.28,.68);
  const length=Math.sqrt(1-elevation*elevation);
  return {x:Math.cos(direction)*length,y:Math.sin(direction)*length,z:elevation};
 }
@@ -755,7 +755,7 @@ function sphereStageAccuracy(stage=composeStage){
  const coverage=guideErrors.reduce((n,d)=>n+clamp(1-d/17),0)/guideErrors.length;
  const precision=drawnErrors.reduce((n,d)=>n+clamp(1-d/17),0)/drawnErrors.length;
  const lengthScore=clamp(1-Math.abs(travel-ideal)/ideal);
- const landmarks=[guide[0],guide[Math.floor(guide.length/2)],guide.at(-1)];
+ const landmarks=[guide[0],guide[Math.floor(guide.length/2)],guide[guide.length-1]];
  const landmarkScore=landmarks.reduce((n,p)=>n+clamp(1-Math.min(...parts.map(q=>polyDist(p,q)))/20),0)/landmarks.length;
  const shadowConsistency=stage===2?points.filter(p=>sphereLightAtPoint(p)<=.16).length/points.length:1;
  const score=Math.round(100*(.42*coverage+.31*precision+.17*landmarkScore+.10*lengthScore)*(.76+.24*shadowConsistency));
@@ -771,7 +771,7 @@ function sphereStageLooksComplete(stage=composeStage){
  if(travel<ideal*.66)return false;
  const tol=Math.max(12,Math.min(24,O.r*.22));
  const coverage=guide.filter(p=>parts.some(pts=>polyDist(p,pts)<=tol)).length/guide.length;
- const anchors=[guide[0],guide[Math.floor(guide.length/2)],guide.at(-1)];
+ const anchors=[guide[0],guide[Math.floor(guide.length/2)],guide[guide.length-1]];
  return coverage>=.83&&anchors.every(p=>parts.some(pts=>polyDist(p,pts)<=tol*1.25));
 }
 function paintSphereStudy(reveal){
@@ -808,7 +808,7 @@ function paintSphereStudy(reveal){
   dc.fillStyle='rgba(53,88,77,.38)';dc.fill();dc.restore();
  }
  circleDot(guide[0].x,guide[0].y);
- circleDot(guide.at(-1).x,guide.at(-1).y);
+ circleDot(guide[guide.length-1].x,guide[guide.length-1].y);
 }
 
 function squareCorners(){
@@ -940,7 +940,7 @@ function recoverOldLensContour(glass){
  if(!Number.isFinite(r)||r<8||!Array.isArray(s.paperMarks))return null;
  const matches=[],seen=new Uint8Array(72);
  for(const mark of s.paperMarks){
-  if(mark?.kind!=='ink'||!Array.isArray(mark.points)||mark.points.length<2)continue;
+  if((mark && mark.kind)!=='ink'||!Array.isArray(mark.points)||mark.points.length<2)continue;
   const points=mark.points.filter(p=>Array.isArray(p)&&p.length===2&&p.every(Number.isFinite)).map(p=>
    mark.space==='iso'?pointFromIso(p):{x:W/2+(p[0]-.5)*(Number(s.legacyAspect)>0?s.legacyAspect:legacyPaperAspect())*H,y:p[1]*H});
   if(points.length<2||pathLength(points)<r*.12)continue;
@@ -1210,7 +1210,7 @@ function balloonContain(body){
 }
 
 function balloonNeck(o){
- if(o.popped&&Array.isArray(o.popState?.knot))return pointFromIso(o.popState.knot);
+ if(o.popped&&Array.isArray((o.popState && o.popState.knot)))return pointFromIso(o.popState.knot);
  const c=pointFromIso(o.at),a=Number(o.angle)||0,r=balloonRenderedRadius(o,Math.PI/2);
  return {x:c.x-Math.sin(a)*r,y:c.y+Math.cos(a)*r};
 }
@@ -1228,10 +1228,10 @@ function finishHeliumBalloon(){
  const original=Array.isArray(composeBalloonOutline)?composeBalloonOutline.map(path=>path.map(pointFromIso)):[];
  const shape=original.length?captureDrawnLens(original,{r:O.r}):null;
  const r=clamp(O.r,16,100),center=shape?pointFromIso(shape.at):{x:O.x,y:O.y};
- const profile=shape?.profile||null;
+ const profile=(shape && shape.profile)||null;
  const stringLength=clamp(practiceStrokes.reduce((v,path)=>v+pathLength(path),0),r*.7,r*2.5);
  const neck={x:center.x,y:center.y+r*lensRadiusAt(profile,Math.PI/2)};
- const tail=practiceStrokes.length?practiceStrokes[practiceStrokes.length-1].at(-1):null;
+ const tail=practiceStrokes.length?practiceStrokes[practiceStrokes.length-1][practiceStrokes[practiceStrokes.length-1].length-1]:null;
  const rope=Array.from({length:10},(_,i)=>{
   const t=i/9;return {x:neck.x+(tail?tail.x-neck.x:0)*t,y:neck.y+(tail?tail.y-neck.y:stringLength)*t};
  });
@@ -1248,9 +1248,9 @@ function finishHeliumBalloon(){
 /* Popped balloons become lightweight, flexible latex with the original string
    still attached. All dynamic nodes are saved in paper-normalized coordinates. */
 function popHeliumBalloon(o){
- if(!o?.at||o.popped)return false;
+ if(!(o && o.at)||o.popped)return false;
  const center=pointFromIso(o.at),neck=balloonNeck(o),radius=clamp(o.radius*H,13,110);
- const angle=Number(o.angle)||0,vx=(o.vel?.[0]||0)*H,vy=(o.vel?.[1]||0)*H;
+ const angle=Number(o.angle)||0,vx=((o.vel && o.vel[0])||0)*H,vy=((o.vel && o.vel[1])||0)*H;
  const flaps=[];
  for(let k=0;k<3;k++){
   const nodes=[],previous=[],lengths=[];
@@ -1275,7 +1275,7 @@ function popHeliumBalloon(o){
  o.dents=[];return true;
 }
 function poppedLatexNodes(o){
- if(!Array.isArray(o.popState?.flaps))return [];
+ if(!Array.isArray((o.popState && o.popState.flaps)))return [];
  return o.popState.flaps.flatMap(f=>Array.isArray(f.nodes)?
   f.nodes.filter(p=>Array.isArray(p)&&p.length===2&&p.every(Number.isFinite)).map(pointFromIso):[]);
 }
@@ -1300,7 +1300,7 @@ function paintPoppedLatex(o){
   for(const p of left.slice(1))bc.lineTo(p.x,p.y);
   for(let i=right.length-1;i>=0;i--)bc.lineTo(right[i].x,right[i].y);
   bc.closePath();
-  const grad=bc.createLinearGradient(points[0].x-size*.1,points[0].y-size*.1,points.at(-1).x+size*.1,points.at(-1).y+size*.1);
+  const grad=bc.createLinearGradient(points[0].x-size*.1,points[0].y-size*.1,points[points.length-1].x+size*.1,points[points.length-1].y+size*.1);
   grad.addColorStop(0,`hsla(${hue},65%,39%,.96)`);
   grad.addColorStop(.43,`hsla(${hue},73%,62%,.92)`);
   grad.addColorStop(.73,`hsla(${hue},68%,46%,.94)`);
@@ -1317,7 +1317,7 @@ function paintPoppedLatex(o){
 }
 function simulatePoppedBalloon(o,dt,bodies){
  const state=o.popState;
- if(!Array.isArray(state?.knot)||!Array.isArray(state.flaps))return;
+ if(!Array.isArray((state && state.knot))||!Array.isArray(state.flaps))return;
  state.age=Math.min(3600,(Number(state.age)||0)+dt);
  const ground=H-4,g=9.81*65,damping=Math.pow(.945,dt*30),wind=7*Math.sin(balloonClock*.65+(Number(o.seed)||0)*.1);
  const knot=pointFromIso(state.knot);
@@ -1347,7 +1347,7 @@ function simulatePoppedBalloon(o,dt,bodies){
    nodes[0]={...knot};
    for(let i=1;i<nodes.length;i++){
     const a=nodes[i-1],b=nodes[i],dx=b.x-a.x,dy=b.y-a.y,dist=Math.hypot(dx,dy)||.001;
-    const segment=clamp((Number(flap.lengths?.[i-1])||.02)*H,2.5,90);
+    const segment=clamp((Number((flap.lengths && flap.lengths[i-1]))||.02)*H,2.5,90);
     const excess=(dist-segment)/dist;
     if(i===1){b.x-=dx*excess*.88;b.y-=dy*excess*.88}
     else{a.x+=dx*excess*.35;a.y+=dy*excess*.35;b.x-=dx*excess*.55;b.y-=dy*excess*.55}
@@ -1415,7 +1415,7 @@ function paintBalloons(){
  bc.clearRect(0,0,W,H);
  if(s.phase!=='draw')return;
  for(const o of s.balloons||[]){
-  if(!o?.at||!Number.isFinite(o.radius)||o.radius<=0)continue;
+  if(!(o && o.at)||!Number.isFinite(o.radius)||o.radius<=0)continue;
   const center=pointFromIso(o.at),r=o.radius*H,rope=balloonRope(o);
   // The freely hanging string is simulated independently of the envelope.
   if(rope.length<2)continue;
@@ -1424,12 +1424,12 @@ function paintBalloons(){
   for(let i=1;i<rope.length-1;i++){
    const p=rope[i],q=rope[i+1];bc.quadraticCurveTo(p.x,p.y,(p.x+q.x)/2,(p.y+q.y)/2);
   }
-  bc.lineTo(rope.at(-1).x,rope.at(-1).y);bc.stroke();bc.restore();
+  bc.lineTo(rope[rope.length-1].x,rope[rope.length-1].y);bc.stroke();bc.restore();
  }
  // Draw all envelopes over all strings, so a string passing behind another
  // balloon is naturally occluded rather than showing through its latex.
  for(const o of s.balloons||[]){
-  if(!o?.at||!Number.isFinite(o.radius)||o.radius<=0||o.popped)continue;
+  if(!(o && o.at)||!Number.isFinite(o.radius)||o.radius<=0||o.popped)continue;
   const center=pointFromIso(o.at),r=o.radius*H;
   bc.save();bc.translate(center.x,center.y);bc.rotate(o.angle||0);
   bc.beginPath();
@@ -1458,14 +1458,14 @@ function paintBalloons(){
   bc.fillStyle=`hsla(${hue},62%,44%,.9)`;bc.fill();
   bc.strokeStyle='rgba(35,45,46,.7)';bc.lineWidth=1;bc.stroke();bc.restore();
  }
- for(const o of s.balloons||[])if(o?.popped)paintPoppedLatex(o);
+ for(const o of s.balloons||[])if((o && o.popped))paintPoppedLatex(o);
 }
 
 function simulateBalloons(dt){
- if(!s.balloons?.length||dt<=0||!W||!H)return;
+ if(!(s.balloons && s.balloons.length)||dt<=0||!W||!H)return;
  dt=Math.min(.05,dt);balloonClock+=dt;
  const g=9.81,ppm=65;
- const bodies=s.balloons.filter(o=>!o.popped&&o?.at&&Number.isFinite(o.radius)&&o.radius>0&&o.at.length===2)
+ const bodies=s.balloons.filter(o=>!o.popped&&(o && o.at)&&Number.isFinite(o.radius)&&o.radius>0&&o.at.length===2)
   .map(o=>{const p=pointFromIso(o.at),v=o.vel||[0,0];return {o,p,
     vx:clamp(Number.isFinite(v[0])?v[0]*H:0,-155,155),
     vy:clamp(Number.isFinite(v[1])?v[1]*H:0,-180,180),
@@ -1608,11 +1608,11 @@ function simulateBalloons(dt){
   b.o.at=pointToIso(b.p);
   b.o.vel=[clamp(b.vx,-155,155)/H,clamp(b.vy,-170,170)/H];
  }
- for(const o of s.balloons)if(o?.popped)simulatePoppedBalloon(o,dt,bodies);
+ for(const o of s.balloons)if((o && o.popped))simulatePoppedBalloon(o,dt,bodies);
 }
 function heliumFrameTick(time){
  balloonFrame=0;
- if(s.phase!=='draw'||!s.balloons?.length||!W||!H){lastBalloonTime=0;return}
+ if(s.phase!=='draw'||!(s.balloons && s.balloons.length)||!W||!H){lastBalloonTime=0;return}
  if(!lastBalloonTime)lastBalloonTime=time;
  const elapsed=time-lastBalloonTime;
  if(elapsed>=29){
@@ -1623,11 +1623,11 @@ function heliumFrameTick(time){
  ensureBalloonAnimation();
 }
 function ensureBalloonAnimation(){
- if(balloonFrame||s.phase!=='draw'||!s.balloons?.length)return;
+ if(balloonFrame||s.phase!=='draw'||!(s.balloons && s.balloons.length))return;
  balloonFrame=requestAnimationFrame(heliumFrameTick);
 }
 function eraseHeliumBalloons(points,width){
- if(!points?.length||!s.balloons?.length)return {popped:0,removed:0,tails:0};
+ if(!(points && points.length)||!(s.balloons && s.balloons.length))return {popped:0,removed:0,tails:0};
  const half=width/2,hit=p=>points.length>1?polyDist(p,points):distance(p,points[0]);
  const touchesTail=rope=>rope.length>=2&&(
   points.some(p=>polyDist(p,rope)<=half+3)
@@ -1635,7 +1635,7 @@ function eraseHeliumBalloons(points,width){
  );
  let popped=0,removed=0,tails=0;
  s.balloons=s.balloons.filter(o=>{
-  if(!o?.at)return false;
+  if(!(o && o.at))return false;
   // A tail is an independently erasable object. Checking it first also
   // prevents the eraser from accidentally popping the latex near its knot.
   if(!o.tailErased&&touchesTail(balloonRope(o))){
@@ -2263,7 +2263,7 @@ function encodeStrokes(strokes){return strokes.map(group=>group.map(p=>[Math.rou
 // older triangle/star saves once without affecting ownership or other drawings.
 // Preserve original hand-drawn strokes in saved history rather than displaying
 // them against the new (incompatible) lightning-bolt guides.
-if(s.legacyEnduranceShapes?.root||s.legacyEnduranceShapes?.stamina){
+if((s.legacyEnduranceShapes && s.legacyEnduranceShapes.root)||(s.legacyEnduranceShapes && s.legacyEnduranceShapes.stamina)){
  s.previousEnduranceTraces=s.previousEnduranceTraces&&typeof s.previousEnduranceTraces==='object'?s.previousEnduranceTraces:{};
  s.previousEndurancePending=s.previousEndurancePending&&typeof s.previousEndurancePending==='object'?s.previousEndurancePending:{};
  for(const id of ['root','stamina']){
@@ -2414,7 +2414,7 @@ function renderNode(id){const {ctx,strokes,symbol}=nodeCanvas[id];const guide=gu
  // Use the player's traced strokes in place of the default artwork for
  // every upgrade. Keep the faint guide available until the upgrade is active.
  // Restore the default symbol only when no player-drawn strokes remain.
- symbol?.classList.toggle('hidden',drawn.length>0||!!(tracing&&tracing.id===id&&tracing.tool==='trace'));
+ if(symbol)symbol.classList.toggle('hidden',drawn.length>0||!!(tracing&&tracing.id===id&&tracing.tool==='trace'));
  // Shop pencil: dark graphite with a subtle green undertone.
  const shopPencilColor='#414a45';
  for(const pts of drawn)stroke(ctx,pts,shopPencilColor,active?4.1:3.5);
@@ -2532,7 +2532,7 @@ function inspect(id){
  const d=defs[id];$('inspectTitle').textContent=d.name;$('inspectDesc').textContent=d.desc;
  const owned=s.owned[id],active=nodeActive(id);
  $('inspectPrice').textContent=owned?(active?'Owned · On':'Owned · Off'):d.cost;
- const count=nodeCanvas[id]?.strokes.length||0,progress=traceStats(id,nodeCanvas[id]?.strokes||[]);
+ const count=(nodeCanvas[id] && nodeCanvas[id].strokes.length)||0,progress=traceStats(id,(nodeCanvas[id] && nodeCanvas[id].strokes)||[]);
  $('clearTrace').classList.toggle('hidden',owned||count===0);
  // The title, ability description, and Owned status are sufficient after purchase.
  $('inspectHint').classList.toggle('hidden',!!owned);
@@ -2616,7 +2616,7 @@ if(s.phase==='draw'&&s.left<=0)openShop(true);
   return;
  }
  navigator.serviceWorker.addEventListener('message', event => {
-  if(event.data?.type !== 'OFFLINE_STATUS') return;
+  if((event.data && event.data.type) !== 'OFFLINE_STATUS') return;
   update(event.data.ready ? 'Ready offline' : 'Offline not ready',
    event.data.ready ? 'Cached on this iPad. Test with Airplane Mode before your flight.' :
    'Connect to Wi-Fi, reopen Learn to Draw, and check again.');
@@ -2627,7 +2627,7 @@ if(s.phase==='draw'&&s.left<=0)openShop(true);
   let found = false;
   try {
    const existing = await navigator.serviceWorker.getRegistration('/');
-   if(existing?.active){
+   if((existing && existing.active)){
     found = true;existing.active.postMessage({type:'CHECK_OFFLINE'});
    }
   } catch {}
