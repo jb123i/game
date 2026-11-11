@@ -475,7 +475,7 @@ function paintPaper(reveal=feedbackReveal){dc.clearRect(0,0,W,H);
   }
  else if((s.mode==='square'||isCompositionMode()&&composeStage===0&&['signpost','kite'].includes(composeTemplate))&&O){for(const p of squareCorners())circleDot(p.x,p.y)}
  else if((s.mode==='circle'||isCompositionMode()&&composeStage===0)&&O){if(upgradeActive('dashedCircle')){dc.beginPath();dc.arc(O.x,O.y,O.r,0,Math.PI*2);dc.strokeStyle='#82aa9b99';dc.lineWidth=2;dc.setLineDash([5,7]);dc.stroke();dc.setLineDash([])}else{circleDot(O.x,O.y,true);for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]])circleDot(O.x+dx*O.r,O.y+dy*O.r)}if(reveal){dc.beginPath();dc.arc(O.x,O.y,O.r,0,Math.PI*2);dc.strokeStyle='#73a891';dc.lineWidth=1.2;dc.stroke()}}
- else if(A&&B){if(reveal){dc.save();dc.beginPath();dc.moveTo(A.x,A.y);dc.lineTo(B.x,B.y);dc.strokeStyle='#51a888';dc.lineWidth=2.4;dc.setLineDash([7,5]);dc.shadowColor='rgba(69,153,118,.35)';dc.shadowBlur=3;dc.stroke();dc.restore()}dot(A,'A','#d9835e');dot(B,'B','#468d7c')}
+ else if(A&&B){if(reveal){dc.save();dc.beginPath();dc.moveTo(A.x,A.y);dc.lineTo(B.x,B.y);dc.strokeStyle='#51a888';dc.lineWidth=2.4;dc.setLineDash([7,5]);dc.shadowColor='rgba(69,153,118,.35)';dc.shadowBlur=3;dc.stroke();dc.restore()}dot(A,'A','#468d7c');dot(B,'B','#d9835e')}
  stroke(dc,strokePts,'#243941',3.2)}
 // Keep ink in height-relative, centered coordinates. That preserves circles and
 // eraser paths even if a desktop layout change dramatically widens the paper.
