@@ -2621,14 +2621,26 @@ if(s.phase==='draw'&&s.left<=0)openShop(true);
    event.data.ready ? 'Cached on this iPad. Test with Airplane Mode before your flight.' :
    'Connect to Wi-Fi, reopen Learn to Draw, and check again.');
  });
- navigator.serviceWorker.register('/sw.js', {scope:'/'})
-  .then(async registration => {
+ // Check an already installed worker first: registration update checks can fail
+ // in Airplane Mode even when the previously installed app is fully cached.
+ (async () => {
+  let found = false;
+  try {
+   const existing = await navigator.serviceWorker.getRegistration('/');
+   if(existing?.active){
+    found = true;existing.active.postMessage({type:'CHECK_OFFLINE'});
+   }
+  } catch {}
+  try {
+   const registration = await navigator.serviceWorker.register('/sw.js', {scope:'/'});
    await navigator.serviceWorker.ready;
    const active = registration.active || navigator.serviceWorker.controller;
    if(active) active.postMessage({type:'CHECK_OFFLINE'});
-   else update('Offline not ready', 'Try reopening the app while connected to Wi-Fi.');
-  })
-  .catch(() => update('Offline not ready', 'The offline file may not be deployed yet. Try again after the website updates.'));
+   else if(!found) update('Offline not ready', 'Try reopening the app while connected to Wi-Fi.');
+  } catch {
+   if(!found) update('Offline not ready', 'The offline file may not be deployed yet. Try again after the website updates.');
+  }
+ })();
 })();
 </script>
 </body>
