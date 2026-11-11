@@ -7,7 +7,7 @@ const SHELL_URL = new URL('/', self.registration.scope).href;
 self.addEventListener('install', event => {
   event.waitUntil((async () => {
     const response = await fetch(new Request(SHELL_URL, { cache: 'reload' }));
-    if (!response.ok || !response.headers.get('content-type')?.includes('text/html')) {
+    if (!response.ok || (response.headers.get('content-type') || '').indexOf('text/html') === -1) {
       throw new Error('Cannot cache Learn to Draw HTML');
     }
     const cache = await caches.open(CACHE_NAME);
@@ -42,7 +42,7 @@ self.addEventListener('fetch', event => {
       const cache = await caches.open(CACHE_NAME);
       try {
         const response = await fetch(request);
-        if (response.ok && response.headers.get('content-type')?.includes('text/html')) {
+        if (response.ok && (response.headers.get('content-type') || '').indexOf('text/html') !== -1) {
           await cache.put(SHELL_URL, response.clone());
         }
         return response;
@@ -69,10 +69,22 @@ self.addEventListener('fetch', event => {
 });
 
 self.addEventListener('message', event => {
-  if (event.data?.type !== 'CHECK_OFFLINE') return;
+  if ((event.data && event.data.type) !== 'CHECK_OFFLINE') return;
   event.waitUntil((async () => {
     const cache = await caches.open(CACHE_NAME);
-    const ready = !!(await cache.match(SHELL_URL));
-    event.source?.postMessage({type:'OFFLINE_STATUS', ready});
+    let ready = !!(await cache.match(SHELL_URL));
+    // iOS 12 Home Screen apps may have separate CacheStorage from Safari.
+    // Repair that cache from inside the installed app while still online,
+    // rather than reporting ready based on Safari's storage.
+    if (!ready) {
+      try {
+        const response = await fetch(SHELL_URL, {cache:'reload'});
+        if (response.ok && (response.headers.get('content-type') || '').indexOf('text/html') !== -1) {
+          await cache.put(SHELL_URL, response.clone());
+          ready = true;
+        }
+      } catch (error) {}
+    }
+    if (event.source) event.source.postMessage({type:'OFFLINE_STATUS', ready});
   })());
 });
