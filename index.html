@@ -157,7 +157,7 @@ const defs={
  composer:{name:'Shape Composer',price:300,desc:'Choose a square or circle and combine it with a line. Each drawing uses two Hand Energy.',cost:'$3.00'},
  dashedCircle:{name:'Dashed Circle Guide',price:500,desc:'Replace circle guide dots with a dashed outline.',cost:'$5.00'}
 };
-const blank=()=>({cash:0,turn:1,energy:1,left:1,sharedEnergyV1:true,shopRootMigrationV1:true,shopBonusEarned:false,lastCompositionCenter:null,legacyEnduranceShapes:{root:false,stamina:false},strokes:0,practiceDraft:null,phase:'draw',last:0,lastPay:0,lastKind:'line',owned:{root:false,stamina:false,secondWind:false,circle:false,balloon:false,free:false,grid:false,eraser:false,eraserSize:false,dashedCircle:false,square:false,triangle:false,composer:false,selector:false},legacySquare:false,legacyComposer:false,legacyBalloon:false,composeBase:'circle',composeLine:'diagonal',disabled:{},traces:{},pendingTraces:{},paperMarks:[],legacyAspect:null,eraserSize:30,gridOn:true,freeOn:false,mode:'line',studyPreference:null,tool:'pencil'});
+const blank=()=>({cash:0,turn:1,energy:1,left:1,sharedEnergyV1:true,shopRootMigrationV1:true,shopBonusEarned:false,legacyEnduranceShapes:{root:false,stamina:false},strokes:0,practiceDraft:null,phase:'draw',last:0,lastPay:0,lastKind:'line',owned:{root:false,stamina:false,secondWind:false,circle:false,balloon:false,free:false,grid:false,eraser:false,eraserSize:false,dashedCircle:false,square:false,triangle:false,composer:false,selector:false},legacySquare:false,legacyComposer:false,legacyBalloon:false,composeBase:'circle',composeLine:'diagonal',disabled:{},traces:{},pendingTraces:{},paperMarks:[],legacyAspect:null,eraserSize:30,gridOn:true,freeOn:false,mode:'line',studyPreference:null,tool:'pencil'});
 let s=blank();
 try{const q=JSON.parse(localStorage.getItem(key)||'null');if(q&&Number.isFinite(q.cash)&&q.owned&&['draw','shop'].includes(q.phase)){
  s={...blank(),...q,owned:{...blank().owned,...q.owned},disabled:q.disabled&&typeof q.disabled==='object'?q.disabled:{},traces:q.traces&&typeof q.traces==='object'?q.traces:{},pendingTraces:q.pendingTraces&&typeof q.pendingTraces==='object'?q.pendingTraces:{},paperMarks:Array.isArray(q.paperMarks)?q.paperMarks:[],practiceDraft:q.practiceDraft&&typeof q.practiceDraft==='object'?q.practiceDraft:null};
@@ -334,33 +334,23 @@ function restorePracticeDraft(){
 }
 // Choose a new in-bounds position, size, and orientation for every exercise.
 const randomBetween=(min,max)=>min+Math.random()*Math.max(0,max-min);
-function placePrompt(points,padding=24,avoidCenter=null){
+function placePrompt(points,padding=24){
  const minX=Math.min(...points.map(p=>p.x)),maxX=Math.max(...points.map(p=>p.x));
  const minY=Math.min(...points.map(p=>p.y)),maxY=Math.max(...points.map(p=>p.y));
  const lowX=padding-minX,highX=W-padding-maxX;
  const lowY=padding-minY,highY=H-padding-maxY;
- const sample=()=>({
-  x:highX>=lowX?randomBetween(lowX,highX):(W-minX-maxX)/2,
-  y:highY>=lowY?randomBetween(lowY,highY):(H-minY-maxY)/2
- });
- let offset=sample();
- if(O&&avoidCenter&&Number.isFinite(avoidCenter.x)&&Number.isFinite(avoidCenter.y)){
-  // Try widely separated random placements before accepting a nearby one.
-  // Normalized coordinates keep the test consistent after a resize.
-  let farthest=offset,best=-1;
-  for(let i=0;i<36;i++){
-   const candidate=i===0?offset:sample();
-   const normalizedX=(O.x+candidate.x)/Math.max(1,W);
-   const normalizedY=(O.y+candidate.y)/Math.max(1,H);
-   const gap=Math.hypot(normalizedX-avoidCenter.x,normalizedY-avoidCenter.y);
-   if(gap>best){best=gap;farthest=candidate}
-   if(gap>=.22){offset=candidate;break}
-   if(i===35)offset=farthest;
-  }
- }
- for(const p of [O,A,B])if(p){p.x+=offset.x;p.y+=offset.y}
+ // A tiny drawing surface may require centering rather than clipping the target.
+ const dx=highX>=lowX?randomBetween(lowX,highX):(W-minX-maxX)/2;
+ const dy=highY>=lowY?randomBetween(lowY,highY):(H-minY-maxY)/2;
+ for(const p of [O,A,B])if(p){p.x+=dx;p.y+=dy}
 }
 function createPrompt(){
+ // Generate targets from the actual visible paper dimensions, not a stale
+ // canvas size retained from a previous shop visit or hidden layout.
+ if(s.phase==='draw'){
+  const rect=$('paperArea').getBoundingClientRect();
+  if(rect.width>1&&rect.height>1&&(W!==Math.round(rect.width)||H!==Math.round(rect.height)))resizePaper();
+ }
  // Preserve the selected exercise and composition type; randomize each new
  // target without changing grading or already saved unfinished drawings.
  s.mode=selectedStudy();
@@ -386,8 +376,7 @@ function createPrompt(){
    B={x:A.x+sx*len*Math.SQRT1_2,y:A.y+sy*len*Math.SQRT1_2};
   }
   const bounds=squareBased?squareCorners():[{x:-r,y:-r},{x:r,y:r}];
-  placePrompt([...bounds,A,B],16,s.lastCompositionCenter);
-  s.lastCompositionCenter={x:O.x/Math.max(1,W),y:O.y/Math.max(1,H)};
+  placePrompt([...bounds,A,B]);
  }
  else if(s.mode==='triangle'){
   const maxR=Math.min(W*.20,H*.26,112);
