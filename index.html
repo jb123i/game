@@ -272,9 +272,60 @@ const automaticStudy=()=>spherePlayable()&&s.left>=4?'sphere':cylinderPlayable()
 const requiredStudyStrokes=mode=>mode==='sphere'?4:isCompositionMode(mode)?2:1;
 const selectedStudy=()=>upgradeActive('selector')&&availableStudy(s.studyPreference)&&s.left>=requiredStudyStrokes(s.studyPreference)?s.studyPreference:automaticStudy();
 const eraserWidth=()=>upgradeActive('eraserSize')?s.eraserSize:30;
+
+/* Adaptive Guides retains the last five graded attempts PER drawing stage.
+   Repeated accuracy earns faded references; low scores restore assistance.
+   Scoring, rewards, and stroke limits are unaffected. */
+let showFullGuides=false;
+function guideStudyKey(mode=s.mode,stage=composeStage){
+ if(mode==='compose')return 'compose:'+composeTemplate+':'+stage;
+ return isCompositionMode(mode)?mode+':'+stage:mode;
+}
+function guideHistory(key=guideStudyKey()){
+ const raw=s.guideMastery?.[key];
+ return Array.isArray(raw)?raw.filter(v=>Number.isFinite(v)&&v>=0&&v<=100).slice(-5):[];
+}
+function guideFadeStrength(key=guideStudyKey()){
+ const history=guideHistory(key);
+ if(history.length<3)return 0;
+ const mean=history.reduce((a,b)=>a+b,0)/history.length;
+ // Three strong attempts begin the fade; five 95%+ results reach the maximum.
+ return clamp((mean-72)/23)*clamp((history.length-2)/3);
+}
+function recordGuideAccuracy(score,key=guideStudyKey()){
+ if(!Number.isFinite(score))return;
+ if(!s.guideMastery||typeof s.guideMastery!=='object'||Array.isArray(s.guideMastery))s.guideMastery={};
+ const history=guideHistory(key);
+ history.push(Math.round(clamp(score,0,100)));
+ s.guideMastery[key]=history.slice(-5);
+}
+function guideFadeOpacity(){
+ if(!adaptiveGuidesPlayable()||s.mode==='line'&&s.freeOn)return 1;
+ return 1-.80*guideFadeStrength();
+}
+function displayedGuideOpacity(reveal=false){
+ if(reveal||showFullGuides||s.phase!=='draw')return 1;
+ return guideFadeOpacity();
+}
+function refreshGuideUI(){
+ const enabled=adaptiveGuidesPlayable()&&s.phase==='draw'&&!(s.mode==='line'&&s.freeOn);
+ const opacity=enabled?guideFadeOpacity():1;
+ const button=$('showGuides');
+ button.classList.toggle('hidden',!enabled||opacity>=.995);
+ button.textContent=showFullGuides?'Resume fading':'Show guides';
+ button.classList.toggle('active',showFullGuides);
+ button.setAttribute('aria-pressed',String(showFullGuides));
+ return {enabled,opacity};
+}
+$('showGuides').addEventListener('click',()=>{
+ if(!adaptiveGuidesPlayable()||s.phase!=='draw'||guideFadeOpacity()>=.995)return;
+ showFullGuides=!showFullGuides;refreshGuideUI();paintPaper();
+});
+
 function reconcileUpgradeEffects(){
  const energy=1+(upgradeActive('root')?1:0)+(upgradeActive('stamina')?1:0)+(enduranceThreePlayable()?1:0);s.energy=energy;const shopBonus=s.phase==='shop'&&s.shopBonusEarned&&upgradeActive('secondWind')?1:0;s.left=Math.max(0,Math.min(s.left,energy+shopBonus));
  s.gridOn=upgradeActive('grid');s.freeOn=upgradeActive('free');
+ if(!adaptiveGuidesPlayable())showFullGuides=false;
  if(!availableStudy(s.mode))s.mode='line';
  if(!s.practiceDraft)s.mode=selectedStudy();
  if(!upgradeActive('eraser'))s.tool='pencil';
@@ -326,9 +377,14 @@ function stats(){
  const circle=s.mode==='circle',curve=s.mode==='curve',oval=s.mode==='oval',cylinder=s.mode==='cylinder',sphere=s.mode==='sphere',square=s.mode==='square',triangle=s.mode==='triangle',compose=isCompositionMode(),squareComposition=compose&&['signpost','kite'].includes(composeTemplate);
  $('activityHeading').textContent=compose?(composeTemplate==='sphere'?'Shade a sphere':composeTemplate==='cylinder'?'Draw a cylinder':composeTemplate==='balloon'?'Draw a balloon':composeTemplate==='signpost'?'Draw a signpost':composeTemplate==='kite'?'Draw a kite':'Draw a magnifying glass'):oval?'Draw an oval':curve?'Draw a curve':circle?'Draw a circle':square?'Draw a square':triangle?'Draw a triangle':s.freeOn?'Draw a straight line':'Connect the points';
  $('instruction').textContent=compose?(sphere?['Part 1 of 4: Draw the sphere contour through four guide points.','Part 2 of 4: Trace the terminator computed from the light source.','Part 3 of 4: Add tonal hatching on the shadowed hemisphere.','Part 4 of 4: Trace the cast shadow opposite the light.'][composeStage]:composeStage===0?(composeTemplate==='cylinder'?'Part 1 of 2: Draw the oval top through four guide points.':squareComposition?'Part 1 of 2: Draw the square. Each mark uses 1 stroke.':'Part 1 of 2: Draw the circular outline. Each mark uses 1 stroke.'):composeTemplate==='cylinder'?'Part 2 of 2: Trace down the left side, around the curved bottom, and up the right side from A to B.':composeTemplate==='balloon'?'Part 2 of 2: Draw the string to release your helium balloon.':'Part 2 of 2: Connect A to B to finish your object.'):oval?'Draw a smooth oval through all four guide points.':curve?'Trace the curved guide from A to B. Lift and continue if needed.':circle?(upgradeActive('dashedCircle')?'Trace the dashed circular guide. With Endurance, you can finish it using multiple strokes.':'Use the center dot and four surrounding dots to draw a circle.'):square?'Connect the four corner points with straight sides. With Endurance, you can lift and continue.':triangle?'Connect three points to form a triangle. You can use multiple strokes with Endurance.':s.freeOn?'Start anywhere and draw one smooth, straight line.':'Start on A, draw a continuous line, and finish on B.';
+ const guideInfo=refreshGuideUI();
  const maxReward=compose?(sphere?550:cylinder?400:squareComposition?250:300):oval?225:curve?175:circle?200:square?150:triangle?125:100;
  $('rewardTag').textContent='UP TO '+cash(maxReward);
- $('drawHint').textContent=compose?(sphere?'Contour + terminator + tone + cast shadow · $5.50':cylinder?'Oval + body · 100% = $4.00':squareComposition?'Square + line':'Circle + line'):oval?'100% = $2.25':curve?'100% = $1.75':circle?'100% = $2.00':square?'100% = $1.50':triangle?'100% = $1.25':'';$('drawHint').classList.toggle('hidden',!compose&&!oval&&!curve&&!circle&&!square&&!triangle);$('activityTag').textContent=compose?(sphere?'Sphere':cylinder?'Cylinder':s.mode==='balloon'?'Balloon':'Composition')+' · Part '+(composeStage+1)+'/'+(sphere?4:2):oval?'Oval study':curve?'Curve study':circle?'Circle study':square?'Square study':triangle?'Triangle study':s.freeOn?'Freehand study':'';$('activityTag').classList.toggle('hidden',!compose&&!oval&&!curve&&!circle&&!square&&!triangle&&!s.freeOn);$('paperArea').classList.toggle('eraser-cursor',s.tool==='eraser');
+ $('drawHint').textContent=compose?(sphere?'Contour + terminator + tone + cast shadow · $5.50':cylinder?'Oval + body · 100% = $4.00':squareComposition?'Square + line':'Circle + line'):oval?'100% = $2.25':curve?'100% = $1.75':circle?'100% = $2.00':square?'100% = $1.50':triangle?'100% = $1.25':'';$('drawHint').classList.toggle('hidden',!compose&&!oval&&!curve&&!circle&&!square&&!triangle&&!guideInfo.enabled);
+ if(guideInfo.enabled){
+  $('drawHint').textContent+=($('drawHint').textContent?' · ':'')+
+   (showFullGuides?'Guides temporarily 100%':'Guides '+Math.round(guideInfo.opacity*100)+'% · '+guideHistory().length+'/5 recent');
+ }$('activityTag').textContent=compose?(sphere?'Sphere':cylinder?'Cylinder':s.mode==='balloon'?'Balloon':'Composition')+' · Part '+(composeStage+1)+'/'+(sphere?4:2):oval?'Oval study':curve?'Curve study':circle?'Circle study':square?'Square study':triangle?'Triangle study':s.freeOn?'Freehand study':'';$('activityTag').classList.toggle('hidden',!compose&&!oval&&!curve&&!circle&&!square&&!triangle&&!s.freeOn);$('paperArea').classList.toggle('eraser-cursor',s.tool==='eraser');
  $('nextTurn').textContent='Begin turn '+(s.turn+1)+' →';
 }
 // Grid, saved pencil marks, and temporary guides occupy separate layers.
@@ -450,6 +506,7 @@ function createPrompt(){
  // Preserve the selected exercise and composition type; randomize each new
  // target without changing grading or already saved unfinished drawings.
  s.mode=selectedStudy();
+ showFullGuides=false;
  strokePts=[];practiceStrokes=[];s.practiceDraft=null;drawing=false;locked=false;feedbackReveal=false;composeStage=0;composeScores=[];composeFirstBounds=null;composeLensShape=null;composeBalloonOutline=null;composeBalloonId=null;
  A=null;B=null;O=null;
  if(s.mode==='sphere'){
@@ -1969,6 +2026,7 @@ function finalizeShape(){
  const rewardBounds=drawnBounds(practiceStrokes);
  s.cash+=reward;s.last=accuracy;s.lastPay=reward;s.lastKind=s.mode;
  s.practiceDraft=null;feedbackReveal=true;
+ recordGuideAccuracy(accuracy);
  save();stats();
  $('score').textContent=accuracy+'% · +'+cash(reward);
  showEarnings(reward,rewardBounds);
@@ -1994,6 +2052,7 @@ function alignBalloonStringToDrawnOutline(){
 function finishSphereStage(){
  const stage=composeStage,accuracy=sphereStageAccuracy(stage);
  composeScores.push(accuracy);
+ recordGuideAccuracy(accuracy);
  composeFirstBounds=boundsToIso(unionBounds(boundsFromIso(composeFirstBounds),drawnBounds(practiceStrokes)));
  if(stage<3){
   composeStage=stage+1;feedbackReveal=false;
@@ -2021,6 +2080,7 @@ function finishSphereStage(){
 function finishCompositionPart(){
  if(s.mode==='sphere'){finishSphereStage();return}
  const accuracy=composeTemplate==='cylinder'?(composeStage===0?ovalAccuracy():cylinderBodyAccuracy()):composeStage===0?(['signpost','kite'].includes(composeTemplate)?squareAccuracy():circleAccuracy()):lineAccuracy(true);
+ recordGuideAccuracy(accuracy);
  composeScores.push(accuracy);
  if(composeStage===0){
   composeFirstBounds=boundsToIso(drawnBounds(practiceStrokes));
