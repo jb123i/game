@@ -800,6 +800,9 @@ function finishCompositionPart(){
   composeFirstBounds=boundsToIso(drawnBounds(practiceStrokes));
   composeStage=1;feedbackReveal=false;practiceStrokes=[];strokePts=[];persistPracticeDraft();stats();paintPaper();
   $('score').textContent=(['signpost','kite'].includes(composeTemplate)?'Square ':'Circle ')+accuracy+'% · Now draw the '+(composeTemplate==='balloon'?'string':composeTemplate==='signpost'?'post':composeTemplate==='kite'?'tail':'handle');
+  // A two-part drawing may use its last stroke on the first component.
+  // Save the second stage and enter the shop after showing the feedback.
+  if(s.left<=0){clearTimeout(advanceTimer);advanceTimer=setTimeout(()=>{if(s.phase==='draw'&&composeStage===1&&s.left<=0)openShop()},1370)}
   return;
  }
  locked=true;
