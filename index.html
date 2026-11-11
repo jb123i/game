@@ -2814,6 +2814,336 @@ $('nextTurn').addEventListener('click',()=>{
  if(s.practiceDraft)s.mode=s.practiceDraft.mode;else s.mode=selectedStudy();
  save();stats();requestAnimationFrame(()=>{resizePaper();if(!restorePracticeDraft())createPrompt();paintBalloons();ensureBalloonAnimation()});
 });
+
+/* Specialization workshops. Stored achievements live in the existing save.
+   Workshop sketches are deliberately ephemeral, allowing experimentation with
+   no energy cost or reward farming. The physics loop is capped for iOS 12. */
+const specialCanvas=$('specialCanvas'),specialCtx=specialCanvas.getContext('2d');
+const SCW=720,SCH=420;
+let specialKind='',specialTool='ramp',specialStroke=null,specialPointer=null,specialFrame=0;
+let specialBodies=[],specialRamps=[],specialDone=false,specialRunning=false,specialGoal=null,specialBall=null;
+let specialMission=0,specialPerspectiveMarks=[],specialGuides=[],specialFullGuides=false,specialLastTime=0;
+const livingMissions=[
+ {spawn:{x:97,y:105},goal:{x:585,y:374},barrier:null,description:'Mission 1: Draw a descending ramp under the starting ball and roll it into the basket on the right.'},
+ {spawn:{x:110,y:90},goal:{x:610,y:374},barrier:{x:350,y:353,w:80,h:32},description:'Mission 2: Deliver the ball past the block. Use two ramps to bridge the obstacle.'},
+ {spawn:{x:95,y:90},goal:{x:606,y:374},barrier:{x:420,y:321,w:60,h:64},description:'Mission 3: Create a longer ramp system. Experiment with other moving shapes and buoyant balloons.'}
+];
+function specialPoint(event){
+ const box=specialCanvas.getBoundingClientRect();
+ return {x:Math.max(0,Math.min(SCW,(event.clientX-box.left)*SCW/Math.max(1,box.width))),
+         y:Math.max(0,Math.min(SCH,(event.clientY-box.top)*SCH/Math.max(1,box.height)))};
+}
+function specialSetMessage(value){$('specialMessage').textContent=value;}
+function specialPath(ctx,points){if(!points.length)return;ctx.beginPath();ctx.moveTo(points[0].x,points[0].y);for(let i=1;i<points.length;i++)ctx.lineTo(points[i].x,points[i].y)}
+function specialLine(ctx,a,b){ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke()}
+function specialDist(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}
+function specialRoundRect(ctx,x,y,w,h){
+ ctx.beginPath();ctx.moveTo(x+8,y);ctx.lineTo(x+w-8,y);ctx.quadraticCurveTo(x+w,y,x+w,y+8);
+ ctx.lineTo(x+w,y+h-8);ctx.quadraticCurveTo(x+w,y+h,x+w-8,y+h);
+ ctx.lineTo(x+8,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-8);
+ ctx.lineTo(x,y+8);ctx.quadraticCurveTo(x,y,x+8,y);ctx.closePath();
+}
+function specialBody(kind,x,y,r){
+ return {kind:kind,x:x,y:y,r:Math.max(9,Math.min(31,r)),vx:0,vy:0,angle:0,spin:0,attach:-1};
+}
+function specialResetScene(){
+ specialStroke=null;specialPointer=null;specialRunning=false;specialDone=false;specialLastTime=0;
+ specialBodies=[];specialRamps=[];specialPerspectiveMarks=[];specialFullGuides=false;
+ specialMission=Math.min(2,s.specialWins[specialKind]||0);
+ if(specialKind==='living'){
+  const cfg=livingMissions[specialMission];
+  specialGoal=cfg.goal;
+  specialBall=specialBody('circle',cfg.spawn.x,cfg.spawn.y,15);
+  specialBodies.push(specialBall);
+  if(specialMission===2){
+   specialBodies.push({kind:'square',x:355,y:343,r:19,vx:0,vy:0,angle:0,spin:0,static:true,attach:-1});
+  }
+  $('specialDescription').textContent=cfg.description+' Sketch a line to make a ramp, or choose a shape to draw a movable object.';
+  specialSetMessage((s.specialWins.living||0)>=3?'Living Ink mastered · Free play.':'Sketch ramps and shapes, then press Release.');
+  $('specialTools').classList.remove('hidden');$('specialAction').textContent='Release';
+ }else{
+  specialGuides=specialPerspectiveTargets(specialMission);
+  const details=['Mission 1 · One-point perspective: draw all four receding edges toward the single vanishing point.',
+  'Mission 2 · Shifted horizon: build a box that recedes toward the vanishing point on the left.',
+  'Mission 3 · Two-point perspective: connect the upper and lower building corners toward BOTH vanishing points.'];
+  $('specialDescription').textContent=details[specialMission]+' Trace from each solid point to its small target square; 70% accuracy is required.';
+  specialSetMessage((s.specialWins.perspective||0)>=3?'Perspective Lab mastered · Free practice.':'0 / 4 depth edges drawn accurately');
+  $('specialTools').classList.add('hidden');$('specialAction').textContent='Show guides';
+ }
+ $('specialChapterBadge').textContent='CHAPTER '+s.specialChapter+' · CHALLENGE '+(specialMission+1)+'/3';
+ specialPaint();
+}
+function specialOpenWorkshop(kind){
+ if(s.phase!=='draw'||!specialPlayable(kind))return;
+ specialKind=kind;specialOpen=true;specialTool='ramp';
+ $('specialTitle').textContent=defs[kind].name;
+ for(const btn of $('specialTools').querySelectorAll('button'))btn.classList.toggle('active',btn.getAttribute('data-special-tool')==='ramp');
+ specialResetScene();stats();specialStartFrame();
+}
+function specialCloseWorkshop(){
+ specialOpen=false;specialRunning=false;specialStroke=null;specialPointer=null;
+ if(specialFrame)cancelAnimationFrame(specialFrame);specialFrame=0;
+ stats();resizePaper();paintPaper();
+}
+$('openLiving').addEventListener('click',()=>specialOpenWorkshop('living'));
+$('openPerspective').addEventListener('click',()=>specialOpenWorkshop('perspective'));
+$('specialBack').addEventListener('click',specialCloseWorkshop);
+for(const btn of $('specialTools').querySelectorAll('button')){
+ btn.addEventListener('click',()=>{
+  specialTool=btn.getAttribute('data-special-tool');
+  for(const b of $('specialTools').querySelectorAll('button'))b.classList.toggle('active',b===btn);
+  if(specialKind==='living')specialSetMessage(specialTool==='ramp'?'Drag a descending line to create a ramp.':'Sketch a '+specialTool+' outline on the canvas to create a physical object.');
+ });
+}
+function specialBegin(p,id){
+ if(!specialOpen||specialRunning||specialDone||specialPointer!==null)return;
+ specialPointer=id;specialStroke=[p];specialPaint();
+}
+function specialMove(p,id){
+ if(specialPointer!==id||!specialStroke)return;
+ if(specialDist(p,specialStroke[specialStroke.length-1])>2)specialStroke.push(p);
+ specialPaint();
+}
+function specialEnd(p,id){
+ if(specialPointer!==id||!specialStroke)return;
+ const pts=specialStroke;specialPointer=null;specialStroke=null;
+ if(specialDist(p,pts[pts.length-1])>1)pts.push(p);
+ if(pts.length<2||specialDist(pts[0],pts[pts.length-1])<3&&pts.length<6){specialPaint();return}
+ if(specialKind==='living')specialCommitShape(pts);else specialCommitPerspective(pts);
+ specialPaint();
+}
+if(typeof window.PointerEvent==='function'){
+ specialCanvas.addEventListener('pointerdown',e=>{e.preventDefault();specialBegin(specialPoint(e),e.pointerId);if(specialCanvas.setPointerCapture)specialCanvas.setPointerCapture(e.pointerId)});
+ specialCanvas.addEventListener('pointermove',e=>{if(specialPointer===e.pointerId){e.preventDefault();specialMove(specialPoint(e),e.pointerId)}});
+ specialCanvas.addEventListener('pointerup',e=>{if(specialPointer===e.pointerId){e.preventDefault();specialEnd(specialPoint(e),e.pointerId)}});
+ specialCanvas.addEventListener('pointercancel',()=>{specialPointer=null;specialStroke=null;specialPaint()});
+}else{
+ // iPad mini 2 / iOS 12 Touch Events. Never depend on PointerEvent.
+ const eventOptions={passive:false};
+ specialCanvas.addEventListener('touchstart',e=>{if(e.touches.length!==1)return;e.preventDefault();specialBegin(specialPoint(e.changedTouches[0]),e.changedTouches[0].identifier)},eventOptions);
+ specialCanvas.addEventListener('touchmove',e=>{if(specialPointer!==null){e.preventDefault();for(const touch of e.changedTouches)if(touch.identifier===specialPointer)specialMove(specialPoint(touch),touch.identifier)}},eventOptions);
+ specialCanvas.addEventListener('touchend',e=>{if(specialPointer!==null){e.preventDefault();for(const touch of e.changedTouches)if(touch.identifier===specialPointer)specialEnd(specialPoint(touch),touch.identifier)}},eventOptions);
+ specialCanvas.addEventListener('touchcancel',()=>{specialPointer=null;specialStroke=null;specialPaint()},eventOptions);
+ let mousePainting=false;
+ specialCanvas.addEventListener('mousedown',e=>{if(e.button!==0)return;mousePainting=true;specialBegin(specialPoint(e),'mouse')});
+ specialCanvas.addEventListener('mousemove',e=>{if(mousePainting)specialMove(specialPoint(e),'mouse')});
+ window.addEventListener('mouseup',e=>{if(mousePainting){mousePainting=false;specialEnd(specialPoint(e),'mouse')}});
+}
+$('specialReset').addEventListener('click',specialResetScene);
+$('specialAction').addEventListener('click',()=>{
+ if(specialDone){specialResetScene();return}
+ if(specialKind==='living'){
+  if(specialRunning){specialRunning=false;specialSetMessage('Paused. Press Release to continue.');$('specialAction').textContent='Resume'}
+  else{specialRunning=true;specialSetMessage('Physics running · Watch the moving ink.');$('specialAction').textContent='Pause';specialStartFrame()}
+ }else{
+  specialFullGuides=!specialFullGuides;
+  $('specialAction').textContent=specialFullGuides?'Hide guides':'Show guides';
+  specialPaint();
+ }
+});
+function specialCommitShape(pts){
+ if(specialTool==='ramp'){
+  if(specialRamps.length>=7){specialSetMessage('Maximum of 7 ramps. Reset the scene to start over.');return}
+  const a=pts[0],b=pts[pts.length-1];
+  if(specialDist(a,b)<25){specialSetMessage('Make the ramp longer.');return}
+  specialRamps.push({a:a,b:b});
+  specialSetMessage('Ramp '+specialRamps.length+' placed. Release the ink to test it.');
+ }else{
+  if(specialBodies.length>=15){specialSetMessage('Maximum of 15 physical objects per scene.');return}
+  let minX=720,maxX=0,minY=420,maxY=0;
+  for(const p of pts){minX=Math.min(minX,p.x);maxX=Math.max(maxX,p.x);minY=Math.min(minY,p.y);maxY=Math.max(maxY,p.y)}
+  if(maxX-minX<16||maxY-minY<16){specialSetMessage('Sketch the whole '+specialTool+' shape, not just a line.');return}
+  const r=Math.min(30,Math.max(10,Math.max(maxX-minX,maxY-minY)*.5));
+  const b=specialBody(specialTool,(minX+maxX)/2,(minY+maxY)/2,r);
+  if(b.kind==='balloon'){
+   let closest=-1,best=95;
+   for(let i=0;i<specialBodies.length;i++)if(specialBodies[i].kind==='square'&&!specialBodies[i].static){
+    const dist=specialDist(b,specialBodies[i]);
+    if(dist<best){best=dist;closest=i}
+   }
+   b.attach=closest;
+  }
+  specialBodies.push(b);
+  specialSetMessage('Your '+specialTool+' has become a physical object. Press Release to simulate it.');
+ }
+}
+function specialPerspectiveTargets(level){
+ if(level===2){
+  const left={x:75,y:138},right={x:645,y:138},top={x:360,y:178},bottom={x:360,y:328};
+  const mix=(a,b,k)=>({x:a.x+(b.x-a.x)*k,y:a.y+(b.y-a.y)*k});
+  return {vps:[left,right],face:[top,bottom],edges:[{a:top,b:mix(top,left,.47)},{a:bottom,b:mix(bottom,left,.47)},{a:top,b:mix(top,right,.47)},{a:bottom,b:mix(bottom,right,.47)}]};
+ }
+ const vp=level===0?{x:575,y:126}:{x:125,y:131};
+ const x=level===0?155:420;
+ const face=[{x:x,y:167},{x:x+107,y:167},{x:x+107,y:304},{x:x,y:304}];
+ const mix=(a,b,k)=>({x:a.x+(b.x-a.x)*k,y:a.y+(b.y-a.y)*k});
+ return {vps:[vp],face:face,edges:face.map(a=>({a:a,b:mix(a,vp,.48)}))};
+}
+function specialCommitPerspective(pts){
+ if(!specialGuides||!specialGuides.edges.length)return;
+ const start=pts[0],end=pts[pts.length-1];
+ let best=-1,bestScore=-Infinity;
+ for(let i=0;i<specialGuides.edges.length;i++){
+  if(specialPerspectiveMarks.some(m=>m.index===i))continue;
+  const guide=specialGuides.edges[i];
+  const direct=specialDist(start,guide.a)*.8+specialDist(end,guide.b);
+  const backwards=specialDist(end,guide.a)*.8+specialDist(start,guide.b);
+  const penalty=Math.min(direct,backwards);
+  const score=Math.max(0,Math.round(100-penalty*.82));
+  if(score>bestScore){bestScore=score;best=i}
+ }
+ if(best<0)return;
+ if(bestScore<70){specialSetMessage('Edge '+(best+1)+': '+bestScore+'%. Follow the faint guide more closely (70% required).');return}
+ specialPerspectiveMarks.push({index:best,score:bestScore,points:pts});
+ specialSetMessage(specialPerspectiveMarks.length+'/4 depth edges · Last accuracy '+bestScore+'%.');
+ if(specialPerspectiveMarks.length===4)specialCompleteMission();
+}
+function specialCompleteMission(){
+ if(specialDone)return;
+ specialDone=true;specialRunning=false;
+ const done=s.specialWins[specialKind]||0;
+ if(done<3&&specialMission===done){
+  s.specialWins[specialKind]=done+1;
+  const reward=[250,350,500][done];s.cash+=reward;
+  if(s.specialChoice===specialKind&&s.specialWins[specialKind]===3)s.specialChapter=2;
+  save();stats();renderTree();
+  let notice='Challenge complete · +'+cash(reward)+' awarded once.';
+  if(s.specialChapter===2&&done===2)notice+=' Chapter 2 unlocked — the other branch is now available in the shop.';
+  specialSetMessage(notice);
+ }else specialSetMessage('Practice complete. No repeat reward.');
+ $('specialAction').textContent=(s.specialWins[specialKind]||0)>=3?'Free practice':'Next challenge';
+}
+function specialStep(dt){
+ const g=560;
+ const cfg=livingMissions[specialMission];
+ for(const b of specialBodies){
+  if(b.static)continue;
+  b.vy+=(b.kind==='balloon'?-g*.7:g)*dt;
+  b.vx*=.998;b.vy*=.999;
+  b.x+=b.vx*dt;b.y+=b.vy*dt;
+  const r=b.r;
+  if(b.x<r){b.x=r;b.vx=Math.abs(b.vx)*.45}
+  if(b.x>SCW-r){b.x=SCW-r;b.vx=-Math.abs(b.vx)*.45}
+  if(b.y<r){b.y=r;b.vy=Math.abs(b.vy)*.3}
+  if(b.y>SCH-36-r){b.y=SCH-36-r;b.vy=-Math.abs(b.vy)*.35;b.vx*=.94;if(Math.abs(b.vy)<14)b.vy=0}
+  for(const seg of specialRamps){
+   const ax=seg.a.x,ay=seg.a.y,dx=seg.b.x-ax,dy=seg.b.y-ay;
+   const t=Math.max(0,Math.min(1,((b.x-ax)*dx+(b.y-ay)*dy)/(dx*dx+dy*dy)));
+   const px=ax+t*dx,py=ay+t*dy;
+   let nx=b.x-px,ny=b.y-py;const d=Math.sqrt(nx*nx+ny*ny);
+   if(d<r+3&&d>.0001){
+    nx/=d;ny/=d;b.x+=(r+3-d)*nx;b.y+=(r+3-d)*ny;
+    const inward=b.vx*nx+b.vy*ny;
+    if(inward<0){b.vx-=1.12*inward*nx;b.vy-=1.12*inward*ny}
+    if(b.kind==='circle'&&ny<-.2)b.vx+=Math.sign(dx*dy)*Math.min(12,Math.abs(dy/dx||0)*18)*dt;
+   }
+  }
+  if(cfg.barrier){
+   const o=cfg.barrier;
+   const nearX=Math.max(o.x,Math.min(b.x,o.x+o.w)),nearY=Math.max(o.y,Math.min(b.y,o.y+o.h));
+   let nx=b.x-nearX,ny=b.y-nearY;const d=Math.hypot(nx,ny);
+   if(d<r&&d>.001){nx/=d;ny/=d;b.x+=(r-d)*nx;b.y+=(r-d)*ny;const vel=b.vx*nx+b.vy*ny;if(vel<0){b.vx-=1.2*vel*nx;b.vy-=1.2*vel*ny}}
+  }
+  if(b.kind==='balloon'&&b.attach>=0&&specialBodies[b.attach]){
+   const cargo=specialBodies[b.attach];
+   const delta={x:cargo.x-b.x,y:cargo.y-b.y};
+   const dist=Math.hypot(delta.x,delta.y);
+   if(dist>55&&dist>0){
+    const force=Math.min(360,(dist-55)*8)*dt;
+    cargo.vy-=force*.95;cargo.vx-=delta.x/dist*force*.4;
+    b.vy+=force*.5;
+   }
+  }
+ }
+ // Approximate mutually colliding bodies by rounded hulls to limit old-iPad CPU use.
+ for(let i=0;i<specialBodies.length;i++)for(let j=i+1;j<specialBodies.length;j++){
+  const a=specialBodies[i],b=specialBodies[j];
+  const dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy),reach=a.r+b.r;
+  if(d>0&&d<reach){const nx=dx/d,ny=dy/d,over=(reach-d)*.5;
+   if(!a.static){a.x-=nx*over;a.y-=ny*over}
+   if(!b.static){b.x+=nx*over;b.y+=ny*over}
+   const closing=(b.vx-a.vx)*nx+(b.vy-a.vy)*ny;
+   if(closing<0){const impulse=-closing*.6;if(!a.static){a.vx-=impulse*nx;a.vy-=impulse*ny}if(!b.static){b.vx+=impulse*nx;b.vy+=impulse*ny}}
+  }
+ }
+ if(specialBall&&specialBall.x>specialGoal.x-34&&specialBall.x<specialGoal.x+34&&specialBall.y>specialGoal.y-36&&specialBall.y<specialGoal.y+16)specialCompleteMission();
+}
+function specialStartFrame(){
+ if(specialFrame)return;
+ const loop=time=>{
+  specialFrame=0;
+  if(!specialOpen)return;
+  if(specialRunning&&specialKind==='living'&&!specialDone){
+   const delta=specialLastTime?Math.min(36,time-specialLastTime):16;
+   const steps=Math.min(3,Math.max(1,Math.ceil(delta/16)));
+   for(let i=0;i<steps;i++)specialStep(Math.min(.021,delta/1000/steps));
+  }
+  specialLastTime=time;specialPaint();
+  if(specialRunning&&specialOpen&&!specialDone)specialFrame=requestAnimationFrame(loop);
+ };
+ specialFrame=requestAnimationFrame(loop);
+}
+function specialPaint(){
+ if(!specialOpen)return;
+ const ctx=specialCtx;ctx.clearRect(0,0,SCW,SCH);
+ ctx.fillStyle='#fffcf6';ctx.fillRect(0,0,SCW,SCH);
+ ctx.strokeStyle='#e9ece4';ctx.lineWidth=1;
+ for(let x=0;x<SCW;x+=30)specialLine(ctx,{x:x,y:0},{x:x,y:SCH});
+ for(let y=0;y<SCH;y+=30)specialLine(ctx,{x:0,y:y},{x:SCW,y:y});
+ ctx.font='700 13px system-ui';ctx.fillStyle='#628371';
+ ctx.fillText(specialKind==='living'?'LIVING INK · '+(specialMission+1)+'/3':'PERSPECTIVE LAB · '+(specialMission+1)+'/3',18,24);
+ if(specialKind==='living'){
+  const cfg=livingMissions[specialMission],floor=SCH-36;
+  ctx.fillStyle='#dce8dd';ctx.fillRect(0,floor,SCW,SCH-floor);
+  ctx.strokeStyle='#538b68';ctx.lineWidth=3;specialLine(ctx,{x:0,y:floor},{x:SCW,y:floor});
+  ctx.strokeStyle='#31825d';ctx.lineWidth=4;ctx.beginPath();
+  ctx.moveTo(cfg.goal.x-33,cfg.goal.y-19);ctx.lineTo(cfg.goal.x-33,cfg.goal.y+3);
+  ctx.lineTo(cfg.goal.x+33,cfg.goal.y+3);ctx.lineTo(cfg.goal.x+33,cfg.goal.y-19);ctx.stroke();
+  ctx.fillStyle='#237044';ctx.fillText('GOAL',cfg.goal.x-19,cfg.goal.y-28);
+  if(cfg.barrier){ctx.fillStyle='#d3a781';ctx.fillRect(cfg.barrier.x,cfg.barrier.y,cfg.barrier.w,cfg.barrier.h)}
+  for(const seg of specialRamps){ctx.strokeStyle='#3e6351';ctx.lineWidth=6;ctx.lineCap='round';specialLine(ctx,seg.a,seg.b)}
+  for(const b of specialBodies){
+   ctx.save();ctx.translate(b.x,b.y);ctx.rotate(b.angle);
+   ctx.lineWidth=2.6;ctx.strokeStyle='#32594e';ctx.fillStyle=b.kind==='balloon'?'rgba(237,145,139,.24)':'rgba(89,170,125,.20)';
+   if(b.kind==='circle'||b.kind==='balloon'){ctx.beginPath();ctx.arc(0,0,b.r,0,Math.PI*2)}
+   else if(b.kind==='square'){ctx.beginPath();ctx.rect(-b.r,-b.r,2*b.r,2*b.r)}
+   else{ctx.beginPath();ctx.moveTo(0,-b.r);ctx.lineTo(b.r,b.r);ctx.lineTo(-b.r,b.r);ctx.closePath()}
+   ctx.fill();ctx.stroke();
+   if(b.kind==='balloon'){ctx.beginPath();ctx.moveTo(0,b.r);ctx.quadraticCurveTo(7,b.r+13,-2,b.r+34);ctx.stroke()}
+   ctx.restore();
+   if(b.kind==='balloon'&&b.attach>=0&&specialBodies[b.attach]){
+    ctx.strokeStyle='#977c73';ctx.lineWidth=1;specialLine(ctx,{x:b.x,y:b.y+b.r},{x:specialBodies[b.attach].x,y:specialBodies[b.attach].y});
+   }
+  }
+  if(!specialRunning&&!specialDone){ctx.setLineDash([5,5]);ctx.strokeStyle='#e0a05b';ctx.lineWidth=2;ctx.beginPath();ctx.arc(cfg.spawn.x,cfg.spawn.y,25,0,Math.PI*2);ctx.stroke();ctx.setLineDash([])}
+ }else{
+  const geom=specialGuides;
+  ctx.strokeStyle='#a6bac6';ctx.lineWidth=2;ctx.setLineDash([8,8]);specialLine(ctx,{x:0,y:geom.vps[0].y},{x:SCW,y:geom.vps[0].y});ctx.setLineDash([]);
+  for(const vp of geom.vps){ctx.fillStyle='#ba6847';ctx.beginPath();ctx.arc(vp.x,vp.y,6,0,Math.PI*2);ctx.fill();ctx.fillText('VP',vp.x-7,vp.y-14)}
+  ctx.strokeStyle='#384e51';ctx.lineWidth=3;
+  if(geom.face.length===4){for(let i=0;i<4;i++)specialLine(ctx,geom.face[i],geom.face[(i+1)%4])}
+  else specialLine(ctx,geom.face[0],geom.face[1]);
+  for(let i=0;i<geom.edges.length;i++){
+   const edge=geom.edges[i],completed=specialPerspectiveMarks.some(m=>m.index===i);
+   ctx.setLineDash(completed?[]:[5,7]);ctx.strokeStyle=completed?'#27875d':specialFullGuides?'#ad846b':'rgba(97,147,115,.4)';ctx.lineWidth=completed?2.8:1.6;specialLine(ctx,edge.a,edge.b);ctx.setLineDash([]);
+   ctx.fillStyle='#668c72';ctx.beginPath();ctx.arc(edge.a.x,edge.a.y,3.7,0,Math.PI*2);ctx.fill();
+   ctx.fillStyle=completed?'#27875d':'#b98659';ctx.fillRect(edge.b.x-4,edge.b.y-4,8,8);
+  }
+  for(const ink of specialPerspectiveMarks){
+   ctx.strokeStyle='#315a50';ctx.lineWidth=2.7;specialPath(ctx,ink.points);ctx.stroke();
+  }
+ }
+ if(specialStroke&&specialStroke.length){
+  ctx.strokeStyle='#29483c';ctx.lineWidth=3;ctx.lineCap='round';specialPath(ctx,specialStroke);ctx.stroke();
+ }
+ if(specialDone){
+  ctx.fillStyle='rgba(248,253,244,.87)';specialRoundRect(ctx,205,163,310,82);ctx.fill();
+  ctx.strokeStyle='#70a983';ctx.lineWidth=2;ctx.stroke();
+  ctx.textAlign='center';ctx.font='800 24px system-ui';ctx.fillStyle='#1e7045';ctx.fillText('CHALLENGE COMPLETE',360,201);
+  ctx.font='600 13px system-ui';ctx.fillText('Continue to the next challenge',360,225);ctx.textAlign='left';
+ }
+}
+
 function resetAllProgress(){
  // Clear timers and cached drawing work before recreating the blank save.
  // A resize alone does NOT clear the ink if the paper dimensions are unchanged.
