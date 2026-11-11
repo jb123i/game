@@ -1465,7 +1465,7 @@ function renderTree(){
  }
  // Show a dotted half-connection toward an unpurchased prerequisite, starting
  // at the visible child. Once the prerequisite is purchased, show the full link.
- const linkParents={curve:'circle',stamina:'root',secondWind:'stamina',triangle:'root',circle:'square',free:'root',grid:'root',eraser:'root',dashedCircle:'circle',eraserSize:'eraser',square:'triangle',balloon:'circle',composer:'balloon',selector:'square'};
+ const linkParents={curve:'circle',stamina:'root',secondWind:'stamina',triangle:'root',circle:'square',free:'root',grid:'root',eraser:'root',dashedCircle:'circle',eraserSize:'eraser',square:'triangle',balloon:'curve',composer:'balloon',selector:'square'};
  for(const [id,parent] of Object.entries(linkParents)){
   drawBranch('link-'+id,id,parent,id==='composer'?balloonPlayable():id==='balloon'?curvePlayable():id==='curve'?circlePlayable():id==='selector'?squarePlayable():id==='circle'?squarePlayable():id==='square'?trianglePlayable():id==='triangle'?upgradeActive('root'):id==='eraserSize'?upgradeActive('eraser'):id==='eraser'?upgradeActive('root'):id==='dashedCircle'?circlePlayable():upgradeActive(parent));
  }
