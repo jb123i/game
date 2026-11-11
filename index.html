@@ -367,7 +367,7 @@ function persistPracticeDraft(){
 }
 function restorePracticeDraft(){
  const d=s.practiceDraft;
- if(s.phase!=='draw'||!d||!Array.isArray(d.strokes)||(!d.strokes.length&&!(isCompositionMode(d.mode)&&d.composeStage===1))||s.left<1||d.mode!==s.mode||!!d.freeOn!==!!s.freeOn)return false;
+ if(s.phase!=='draw'||!d||!Array.isArray(d.strokes)||(!d.strokes.length&&!(isCompositionMode(d.mode)&&d.composeStage===1))||s.left<1||d.mode!==s.mode||(d.mode==='line'&&!!d.freeOn!==!!s.freeOn))return false;
  if((d.mode==='circle'||d.mode==='square'||d.mode==='triangle')&&!d.O||d.mode==='line'&&!d.freeOn&&(!d.A||!d.B)||d.mode==='curve'&&(!d.A||!d.B||!d.O)||d.mode==='oval'&&(!d.O||!(d.O.rx>0)||!(d.O.ry>0))||isCompositionMode(d.mode)&&(!d.O||!d.A||!d.B))return false;
  try{
   A=d.A?pointFromIso(d.A):null;B=d.B?pointFromIso(d.B):null;
@@ -380,7 +380,13 @@ function restorePracticeDraft(){
   practiceStrokes=d.strokes.map(pts=>pts.map(pointFromIso)).filter(pts=>pts.length>=2);
   if(!practiceStrokes.length&&!(isCompositionMode(d.mode)&&composeStage===1))return false;
   drawing=false;locked=false;strokePts=[];
-  stats();paintPaper();$('score').textContent=isCompositionMode()?'Part 2 of 2 · Finish your '+(composeTemplate==='balloon'?'balloon':composeTemplate==='signpost'?'signpost':composeTemplate==='kite'?'kite':'magnifying glass'):practiceStrokes.length+' stroke'+(practiceStrokes.length===1?'':'s')+' saved · Continue drawing';
+  stats();paintPaper();
+  const objectName=composeTemplate==='balloon'?'balloon':composeTemplate==='signpost'?'signpost':composeTemplate==='kite'?'kite':'magnifying glass';
+  $('score').textContent=isCompositionMode()
+   ?composeStage===1
+    ?'Part 2 of 2 · Draw the '+(composeTemplate==='balloon'?'string':'line')+' from A to B to finish your '+objectName+' · '+s.left+' stroke'+(s.left===1?'':'s')+' available'
+    :'Part 1 of 2 · Continue the '+(['signpost','kite'].includes(composeTemplate)?'square':'circle')+' for your '+objectName
+   :practiceStrokes.length+' stroke'+(practiceStrokes.length===1?'':'s')+' saved · Continue drawing';
   return true;
  }catch{return false}
 }
@@ -1347,13 +1353,27 @@ function finalizeShape(){
  clearTimeout(advanceTimer);
  advanceTimer=setTimeout(()=>{if(s.left<=0)openShop();else createPrompt()},1370);
 }
+
+// The player's circle may be offset from its ideal guide. Attach the string
+// to its actual lowest inked point, within the available paper bounds.
+function alignBalloonStringToDrawnOutline(){
+ if(!O||!A||!B||!practiceStrokes.length)return;
+ const pts=practiceStrokes.flat().filter(p=>Number.isFinite(p.x)&&Number.isFinite(p.y));
+ if(!pts.length)return;
+ const lowest=pts.reduce((a,p)=>p.y>a.y?p:a);
+ const first={...A},end={...B};
+ const dx=clamp(lowest.x-first.x,24-Math.min(first.x,end.x),W-24-Math.max(first.x,end.x));
+ const dy=clamp(lowest.y+3-first.y,24-Math.min(first.y,end.y),H-24-Math.max(first.y,end.y));
+ A={x:first.x+dx,y:first.y+dy};
+ B={x:end.x+dx,y:end.y+dy};
+}
 function finishCompositionPart(){
  const accuracy=composeStage===0?(['signpost','kite'].includes(composeTemplate)?squareAccuracy():circleAccuracy()):lineAccuracy(true);
  composeScores.push(accuracy);
  if(composeStage===0){
   composeFirstBounds=boundsToIso(drawnBounds(practiceStrokes));
   if(composeTemplate==='magnifier')composeLensShape=captureDrawnLens(practiceStrokes);
-  if(composeTemplate==='balloon')composeBalloonOutline=practiceStrokes.map(pts=>pts.map(pointToIso));
+  if(composeTemplate==='balloon'){composeBalloonOutline=practiceStrokes.map(pts=>pts.map(pointToIso));alignBalloonStringToDrawnOutline()}
   composeStage=1;feedbackReveal=false;practiceStrokes=[];strokePts=[];persistPracticeDraft();stats();paintPaper();
   $('score').textContent=(['signpost','kite'].includes(composeTemplate)?'Square ':'Circle ')+accuracy+'% · Now draw the '+(composeTemplate==='balloon'?'string':composeTemplate==='signpost'?'post':composeTemplate==='kite'?'tail':'handle');
   // A two-part drawing may use its last stroke on the first component.
@@ -1405,7 +1425,7 @@ function finishPractice(){
  }
 }
 draw.addEventListener('pointerdown',e=>{if(s.phase!=='draw'||drawing||erasing||(locked&&s.tool!=='eraser')||(!e.isPrimary&&e.pointerType==='touch'))return;if(s.tool==='eraser'){e.preventDefault();$('endTurn').disabled=true;eraserBegin(e);return}const p=pointer(e,draw);
- if(((s.mode==='line'&&!s.freeOn||s.mode==='curve')&&!practiceStrokes.length||isCompositionMode()&&composeStage===1&&!practiceStrokes.length)&&distance(p,A)>31){$('score').textContent='Start near point A';return}e.preventDefault();drawing=true;$('endTurn').disabled=true;activePointer=e.pointerId;strokePts=[p];startStablePointer(e,p);draw.setPointerCapture(e.pointerId);paintPaper()});
+ if((s.mode==='line'&&!s.freeOn||s.mode==='curve')&&!practiceStrokes.length&&distance(p,A)>31){$('score').textContent='Start near point A';return}e.preventDefault();drawing=true;$('endTurn').disabled=true;activePointer=e.pointerId;strokePts=[p];startStablePointer(e,p);draw.setPointerCapture(e.pointerId);paintPaper()});
 draw.addEventListener('pointermove',e=>{if(activePointer!==e.pointerId||(!drawing&&!erasing))return;e.preventDefault();for(const sample of stableSamples(e)){const p=stablePointer(sample);if(!p)continue;const pts=drawing?strokePts:eraserPts;const last=pts[pts.length-1];if(distance(p,last)>.65)pts.push(p)}if(drawing)requestPaperPaint();if(erasing)paintInk()});
 function preserveInterruptedStroke(){
  if(drawing&&strokePts.length>1&&pathLength(strokePts)>3)s.paperMarks.push({kind:'ink',space:'iso',points:normalizeMark(strokePts)});
