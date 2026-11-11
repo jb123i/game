@@ -313,7 +313,7 @@ for(const name of ['touchstart','touchmove'])draw.addEventListener(name,e=>{if(e
 // Prevent page scrolling during an active touch stroke, even on older mobile browsers.
 window.addEventListener('touchmove',e=>{if(activePointer!==null&&e.cancelable)e.preventDefault()},{passive:false});
 
-let composeStage=0,composeScores=[],composeTemplate='balloon',composeFirstBounds=null;
+let composeStage=0,composeScores=[],composeTemplate='balloon',composeFirstBounds=null,composeLensShape=null;
 let W=0,H=0,A=null,B=null,O=null,strokePts=[],practiceStrokes=[],drawing=false,eraserPts=[],erasing=false,locked=false,advanceTimer=null,activePointer=null,strokeAnchor=null,pendingResize=false,paintFrame=0,feedbackReveal=false;
 let lastSquareAngle=null;
 // A square has 90-degree rotational symmetry. Vary its orientation across the
@@ -352,7 +352,7 @@ function persistPracticeDraft(){
  s.practiceDraft={mode:s.mode,freeOn:!!s.freeOn,composeStage,composeScores:[...composeScores],composeTemplate,
   A:A?pointToIso(A):null,B:B?pointToIso(B):null,
   O:O?{at:pointToIso(O),r:O.r/Math.max(1,H),angle:Number(O.angle)||0}:null,
-  strokes:practiceStrokes.map(pts=>pts.map(pointToIso)),composeFirstBounds};
+  strokes:practiceStrokes.map(pts=>pts.map(pointToIso)),composeFirstBounds,composeLensShape};
  save();
 }
 function restorePracticeDraft(){
@@ -364,6 +364,7 @@ function restorePracticeDraft(){
   O=d.O?{...pointFromIso(d.O.at),r:d.O.r*H,angle:Number.isFinite(d.O.angle)?d.O.angle:0}:null;
   composeStage=isCompositionMode(d.mode)?(d.composeStage===1?1:0):0;composeScores=Array.isArray(d.composeScores)?d.composeScores.slice(0,1):[];composeTemplate=['balloon','magnifier','signpost','kite'].includes(d.composeTemplate)?d.composeTemplate:'balloon';
   composeFirstBounds=d.composeFirstBounds&&['minX','maxX','minY','maxY'].every(k=>Number.isFinite(d.composeFirstBounds[k]))?d.composeFirstBounds:null;
+   composeLensShape=d.composeLensShape&&Array.isArray(d.composeLensShape.profile)?d.composeLensShape:null;
   practiceStrokes=d.strokes.map(pts=>pts.map(pointFromIso)).filter(pts=>pts.length>=2);
   if(!practiceStrokes.length&&!(isCompositionMode(d.mode)&&composeStage===1))return false;
   drawing=false;locked=false;strokePts=[];
@@ -393,7 +394,7 @@ function createPrompt(){
  // Preserve the selected exercise and composition type; randomize each new
  // target without changing grading or already saved unfinished drawings.
  s.mode=selectedStudy();
- strokePts=[];practiceStrokes=[];s.practiceDraft=null;drawing=false;locked=false;feedbackReveal=false;composeStage=0;composeScores=[];composeFirstBounds=null;
+ strokePts=[];practiceStrokes=[];s.practiceDraft=null;drawing=false;locked=false;feedbackReveal=false;composeStage=0;composeScores=[];composeFirstBounds=null;composeLensShape=null;
  A=null;B=null;O=null;
  if(isCompositionMode()){
   composeTemplate=s.mode==='balloon'?'balloon':s.composeBase==='square'?(s.composeLine==='down'?'signpost':'kite'):(s.composeLine==='down'?'balloon':'magnifier');
@@ -512,6 +513,67 @@ function applyMark(mark){if(!mark||!Array.isArray(mark.points)||mark.points.leng
 function paintInk(){ic.clearRect(0,0,W,H);for(const mark of s.paperMarks)applyMark(mark);if(erasing&&eraserPts.length)applyMark({kind:'erase',space:'iso',size:eraserWidth(),points:normalizeMark(eraserPts)});paintLens()}
 function paintGrid(){gc.clearRect(0,0,W,H);if(!upgradeActive('grid')){paintLens();return}const d=26;gc.strokeStyle='#becbc5ba';gc.lineWidth=1;gc.beginPath();for(let x=d/2;x<W;x+=d){gc.moveTo(x+.5,0);gc.lineTo(x+.5,H)}for(let y=d/2;y<H;y+=d){gc.moveTo(0,y+.5);gc.lineTo(W,y+.5)}gc.stroke();paintLens()}
 
+
+/* Preserve the outline actually drawn by the player, not the ideal guide circle.
+   The shape is stored as a center and 192 polar radii in paper-relative units.
+   Its silhouette can be wobbly, tilted, elliptical, or slightly off-center. */
+function captureDrawnLens(strokes){
+ const pts=strokes.filter(v=>v.length>=2).flat();
+ if(pts.length<3||!O)return null;
+ const box=drawnBounds(strokes);
+ if(!box)return null;
+ const center={x:(box.minX+box.maxX)/2,y:(box.minY+box.maxY)/2};
+ const nominal=Math.max(8,O.r),count=192;
+ const raw=Array(count).fill(null);
+ const segments=[];
+ for(const path of strokes)for(let j=1;j<path.length;j++){
+  if(distance(path[j-1],path[j])>.01)segments.push([path[j-1],path[j]]);
+ }
+ for(let i=0;i<count;i++){
+  const angle=i*2*Math.PI/count,dx=Math.cos(angle),dy=Math.sin(angle);
+  let best=Infinity,closest=null;
+  for(const [p,q] of segments){
+   const ex=q.x-p.x,ey=q.y-p.y,det=dx*ey-dy*ex;
+   if(Math.abs(det)<1e-7)continue;
+   const rx=p.x-center.x,ry=p.y-center.y;
+   const t=(rx*ey-ry*ex)/det,u=(rx*dy-ry*dx)/det;
+   if(t<=0||u<-.0001||u>1.0001)continue;
+   const diff=Math.abs(t-nominal);
+   if(diff<best){best=diff;closest=t}
+  }
+  if(closest!==null)raw[i]=clamp(closest/nominal,.35,1.85);
+ }
+ const available=raw.map((v,i)=>v===null?-1:i).filter(i=>i>=0);
+ if(available.length<Math.floor(count*.48))return null;
+ // Reconstruct only missing angular intervals; use the actual hand-drawn
+ // segments everywhere they exist, never replacing wobbles with a perfect rim.
+ for(let k=0;k<available.length;k++){
+  const a=available[k],b=available[(k+1)%available.length],
+   gap=(b-a+count)%count;
+  if(gap<=1)continue;
+  for(let j=1;j<gap;j++)raw[(a+j)%count]=raw[a]+(raw[b]-raw[a])*j/gap;
+ }
+ return {at:pointToIso(center),r:nominal/Math.max(1,H),profile:raw.map(v=>Math.round(v*10000)/10000)};
+}
+function lensRadiusAt(profile,angle){
+ if(!profile)return 1;
+ const n=profile.length,t=((angle/(2*Math.PI)%1+1)%1)*n,
+  i=Math.floor(t),fraction=t-i;
+ return profile[i]*(1-fraction)+profile[(i+1)%n]*fraction;
+}
+function lensOutlinePath(ctx,glass,inset=0,begin=0,end=Math.PI*2){
+ const profile=glass.profile,n=profile?profile.length:128;
+ const steps=Math.max(6,Math.ceil((end-begin)/(2*Math.PI)*n));
+ ctx.beginPath();
+ for(let i=0;i<=steps;i++){
+  const theta=begin+(end-begin)*i/steps;
+  const rr=Math.max(2,glass.r*lensRadiusAt(profile,theta)-inset);
+  const x=glass.x+rr*Math.cos(theta),y=glass.y+rr*Math.sin(theta);
+  if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+ }
+ if(end-begin>=Math.PI*2-.0001)ctx.closePath();
+}
+
 /* The magnifying-glass composition is an optical lens, not a decorative circle.
    Composite the exact grid, ink and moving pencil beneath it. Its clear aperture
    samples this image with smooth convex-lens magnification, radial refraction,
@@ -524,15 +586,21 @@ function paintLens(){
  for(const glass of s.magnifiers||[]){
   if(!glass||!Array.isArray(glass.at)||glass.at.length!==2
    ||!glass.at.every(Number.isFinite)||!Number.isFinite(glass.r)||glass.r<=0)continue;
-  paintMagnifierLens({...pointFromIso(glass.at),r:glass.r*H});
+  paintMagnifierLens({...pointFromIso(glass.at),r:glass.r*H,profile:glass.profile});
  }
  // The active lens starts working after its circle is finished; avoid
  // double rendering once the completed lens is saved.
  if(isCompositionMode()&&composeTemplate==='magnifier'&&composeStage===1&&O&&!feedbackReveal)
-  paintMagnifierLens(O);
+  paintMagnifierLens(composeLensShape?{...pointFromIso(composeLensShape.at),r:composeLensShape.r*H,profile:composeLensShape.profile}:O);
 }
 function paintMagnifierLens(glass){
- const radius=Math.max(4,glass.r),size=Math.ceil(radius*2+14);
+ // Old save files contain round lenses; new ones have an exact hand-drawn
+ // radial silhouette. Ignore malformed profiles rather than breaking gameplay.
+ const profile=Array.isArray(glass.profile)&&glass.profile.length===192&&glass.profile.every(v=>Number.isFinite(v)&&v>=.35&&v<=1.85)?glass.profile:null;
+ glass={...glass,profile};
+ const radius=Math.max(4,glass.r);
+ const maxRadius=radius*(profile?Math.max(...profile):1);
+ const size=Math.ceil(maxRadius*2+16);
  const left=Math.floor(glass.x-size/2),top=Math.floor(glass.y-size/2);
  if(lensSource.width!==size||lensSource.height!==size){
   lensSource.width=size;lensSource.height=size;lensFrame=null;
@@ -552,7 +620,7 @@ function paintMagnifierLens(glass){
  const source=patch.getImageData(0,0,size,size).data;
  if(!lensFrame||lensFrame.width!==size||lensFrame.height!==size)lensFrame=lc.createImageData(size,size);
  const output=lensFrame.data;output.fill(0);
- const cx=glass.x-left,cy=glass.y-top,aperture=radius-3.5,zoom=1.9;
+ const cx=glass.x-left,cy=glass.y-top,zoom=1.9;
  // Bilinear sampling avoids pixel stair-stepping at fractional magnification.
  function sample(x,y,channel){
   const fx=clamp(x,0,size-1.001),fy=clamp(y,0,size-1.001);
@@ -561,11 +629,14 @@ function paintMagnifierLens(glass){
   const b=source[p+size*4]*(1-tx)+source[p+size*4+4]*tx;
   return a*(1-ty)+b*ty;
  }
- // Warp only the circular glass interior; outside remains fully transparent.
- for(let y=Math.max(0,Math.floor(cy-aperture));y<Math.min(size,Math.ceil(cy+aperture));y++){
+ // Refraction and transparency follow every irregularity in the player's
+ // actual outline. Each angular slice has its own boundary radius.
+ for(let y=Math.max(0,Math.floor(cy-maxRadius));y<Math.min(size,Math.ceil(cy+maxRadius));y++){
   const dy=y+.5-cy;
-  for(let x=Math.max(0,Math.floor(cx-aperture));x<Math.min(size,Math.ceil(cx+aperture));x++){
+  for(let x=Math.max(0,Math.floor(cx-maxRadius));x<Math.min(size,Math.ceil(cx+maxRadius));x++){
    const dx=x+.5-cx,d=Math.hypot(dx,dy);
+   const theta=Math.atan2(dy,dx),edgeRadius=radius*lensRadiusAt(profile,theta);
+   const aperture=Math.max(2,edgeRadius-2.3);
    if(d>=aperture)continue;
    const u=d/aperture,u2=u*u;
    // 1.9x at the center, smoothly blending to 1x at the rim.
@@ -574,7 +645,8 @@ function paintMagnifierLens(glass){
    output[o]=Math.min(255,sample(cx+dx*(inv-dispersion),cy+dy*(inv-dispersion),0)+glow);
    output[o+1]=Math.min(255,sample(cx+dx*inv,cy+dy*inv,1)+glow*1.15);
    output[o+2]=Math.min(255,sample(cx+dx*(inv+dispersion),cy+dy*(inv+dispersion),2)+glow*1.35);
-   output[o+3]=255;
+   // Fade just inside the pen line so its precise hand-drawn boundary shows.
+   output[o+3]=Math.round(255*clamp((aperture-d)/2.1));
   }
  }
  // Composite each lens using its alpha mask, including overlapping lenses.
@@ -582,8 +654,8 @@ function paintMagnifierLens(glass){
  if(lensOutput.width!==size||lensOutput.height!==size){lensOutput.width=size;lensOutput.height=size}
  lensOutputCtx.putImageData(lensFrame,0,0);
  lc.drawImage(lensOutput,left,top);
- // Quiet specular highlight and faint rim, preserving the user's pencil outline.
- lc.save();lc.beginPath();lc.arc(glass.x,glass.y,aperture,0,Math.PI*2);lc.clip();
+ // Shape-matched sheen and glints; no artificially perfect circular rim.
+ lc.save();lensOutlinePath(lc,glass,2.3);lc.clip();
  const sheen=lc.createLinearGradient(glass.x-radius,glass.y-radius,glass.x+radius,glass.y+radius);
  sheen.addColorStop(0,'rgba(255,255,255,.18)');
  sheen.addColorStop(.32,'rgba(255,255,255,.02)');
@@ -591,13 +663,13 @@ function paintMagnifierLens(glass){
  sheen.addColorStop(1,'rgba(95,150,155,.07)');
  lc.fillStyle=sheen;lc.fillRect(glass.x-radius,glass.y-radius,2*radius,2*radius);
  lc.restore();
- lc.save();lc.beginPath();lc.arc(glass.x,glass.y,radius-2.5,0,Math.PI*2);
- lc.strokeStyle='rgba(58,102,106,.4)';lc.lineWidth=1.5;
+ lc.save();lensOutlinePath(lc,glass,1.5);
+ lc.strokeStyle='rgba(58,102,106,.27)';lc.lineWidth=1.15;
  lc.shadowColor='rgba(30,64,67,.3)';lc.shadowBlur=4;lc.stroke();
  lc.shadowBlur=0;
- lc.beginPath();lc.arc(glass.x,glass.y,radius-6,-2.55,-.85);
+ lensOutlinePath(lc,glass,5,-2.55,-.85);
  lc.strokeStyle='rgba(255,255,255,.72)';lc.lineWidth=2;lc.stroke();
- lc.beginPath();lc.arc(glass.x,glass.y,radius-5,.35,1.85);
+ lensOutlinePath(lc,glass,4,.35,1.85);
  lc.strokeStyle='rgba(53,108,110,.14)';lc.lineWidth=1.3;lc.stroke();
  lc.restore();
 }
@@ -893,6 +965,7 @@ function finishCompositionPart(){
  composeScores.push(accuracy);
  if(composeStage===0){
   composeFirstBounds=boundsToIso(drawnBounds(practiceStrokes));
+  if(composeTemplate==='magnifier')composeLensShape=captureDrawnLens(practiceStrokes);
   composeStage=1;feedbackReveal=false;practiceStrokes=[];strokePts=[];persistPracticeDraft();stats();paintPaper();
   $('score').textContent=(['signpost','kite'].includes(composeTemplate)?'Square ':'Circle ')+accuracy+'% · Now draw the '+(composeTemplate==='balloon'?'string':composeTemplate==='signpost'?'post':composeTemplate==='kite'?'tail':'handle');
   // A two-part drawing may use its last stroke on the first component.
@@ -906,7 +979,7 @@ function finishCompositionPart(){
  const reward=payoutForShape(firstMode,composeScores[0])+payoutForShape('line',composeScores[1]);
  const rewardBounds=unionBounds(boundsFromIso(composeFirstBounds),drawnBounds(practiceStrokes));
  s.cash+=reward;s.last=Math.round((composeScores[0]+composeScores[1])/2);s.lastPay=reward;s.lastKind=s.mode==='balloon'?'balloon':'composition';
- if(composeTemplate==='magnifier'&&O)s.magnifiers.push({at:pointToIso(O),r:O.r/Math.max(1,H)});
+ if(composeTemplate==='magnifier'&&O)s.magnifiers.push(composeLensShape||{at:pointToIso(O),r:O.r/Math.max(1,H)});
  s.practiceDraft=null;feedbackReveal=true;save();stats();paintPaper(true);
  $('score').textContent='Composition '+s.last+'% · +'+cash(reward);
  showEarnings(reward,rewardBounds);
