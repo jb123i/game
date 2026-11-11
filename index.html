@@ -2712,7 +2712,33 @@ $('nextTurn').addEventListener('click',()=>{
  if(s.practiceDraft)s.mode=s.practiceDraft.mode;else s.mode=selectedStudy();
  save();stats();requestAnimationFrame(()=>{resizePaper();if(!restorePracticeDraft())createPrompt();paintBalloons();ensureBalloonAnimation()});
 });
-$('reset').addEventListener('click',()=>{if(!confirm('Erase all game progress and hand-drawn upgrade shapes?'))return;clearTimeout(advanceTimer);s=blank();practiceStrokes=[];lastBalloonTime=0;balloonClock=0;paintBalloons();skillTool='trace';for(const id in nodeCanvas)nodeCanvas[id].strokes=[];setSkillTool('trace');strokePts=[];eraserPts=[];save();stats();resizePaper();createPrompt();renderTree()});
+function resetAllProgress(){
+ // Clear timers and cached drawing work before recreating the blank save.
+ // A resize alone does NOT clear the ink if the paper dimensions are unchanged.
+ clearTimeout(advanceTimer);advanceTimer=null;
+ if(paintFrame)cancelAnimationFrame(paintFrame);paintFrame=0;
+ if(balloonFrame)cancelAnimationFrame(balloonFrame);balloonFrame=0;
+ tracing=null;inspectPinned=false;inspectId=null;hoveredUpgradeId=null;
+ drawing=false;erasing=false;locked=false;activePointer=null;strokeAnchor=null;pendingResize=false;
+ strokePts=[];eraserPts=[];practiceStrokes=[];A=null;B=null;O=null;
+ feedbackReveal=false;showFullGuides=false;
+ composeStage=0;composeScores=[];composeTemplate='balloon';composeFirstBounds=null;
+ composeLensShape=null;composeBalloonOutline=null;composeBalloonId=null;
+ lastSquareAngle=null;lastBalloonTime=0;lastBalloonSave=0;balloonClock=0;lensFrame=null;
+ s=blank();skillTool='trace';
+ for(const id in nodeCanvas)nodeCanvas[id].strokes=[];
+ earningPopup.classList.add('hidden');earningPopup.textContent='';
+ closeInspector();setSkillTool('trace');
+ save();stats();resizePaper();
+ // Paint all layers unconditionally. resizePaper intentionally does nothing
+ // when width and height match, so relying on it leaves old ink on screen.
+ paintGrid();paintInk();paintBalloons();paintLens();
+ createPrompt();renderTree();
+}
+$('reset').addEventListener('click',()=>{
+ if(!confirm('Erase all game progress, drawings, balloons, lenses, and hand-drawn upgrades?'))return;
+ resetAllProgress();
+});
 window.addEventListener('resize',()=>{if(s.phase==='draw')resizePaper()});
 if(s.phase==='draw'&&s.left<=0)openShop(true);
  // Preserve incomplete old-save drawings. For a fresh prompt, stop older
