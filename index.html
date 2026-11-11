@@ -989,6 +989,7 @@ function balloonContain(body){
 }
 
 function balloonNeck(o){
+ if(o.popped&&Array.isArray(o.popState?.knot))return pointFromIso(o.popState.knot);
  const c=pointFromIso(o.at),a=Number(o.angle)||0,r=balloonRenderedRadius(o,Math.PI/2);
  return {x:c.x-Math.sin(a)*r,y:c.y+Math.cos(a)*r};
 }
@@ -1201,7 +1202,7 @@ function paintBalloons(){
  // Draw all envelopes over all strings, so a string passing behind another
  // balloon is naturally occluded rather than showing through its latex.
  for(const o of s.balloons||[]){
-  if(!o?.at||!Number.isFinite(o.radius)||o.radius<=0)continue;
+  if(!o?.at||!Number.isFinite(o.radius)||o.radius<=0||o.popped)continue;
   const center=pointFromIso(o.at),r=o.radius*H;
   bc.save();bc.translate(center.x,center.y);bc.rotate(o.angle||0);
   bc.beginPath();
@@ -1230,18 +1231,18 @@ function paintBalloons(){
   bc.fillStyle=`hsla(${hue},62%,44%,.9)`;bc.fill();
   bc.strokeStyle='rgba(35,45,46,.7)';bc.lineWidth=1;bc.stroke();bc.restore();
  }
+ for(const o of s.balloons||[])if(o?.popped)paintPoppedLatex(o);
 }
 
 function simulateBalloons(dt){
  if(!s.balloons?.length||dt<=0||!W||!H)return;
  dt=Math.min(.05,dt);balloonClock+=dt;
  const g=9.81,ppm=65;
- const bodies=s.balloons.filter(o=>o?.at&&Number.isFinite(o.radius)&&o.radius>0&&o.at.length===2)
+ const bodies=s.balloons.filter(o=>!o.popped&&o?.at&&Number.isFinite(o.radius)&&o.radius>0&&o.at.length===2)
   .map(o=>{const p=pointFromIso(o.at),v=o.vel||[0,0];return {o,p,
     vx:clamp(Number.isFinite(v[0])?v[0]*H:0,-155,155),
     vy:clamp(Number.isFinite(v[1])?v[1]*H:0,-180,180),
     ...balloonPhysicsData(o)}});
- if(!bodies.length)return;
  for(const b of bodies){
   const o=b.o;
   o.dents=Array.isArray(o.dents)?o.dents.filter(x=>Number.isFinite(x.amount)&&x.amount>.002&&Number.isFinite(x.angle)).slice(0,5):[];
@@ -1378,6 +1379,7 @@ function simulateBalloons(dt){
   b.o.at=pointToIso(b.p);
   b.o.vel=[clamp(b.vx,-155,155)/H,clamp(b.vy,-170,170)/H];
  }
+ for(const o of s.balloons)if(o?.popped)simulatePoppedBalloon(o,dt,bodies);
 }
 function heliumFrameTick(time){
  balloonFrame=0;
@@ -1396,18 +1398,25 @@ function ensureBalloonAnimation(){
  balloonFrame=requestAnimationFrame(heliumFrameTick);
 }
 function eraseHeliumBalloons(points,width){
- if(!points?.length||!s.balloons?.length)return;
- const half=width/2,original=s.balloons.length;
+ if(!points?.length||!s.balloons?.length)return {popped:0,removed:0};
+ const half=width/2,hit=p=>points.length>1?polyDist(p,points):distance(p,points[0]);
+ let popped=0,removed=0;
  s.balloons=s.balloons.filter(o=>{
   if(!o?.at)return false;
-  const center=pointFromIso(o.at),radius=o.radius*H;
-  if((points.length>1?polyDist(center,points):distance(center,points[0]))<=radius+half)return false;
-  const rope=balloonRope(o);
-  if(points.some(p=>polyDist(p,rope)<=half+4))return false;
-  if(rope.some(p=>points.length>1?polyDist(p,points)<=half+4:distance(p,points[0])<=half+4))return false;
+  if(o.popped){
+   // A later, separate pass can erase the settled membrane and string.
+   const fragments=poppedLatexNodes(o),rope=balloonRope(o);
+   if([...fragments,...rope].some(p=>hit(p)<=half+3)){removed++;return false}
+   return true;
+  }
+  const center=pointFromIso(o.at);
+  const profile=Array.isArray(o.profile)&&o.profile.length===192?o.profile:null;
+  const extent=o.radius*H*(profile?Math.min(1.85,Math.max(...profile)):1);
+  if(hit(center)<=extent+half&&popHeliumBalloon(o)){popped++;return true}
   return true;
  });
- if(original!==s.balloons.length){paintBalloons();paintLens()}
+ if(popped||removed){paintBalloons();paintLens();ensureBalloonAnimation()}
+ return {popped,removed};
 }
 
 function eraserBegin(e){if(!upgradeActive('eraser'))return;
@@ -1874,7 +1883,7 @@ function preserveInterruptedStroke(){
  if(erasing&&eraserPts.length){eraseMagnification(eraserPts,eraserWidth());eraseHeliumBalloons(eraserPts,eraserWidth());s.paperMarks.push({kind:'erase',space:'iso',size:eraserWidth(),points:normalizeMark(eraserPts)})}
  drawing=false;erasing=false;$('endTurn').disabled=false;strokePts=[];eraserPts=[];activePointer=null;strokeAnchor=null;save();paintInk();paintPaper();if(pendingResize)resizePaper();
 }
-draw.addEventListener('pointerup',e=>{if(activePointer!==e.pointerId)return;e.preventDefault();const p=stablePointer(e);if(drawing){if(p)strokePts.push(p);activePointer=null;strokeAnchor=null;finishPractice()}else if(erasing){if(p)eraserPts.push(p);eraseMagnification(eraserPts,eraserWidth());eraseHeliumBalloons(eraserPts,eraserWidth());s.paperMarks.push({kind:'erase',space:'iso',size:eraserWidth(),points:normalizeMark(eraserPts)});erasing=false;eraserPts=[];activePointer=null;strokeAnchor=null;$('endTurn').disabled=false;save();paintInk();stats();$('score').textContent='Pencil erased · No strokes used'}if(pendingResize)resizePaper()});
+draw.addEventListener('pointerup',e=>{if(activePointer!==e.pointerId)return;e.preventDefault();const p=stablePointer(e);if(drawing){if(p)strokePts.push(p);activePointer=null;strokeAnchor=null;finishPractice()}else if(erasing){if(p)eraserPts.push(p);eraseMagnification(eraserPts,eraserWidth());eraseHeliumBalloons(eraserPts,eraserWidth());s.paperMarks.push({kind:'erase',space:'iso',size:eraserWidth(),points:normalizeMark(eraserPts)});erasing=false;eraserPts=[];activePointer=null;strokeAnchor=null;$('endTurn').disabled=false;save();paintInk();stats();$('score').textContent='Eraser used · Balloon latex falls when popped · No strokes used'}if(pendingResize)resizePaper()});
 draw.addEventListener('pointercancel',e=>{if(activePointer!==e.pointerId)return;preserveInterruptedStroke();$('score').textContent='Stroke interrupted · Partial drawing saved';});
 window.addEventListener('pagehide',()=>{if(drawing||erasing)preserveInterruptedStroke()});
 function changeMode(mode){if(!upgradeActive('selector')||s.phase!=='draw'||locked||drawing)return;if(isCompositionMode(mode)&&(!(mode==='balloon'?balloonPlayable():mode==='cylinder'?cylinderPlayable():composerPlayable())||s.left<2)){$('score').textContent='Two-part drawings require the active upgrade and at least 2 strokes left';return;}if(practiceStrokes.length||isCompositionMode()&&composeStage===1){$('score').textContent='Finish the current shape before switching modes';return}if(!availableStudy(mode))return;s.studyPreference=mode;s.mode=mode;s.tool='pencil';save();stats();createPrompt()}
