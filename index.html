@@ -574,6 +574,10 @@ function stats(){
   $('drawHint').textContent+=($('drawHint').textContent?' · ':'')+
    (showFullGuides?'Guides temporarily 100%':'Guides '+Math.round(guideInfo.opacity*100)+'% · '+guideHistory().length+'/5 recent');
  }$('activityTag').textContent=compose?(sphere?'Sphere':cylinder?'Cylinder':s.mode==='balloon'?'Balloon':'Composition')+' · Part '+(composeStage+1)+'/'+(sphere?4:2):oval?'Oval study':curve?'Curve study':circle?'Circle study':square?'Square study':triangle?'Triangle study':s.freeOn?'Freehand study':'';$('activityTag').classList.toggle('hidden',!compose&&!oval&&!curve&&!circle&&!square&&!triangle&&!s.freeOn);$('paperArea').classList.toggle('eraser-cursor',s.tool==='eraser');
+ if(s.owned.composer&&s.specialTrials.length<3){
+  $('drawHint').textContent+=($('drawHint').textContent?' · ':'')+'Specialization trials '+s.specialTrials.length+'/3';
+  $('drawHint').classList.remove('hidden');
+ }
  $('nextTurn').textContent='Begin turn '+(s.turn+1)+' →';
  $('openLiving').classList.toggle('hidden',!specialPlayable('living'));
  $('openPerspective').classList.toggle('hidden',!specialPlayable('perspective'));
@@ -1798,7 +1802,7 @@ function simulateBalloons(dt){
 }
 function heliumFrameTick(time){
  balloonFrame=0;
- if(s.phase!=='draw'||!(s.balloons && s.balloons.length)||!W||!H){lastBalloonTime=0;return}
+ if(specialOpen||s.phase!=='draw'||!(s.balloons && s.balloons.length)||!W||!H){lastBalloonTime=0;return}
  if(!lastBalloonTime)lastBalloonTime=time;
  const elapsed=time-lastBalloonTime;
  if(elapsed>=29){
@@ -1809,7 +1813,7 @@ function heliumFrameTick(time){
  ensureBalloonAnimation();
 }
 function ensureBalloonAnimation(){
- if(balloonFrame||s.phase!=='draw'||!(s.balloons && s.balloons.length))return;
+ if(balloonFrame||specialOpen||s.phase!=='draw'||!(s.balloons && s.balloons.length))return;
  balloonFrame=requestAnimationFrame(heliumFrameTick);
 }
 function eraseHeliumBalloons(points,width){
@@ -2876,6 +2880,7 @@ function specialResetScene(){
 function specialOpenWorkshop(kind){
  if(s.phase!=='draw'||!specialPlayable(kind))return;
  specialKind=kind;specialOpen=true;specialTool='ramp';
+ if(balloonFrame)cancelAnimationFrame(balloonFrame);balloonFrame=0;lastBalloonTime=0;
  $('specialTitle').textContent=defs[kind].name;
  for(const btn of $('specialTools').querySelectorAll('button'))btn.classList.toggle('active',btn.getAttribute('data-special-tool')==='ramp');
  specialResetScene();stats();specialStartFrame();
@@ -2883,7 +2888,7 @@ function specialOpenWorkshop(kind){
 function specialCloseWorkshop(){
  specialOpen=false;specialRunning=false;specialStroke=null;specialPointer=null;
  if(specialFrame)cancelAnimationFrame(specialFrame);specialFrame=0;
- stats();resizePaper();paintPaper();
+ stats();resizePaper();paintPaper();ensureBalloonAnimation();
 }
 $('openLiving').addEventListener('click',()=>specialOpenWorkshop('living'));
 $('openPerspective').addEventListener('click',()=>specialOpenWorkshop('perspective'));
