@@ -395,14 +395,14 @@ function createPrompt(){
   composeTemplate=s.mode==='balloon'?'balloon':s.composeBase==='square'?(s.composeLine==='down'?'signpost':'kite'):(s.composeLine==='down'?'balloon':'magnifier');
   const maxR=Math.min(W*.14,H*.17,82),r=randomBetween(Math.max(22,maxR*.62),Math.max(22,maxR));
   const squareBased=['signpost','kite'].includes(composeTemplate);
-  O={x:0,y:0,r,angle:squareBased?nextSquareAngle():0};
+  O={x:0,y:0,r,angle:composeTemplate==='kite'?nextSquareAngle():0};
   const len=randomBetween(Math.max(34,r*.72),Math.max(44,r*1.28));
   if(composeTemplate==='kite'){
    const corner=squareCorners()[2],direction=Math.random()<.5?-1:1;
    A={x:corner.x,y:corner.y};B={x:A.x+direction*len*.72,y:A.y+len*.78};
   }else if(composeTemplate==='signpost'){
-   A={x:-r*Math.sin(O.angle),y:r*Math.cos(O.angle)+3};
-   B={x:A.x+randomBetween(-r*.09,r*.09),y:A.y+len};
+   A={x:0,y:r+3};
+   B={x:0,y:A.y+len};
   }else if(composeTemplate==='balloon'){
    A={x:0,y:r+3};B={x:A.x+randomBetween(-r*.23,r*.23),y:A.y+len};
   }else{
