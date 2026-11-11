@@ -219,7 +219,7 @@
  }
  if(typeof window.PointerEvent==='function')return;
  if(window.HTMLCanvasElement&&!HTMLCanvasElement.prototype.setPointerCapture){
-  HTMLCanvasElement.prototype.setPointerCapture=function(){};
+  try {HTMLCanvasElement.prototype.setPointerCapture=function(){};} catch(error) {}
  }
  var active=null,lastTouch=0,mouseDown=false;
  function eligible(canvas){
@@ -1772,7 +1772,7 @@ function eraseHeliumBalloons(points,width){
 }
 
 function eraserBegin(e){if(!upgradeActive('eraser'))return;
- erasing=true;activePointer=e.pointerId;eraserPts=[pointer(e,draw)];startStablePointer(e,eraserPts[0]);draw.setPointerCapture(e.pointerId);paintInk();$('score').textContent='Erasing pencil · No strokes used'
+ erasing=true;activePointer=e.pointerId;eraserPts=[pointer(e,draw)];startStablePointer(e,eraserPts[0]);if(draw.setPointerCapture)draw.setPointerCapture(e.pointerId);paintInk();$('score').textContent='Erasing pencil · No strokes used'
 }
 // Accuracy for multi-stroke studies uses the UNION of separate strokes. Never
 // connect distant endpoints across a pen lift, or count those invisible links.
@@ -2261,7 +2261,7 @@ function finishPractice(){
  }
 }
 draw.addEventListener('pointerdown',e=>{if(s.phase!=='draw'||drawing||erasing||(locked&&s.tool!=='eraser')||(!e.isPrimary&&e.pointerType==='touch'))return;if(s.tool==='eraser'){e.preventDefault();$('endTurn').disabled=true;eraserBegin(e);return}const p=pointer(e,draw);
- if((s.mode==='line'&&!s.freeOn||s.mode==='curve')&&!practiceStrokes.length&&distance(p,A)>31){$('score').textContent='Start near point A';return}e.preventDefault();drawing=true;$('endTurn').disabled=true;activePointer=e.pointerId;strokePts=[p];startStablePointer(e,p);draw.setPointerCapture(e.pointerId);paintPaper()});
+ if((s.mode==='line'&&!s.freeOn||s.mode==='curve')&&!practiceStrokes.length&&distance(p,A)>31){$('score').textContent='Start near point A';return}e.preventDefault();drawing=true;$('endTurn').disabled=true;activePointer=e.pointerId;strokePts=[p];startStablePointer(e,p);if(draw.setPointerCapture)draw.setPointerCapture(e.pointerId);paintPaper()});
 draw.addEventListener('pointermove',e=>{if(activePointer!==e.pointerId||(!drawing&&!erasing))return;e.preventDefault();for(const sample of stableSamples(e)){const p=stablePointer(sample);if(!p)continue;const pts=drawing?strokePts:eraserPts;const last=pts[pts.length-1];if(distance(p,last)>.65)pts.push(p)}if(drawing)requestPaperPaint();if(erasing)paintInk()});
 function preserveInterruptedStroke(){
  if(drawing&&strokePts.length>1&&pathLength(strokePts)>3)s.paperMarks.push({kind:'ink',space:'iso',points:normalizeMark(strokePts)});
@@ -2485,12 +2485,12 @@ for(const n of nodes){const id=n.dataset.id,c=n.querySelector('canvas'),ctx=c.ge
    if(!s.owned[id]){$('shopFeedback').textContent='You can only erase upgrades you have already purchased.';return}
    if(polyDist(p,guides[id]||guides.circle)>19)return;
    e.preventDefault();tracing={id,ptr:e.pointerId,tool:'erase',last:p};
-   c.setPointerCapture(e.pointerId);eraseSkillInk(id,p,p);updateActivation(id);renderNode(id);return;
+   if(c.setPointerCapture)c.setPointerCapture(e.pointerId);eraseSkillInk(id,p,p);updateActivation(id);renderNode(id);return;
   }
   if(s.left<=0){$('shopFeedback').textContent='No strokes left. Begin the next turn to refill.';return}
   if(polyDist(p,guides[id]||guides.circle)>19){$('shopFeedback').textContent='Start on the faint outline and trace any missing section.';return}
   e.preventDefault();tracing={id,ptr:e.pointerId,tool:'trace',points:[p]};
-  c.setPointerCapture(e.pointerId);renderNode(id)
+  if(c.setPointerCapture)c.setPointerCapture(e.pointerId);renderNode(id)
  });
  c.addEventListener('pointermove',e=>{
   if(!tracing||tracing.id!==id||tracing.ptr!==e.pointerId)return;
