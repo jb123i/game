@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="ltd-build" content="2026-11-17.3">
+<meta name="ltd-build" content="2026-11-17.4">
 <meta name="theme-color" content="#f6f2e9">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -139,6 +139,7 @@
  }
 }
 
+.mug-reference{display:block;width:60px;height:45px;border:1px solid #cedbd1;border-radius:8px;background:#fffdf7}
 .specialization-section{max-width:610px;margin:20px auto 26px;padding:16px 8px;border-top:2px dashed #aac6b1;text-align:center}
 .specialization-section h3{font:700 22px Georgia,serif;margin:0}
 .specialization-section p{font-size:12px;line-height:1.5;color:#527565}
@@ -166,7 +167,14 @@
 <header class="brand"><div class="brandmark"><div class="logo" aria-hidden="true">✎</div><div><p class="eyebrow">An incremental sketchbook</p><h1>Learn to Draw</h1></div></div><span class="offline-note" id="offlineStatus" role="status">Preparing offline</span></header>
 <div class="stats" role="status" aria-label="Progress"><div class="stat"><div class="stat-label">Wallet</div><div class="stat-value money" id="wallet">$0.00</div></div><div class="stat"><div class="stat-label">Turn</div><div class="stat-value" id="turn">1</div></div><div class="stat"><div class="stat-label">Strokes left</div><div class="stat-value" id="energy">1 / 1</div></div><div class="stat"><div class="stat-label">Strokes completed</div><div class="stat-value" id="strokes">0</div></div></div>
 <section class="panel" id="playStage"><div class="panel-head"><div><p class="eyebrow hidden" id="activityTag"></p><h2 class="panel-title" id="activityHeading">Connect the points</h2><p class="panel-sub" id="instruction">Start on A, draw a continuous line, and finish on B.</p></div><span class="smalltag" id="rewardTag">UP TO $1.00</span></div>
-<div class="paper-tools"><div class="toolgroup hidden" id="modeTools"><span class="tiny-label">Study</span><button class="pill active" id="lineMode" type="button">Line</button><button class="pill hidden" id="triangleMode" type="button">Triangle</button><button class="pill hidden" id="squareMode" type="button">Square</button><button class="pill hidden" id="circleMode" type="button">Circle</button><button class="pill hidden" id="curveMode" type="button">Curve</button><button class="pill hidden" id="ovalMode" type="button">Oval</button><button class="pill hidden" id="cylinderMode" type="button">Cylinder</button><button class="pill hidden" id="sphereMode" type="button">Sphere</button><button class="pill hidden" id="balloonMode" type="button">Balloon</button><button class="pill hidden" id="composeMode" type="button">Compose</button></div><div class="toolgroup hidden" id="composerOptions" aria-label="Choose a composition"><span class="tiny-label">Object</span><button class="pill" id="composeMagnifier" type="button">Magnifier</button><button class="pill" id="composeSignpost" type="button">Signpost</button><button class="pill" id="composeKite" type="button">Kite</button></div><div class="toolgroup"><span class="tiny-label">Paper</span><button class="pill hidden" id="gridSwitch" type="button" hidden aria-hidden="true">▦ Grid on</button><button class="pill hidden" id="guideSwitch" type="button" hidden aria-hidden="true">Freehand on</button><button class="pill hidden" id="pencilTool" type="button">Pencil</button><button class="pill hidden" id="eraserTool" type="button">Eraser</button><button class="pill hidden" id="showGuides" type="button" aria-pressed="false" title="Temporarily restore full guides for this exercise">Show guides</button><label class="eraser-size-control hidden" id="eraserSizeControl" for="eraserSize"><span>Eraser size</span><input id="eraserSize" type="range" min="8" max="64" step="2" value="30" aria-label="Eraser width"/><output id="eraserSizeValue" for="eraserSize">30 px</output></label></div></div>
+<div class="paper-tools"><div class="toolgroup hidden" id="modeTools"><span class="tiny-label">Study</span><button class="pill active" id="lineMode" type="button">Line</button><button class="pill hidden" id="triangleMode" type="button">Triangle</button><button class="pill hidden" id="squareMode" type="button">Square</button><button class="pill hidden" id="circleMode" type="button">Circle</button><button class="pill hidden" id="curveMode" type="button">Curve</button><button class="pill hidden" id="ovalMode" type="button">Oval</button><button class="pill hidden" id="cylinderMode" type="button">Cylinder</button><button class="pill hidden" id="mugMode" type="button">Mug</button><button class="pill hidden" id="sphereMode" type="button">Sphere</button><button class="pill hidden" id="balloonMode" type="button">Balloon</button><button class="pill hidden" id="composeMode" type="button">Compose</button></div><div class="toolgroup hidden" id="composerOptions" aria-label="Choose a composition"><span class="tiny-label">Object</span><button class="pill" id="composeMagnifier" type="button">Magnifier</button><button class="pill" id="composeSignpost" type="button">Signpost</button><button class="pill" id="composeKite" type="button">Kite</button></div><div class="toolgroup hidden" id="mugOptions">
+ <canvas class="mug-reference" id="mugReference" width="108" height="81" role="img" aria-label="Finished mug reference"></canvas>
+ <div class="toolgroup" role="group" aria-label="Mug viewpoint">
+  <button class="pill" id="mugFront" type="button" aria-pressed="true">Straight on</button>
+  <button class="pill" id="mugAbove" type="button" aria-pressed="false">From above</button>
+ </div>
+ <button class="pill" id="mugFewerGuides" type="button" aria-pressed="false">Fewer guides</button>
+</div><div class="toolgroup"><span class="tiny-label">Paper</span><button class="pill hidden" id="gridSwitch" type="button" hidden aria-hidden="true">▦ Grid on</button><button class="pill hidden" id="guideSwitch" type="button" hidden aria-hidden="true">Freehand on</button><button class="pill hidden" id="pencilTool" type="button">Pencil</button><button class="pill hidden" id="eraserTool" type="button">Eraser</button><button class="pill hidden" id="showGuides" type="button" aria-pressed="false" title="Temporarily restore full guides for this exercise">Show guides</button><label class="eraser-size-control hidden" id="eraserSizeControl" for="eraserSize"><span>Eraser size</span><input id="eraserSize" type="range" min="8" max="64" step="2" value="30" aria-label="Eraser width"/><output id="eraserSizeValue" for="eraserSize">30 px</output></label></div></div>
 <div class="paper-area" id="paperArea"><canvas id="gridLayer" aria-hidden="true"></canvas><canvas id="inkLayer" aria-hidden="true"></canvas><canvas id="balloonLayer" aria-hidden="true"></canvas><canvas id="drawingLayer" aria-label="Drawing canvas. Use a mouse, stylus or finger to draw."></canvas><canvas id="lensLayer" aria-hidden="true"></canvas><div id="earningPopup" class="earning-popup hidden" aria-hidden="true"></div></div>
 <div class="draw-foot"><small id="drawHint" class="hidden"></small><div class="draw-actions"><span class="score" id="score"></span><button class="pill hidden" id="openLiving" type="button">Living Ink ↗</button><button class="pill hidden" id="openPerspective" type="button">Perspective Lab ↗</button><button class="action end-turn" id="endTurn" type="button">End Turn →</button></div></div></section>
 <section class="panel special-stage hidden" id="specialStage">
@@ -201,6 +209,7 @@
 <line id="link-curve" x1="30" y1="10" x2="30" y2="28"/>
 <path id="link-oval" d="M30 28 L37 38 L60 38 L68 31"/>
 <line id="link-cylinder" x1="68" y1="31" x2="88" y2="31"/>
+<path id="link-object" d="M88 31 L99 36 L99 76 L96 79 L63 79 L63 88"/>
 <path id="link-sphere" d="M88 31 L78 44"/>
 <path id="link-sphere-endurance" d="M38 88 L54 89 L62 58 L78 44"/>
 <path id="link-cylinder-stamina" d="M12 88 L62 96 L97 83 L97 31 L88 31"/>
@@ -224,6 +233,7 @@
 <div class="upgrade off" data-id="curve" style="left:30%;top:28%;" tabindex="0" aria-label="Curve Studies, three dollars"><canvas width="192" height="192"></canvas><span class="node-symbol">⌢</span><span class="node-price">$3.00</span><span class="node-name">Curves</span><span class="tip"><strong>Curve Studies</strong>Trace smooth open curves between A and B. Perfect accuracy earns $1.75.<span class="tip-cost">$3.00 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="oval" style="left:68%;top:31%;" tabindex="0" aria-label="Oval Studies, ten dollars"><canvas width="192" height="192"></canvas><span class="node-symbol">⬭</span><span class="node-price">$10.00</span><span class="node-name">Ovals</span><span class="tip"><strong>Oval Studies</strong>Draw elongated, rotated ovals. Perfect accuracy earns $2.25.<span class="tip-cost">$10.00 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="cylinder" style="left:88%;top:31%;" tabindex="0" aria-label="Cylinder Studies, fifteen dollars"><canvas width="192" height="192"></canvas><span class="node-symbol">▤</span><span class="node-price">$15.00</span><span class="node-name">Cylinders</span><span class="tip"><strong>Cylinder Studies</strong>Draw an oval top and a curved cylindrical body in two stages. Perfect accuracy earns $4.00.<span class="tip-cost">$15.00 · Trace to buy</span></span></div>
+<div class="upgrade off" data-id="object" style="left:63%;top:88%;" tabindex="0" aria-label="Object Studies, eighteen dollars"><canvas width="192" height="192"></canvas><span class="node-price">$18.00</span><span class="node-name">Objects</span></div>
 <div class="upgrade off" data-id="sphere" style="left:78%;top:44%;" tabindex="0" aria-label="Sphere Studies, twenty dollars"><canvas width="192" height="192"></canvas><span class="node-symbol">◕</span><span class="node-price">$20.00</span><span class="node-name">Spheres</span><span class="tip"><strong>Sphere Studies</strong>Draw a lit sphere in four stages: contour, shadow boundary, tonal shading and cast shadow. Perfect accuracy earns $5.50.<span class="tip-cost">$20.00 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="balloon" style="left:12%;top:43%;" tabindex="0" aria-label="Balloon Drawing, two dollars"><canvas width="192" height="192"></canvas><span class="node-symbol balloon-symbol" aria-hidden="true"><svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><ellipse cx="18" cy="12" rx="9" ry="11"/><path d="m15 24 3 3 3-3M18 27c-7 2 4 4-1 8"/></svg></span><span class="node-price">$2.00</span><span class="node-name">Balloon</span><span class="tip"><strong>Balloon Drawing</strong>Draw a helium balloon that floats upward with a swinging string.<span class="tip-cost">$2.00 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="guideFade" style="left:27%;top:53%;" tabindex="0" aria-label="Adaptive Guides, six dollars"><canvas width="192" height="192"></canvas><span class="node-symbol">◌</span><span class="node-price">$6.00</span><span class="node-name">Adaptive Guides</span><span class="tip"><strong>Adaptive Guides</strong>As you score consistently well in a drawing study, its guide marks fade. Lower scores bring them back. Track mastery separately for each study and stage.<span class="tip-cost">$6.00 · Trace to buy</span></span></div>
@@ -360,6 +370,7 @@ const defs={
  guideFade:{name:'Adaptive Guides',price:600,desc:'Guide marks gradually fade as your recent scores improve in each study and stage, then return when you need help. Toggle full guides during an exercise whenever you want.',cost:'$6.00'},
  oval:{name:'Oval Studies',price:1000,desc:'Draw elongated, rotated ovals. Perfect accuracy earns $2.25.',cost:'$10.00'},
  cylinder:{name:'Cylinder Studies',price:1500,desc:'Draw an oval top, then both sides and the curved bottom in two stages. Perfect accuracy earns $4.00.',cost:'$15.00'},
+ object:{name:'Object Studies',price:1800,desc:'Draw the rim, body, and handle of a mug in three stages. Practice two views. Perfect accuracy earns $5.00.',cost:'$18.00'},
  sphere:{name:'Sphere Studies',price:2000,desc:'Draw a lit sphere in four stages: contour, physically derived terminator, tonal shading and cast shadow. Perfect accuracy earns $5.50.',cost:'$20.00'},
  triangle:{name:'Triangle Studies',price:100,desc:'Connect three points to draw triangles. Perfect accuracy earns $1.25.',cost:'$1.00'},
  square:{name:'Square Studies',price:150,desc:'Connect four corner points to draw squares. Perfect accuracy earns $1.50.',cost:'$1.50'},
@@ -373,7 +384,7 @@ const defs={
  living:{name:'Living Ink',price:1200,desc:'Bring pencil drawings to life with ramps, moving objects, and balloons. Earn access with three accurate study types.',cost:'$12.00'},
  perspective:{name:'Perspective Lab',price:1200,desc:'Draw believable 3D spaces using vanishing points. Earn access with three accurate study types.',cost:'$12.00'}
 };
-const blank=()=>({cash:0,turn:1,energy:1,left:1,sharedEnergyV1:true,shopRootMigrationV1:true,shopBonusEarned:false,legacyEnduranceShapes:{root:false,stamina:false},strokes:0,practiceDraft:null,phase:'draw',last:0,lastPay:0,lastKind:'line',owned:{root:false,stamina:false,staminaIII:false,secondWind:false,circle:false,curve:false,guideFade:false,oval:false,cylinder:false,sphere:false,balloon:false,free:false,grid:false,eraser:false,eraserSize:false,dashedCircle:false,square:false,triangle:false,composer:false,selector:false,living:false,perspective:false},specialTrials:[],specialChoice:null,specialChapter:1,specialWins:{living:0,perspective:0},legacySquare:false,legacyComposer:false,legacyBalloon:false,legacyCurvePath:false,curveGateV1:true,composeBase:'circle',composeLine:'diagonal',disabled:{},traces:{},pendingTraces:{},paperMarks:[],magnifiers:[],balloons:[],balloonSerial:0,guideMastery:{},legacyAspect:null,eraserSize:30,gridOn:true,freeOn:false,mode:'line',studyPreference:null,tool:'pencil'});
+const blank=()=>({cash:0,turn:1,energy:1,left:1,sharedEnergyV1:true,shopRootMigrationV1:true,shopBonusEarned:false,legacyEnduranceShapes:{root:false,stamina:false},strokes:0,practiceDraft:null,phase:'draw',last:0,lastPay:0,lastKind:'line',owned:{root:false,stamina:false,staminaIII:false,secondWind:false,circle:false,curve:false,guideFade:false,oval:false,cylinder:false,object:false,sphere:false,balloon:false,free:false,grid:false,eraser:false,eraserSize:false,dashedCircle:false,square:false,triangle:false,composer:false,selector:false,living:false,perspective:false},specialTrials:[],specialChoice:null,specialChapter:1,specialWins:{living:0,perspective:0},legacySquare:false,legacyComposer:false,legacyBalloon:false,legacyCurvePath:false,curveGateV1:true,composeBase:'circle',composeLine:'diagonal',mugView:'front',mugFewerGuides:false,mugResult:null,disabled:{},traces:{},pendingTraces:{},paperMarks:[],magnifiers:[],balloons:[],balloonSerial:0,guideMastery:{},legacyAspect:null,eraserSize:30,gridOn:true,freeOn:false,mode:'line',studyPreference:null,tool:'pencil'});
 let s=blank();
 try{const q=JSON.parse(localStorage.getItem(key)||'null');if(q&&Number.isFinite(q.cash)&&q.owned&&['draw','shop'].includes(q.phase)){
  s={...blank(),...q,owned:{...blank().owned,...q.owned},disabled:q.disabled&&typeof q.disabled==='object'?q.disabled:{},traces:q.traces&&typeof q.traces==='object'?q.traces:{},pendingTraces:q.pendingTraces&&typeof q.pendingTraces==='object'?q.pendingTraces:{},paperMarks:Array.isArray(q.paperMarks)?q.paperMarks:[],magnifiers:Array.isArray(q.magnifiers)?q.magnifiers:[],balloons:Array.isArray(q.balloons)?q.balloons.slice(0,36):[],guideMastery:q.guideMastery&&typeof q.guideMastery==='object'&&!Array.isArray(q.guideMastery)?q.guideMastery:{},practiceDraft:q.practiceDraft&&typeof q.practiceDraft==='object'?q.practiceDraft:null,
@@ -411,6 +422,11 @@ try{const q=JSON.parse(localStorage.getItem(key)||'null');if(q&&Number.isFinite(
  if(q.owned.composer&&!Object.prototype.hasOwnProperty.call(q.owned,'square'))s.legacyComposer=true;
  // Players who already bought Balloon/Composer retain their old path.
  if(q.curveGateV1!==true){s.legacyCurvePath=!!(q.owned.balloon||q.owned.composer);s.curveGateV1=true}
+ s.mugView=q.mugView==='above'?'above':'front';
+ s.mugFewerGuides=q.mugFewerGuides===true;
+ const mugResult=q.mugResult;
+ if(!mugResult||!['front','above'].includes(mugResult.view)||!Array.isArray(mugResult.scores)||
+    mugResult.scores.length!==3||!mugResult.scores.every(score=>Number.isFinite(score)&&score>=0&&score<=100))s.mugResult=null;
  // Migrate legacy play-mode toggles once; from now on only erasing/retracing shop shapes changes activation.
  if(!q.disabled){if(s.owned.grid&&!q.gridOn)s.disabled.grid=true;if(s.owned.free&&!q.freeOn)s.disabled.free=true}
  s.eraserSize=Number.isFinite(Number(s.eraserSize))?Math.round(Math.min(64,Math.max(8,Number(s.eraserSize)))/2)*2:30;s.cash=Math.max(0,Math.floor(s.cash));s.energy=1+((s.owned.root&&!s.disabled.root)?1:0)+((s.owned.stamina&&!s.disabled.stamina)?1:0)+((s.owned.staminaIII&&!s.disabled.staminaIII&&s.owned.stamina&&!s.disabled.stamina)?1:0);s.left=Math.max(0,Math.min(s.energy+(s.shopBonusEarned&&s.owned.secondWind&&!s.disabled.secondWind?1:0),Number(s.left)||0));if(q.sharedEnergyV1!==true&&s.phase==='shop'&&Number.isFinite(q.shopLeft))s.left=Math.max(0,Math.min(s.energy,q.shopLeft));delete s.shopLeft;s.sharedEnergyV1=true;if((!s.owned.circle||s.disabled.circle||(s.owned.square&&s.disabled.square))&&s.mode==='circle')s.mode='line';if(s.mode==='square'&&(!s.owned.square||s.disabled.square))s.mode='line';if(s.mode==='compose'&&(!s.owned.composer||s.disabled.composer||!s.owned.circle||s.disabled.circle||(s.owned.square&&s.disabled.square)||(s.legacyComposer?(s.owned.stamina?!!s.disabled.stamina:!s.owned.root||!!s.disabled.root):!s.owned.stamina||!!s.disabled.stamina)))s.mode='line';if(!s.owned.eraser||s.disabled.eraser)s.tool='pencil';s.freeOn=!!(s.owned.free&&!s.disabled.free);s.gridOn=!!(s.owned.grid&&!s.disabled.grid);
@@ -430,10 +446,11 @@ const adaptiveGuidesPlayable=()=>upgradeActive('guideFade')&&curvePlayable();
 const ovalPlayable=()=>upgradeActive('oval')&&curvePlayable();
 const enduranceThreePlayable=()=>upgradeActive('staminaIII')&&upgradeActive('stamina');
 const cylinderPlayable=()=>upgradeActive('cylinder')&&ovalPlayable()&&upgradeActive('stamina');
+const objectPlayable=()=>upgradeActive('object')&&cylinderPlayable();
 const spherePlayable=()=>upgradeActive('sphere')&&cylinderPlayable()&&enduranceThreePlayable();
 const balloonPlayable=()=>upgradeActive('balloon')&&circlePlayable()&&upgradeActive('root')&&(s.legacyCurvePath||curvePlayable());
 const composerPlayable=()=>upgradeActive('composer')&&circlePlayable()&&(s.legacyBalloon||balloonPlayable())&&(s.legacyComposer?(s.owned.stamina?upgradeActive('stamina'):upgradeActive('root')):upgradeActive('stamina'));
-const isCompositionMode=(mode=s.mode)=>mode==='balloon'||mode==='compose'||mode==='cylinder'||mode==='sphere';
+const isCompositionMode=(mode=s.mode)=>mode==='balloon'||mode==='compose'||mode==='cylinder'||mode==='mug'||mode==='sphere';
 const isSpecialBranch=id=>id==='living'||id==='perspective';
 const specialPlayable=id=>upgradeActive(id)&&composerPlayable();
 function specialEligibility(id){
@@ -445,15 +462,15 @@ function specialEligibility(id){
 }
 function recordSpecialTrial(kind,score){
  if(!s.owned.composer||score<80||s.specialTrials.indexOf(kind)>=0)return;
- if(['line','triangle','square','circle','curve','oval','balloon','composition','cylinder','sphere'].indexOf(kind)>=0)s.specialTrials.push(kind);
+ if(['line','triangle','square','circle','curve','oval','balloon','composition','cylinder','mug','sphere'].indexOf(kind)>=0)s.specialTrials.push(kind);
 }
-const nodeActive=id=>isSpecialBranch(id)?specialPlayable(id):id==='staminaIII'?enduranceThreePlayable():id==='composer'?composerPlayable():id==='balloon'?balloonPlayable():id==='triangle'?trianglePlayable():id==='square'?squarePlayable():id==='circle'?circlePlayable():id==='curve'?curvePlayable():id==='guideFade'?adaptiveGuidesPlayable():id==='oval'?ovalPlayable():id==='cylinder'?cylinderPlayable():id==='sphere'?spherePlayable():upgradeActive(id);
+const nodeActive=id=>isSpecialBranch(id)?specialPlayable(id):id==='staminaIII'?enduranceThreePlayable():id==='composer'?composerPlayable():id==='balloon'?balloonPlayable():id==='triangle'?trianglePlayable():id==='square'?squarePlayable():id==='circle'?circlePlayable():id==='curve'?curvePlayable():id==='guideFade'?adaptiveGuidesPlayable():id==='oval'?ovalPlayable():id==='cylinder'?cylinderPlayable():id==='object'?objectPlayable():id==='sphere'?spherePlayable():upgradeActive(id);
 // Without Study Selector, automatically practice the newest available shape.
 // The newest shape does not permanently replace earlier exercises: purchasing
 // Study Selector lets players deliberately return to any unlocked study.
-const availableStudy=mode=>mode==='line'||mode==='triangle'&&trianglePlayable()||mode==='square'&&squarePlayable()||mode==='circle'&&circlePlayable()||mode==='curve'&&curvePlayable()||mode==='oval'&&ovalPlayable()||mode==='cylinder'&&cylinderPlayable()||mode==='sphere'&&spherePlayable()||mode==='balloon'&&balloonPlayable()||mode==='compose'&&composerPlayable();
-const automaticStudy=()=>spherePlayable()&&s.left>=4?'sphere':cylinderPlayable()&&s.left>=2?'cylinder':composerPlayable()&&s.left>=2?'compose':balloonPlayable()&&s.left>=2?'balloon':ovalPlayable()?'oval':curvePlayable()?'curve':circlePlayable()?'circle':squarePlayable()?'square':trianglePlayable()?'triangle':'line';
-const requiredStudyStrokes=mode=>mode==='sphere'?4:isCompositionMode(mode)?2:1;
+const availableStudy=mode=>mode==='line'||mode==='triangle'&&trianglePlayable()||mode==='square'&&squarePlayable()||mode==='circle'&&circlePlayable()||mode==='curve'&&curvePlayable()||mode==='oval'&&ovalPlayable()||mode==='cylinder'&&cylinderPlayable()||mode==='mug'&&objectPlayable()||mode==='sphere'&&spherePlayable()||mode==='balloon'&&balloonPlayable()||mode==='compose'&&composerPlayable();
+const automaticStudy=()=>spherePlayable()&&s.left>=4?'sphere':objectPlayable()&&s.left>=3?'mug':cylinderPlayable()&&s.left>=2?'cylinder':composerPlayable()&&s.left>=2?'compose':balloonPlayable()&&s.left>=2?'balloon':ovalPlayable()?'oval':curvePlayable()?'curve':circlePlayable()?'circle':squarePlayable()?'square':trianglePlayable()?'triangle':'line';
+const requiredStudyStrokes=mode=>mode==='sphere'?4:mode==='mug'?3:isCompositionMode(mode)?2:1;
 const selectedStudy=()=>upgradeActive('selector')&&availableStudy(s.studyPreference)&&s.left>=requiredStudyStrokes(s.studyPreference)?s.studyPreference:automaticStudy();
 const eraserWidth=()=>upgradeActive('eraserSize')?s.eraserSize:30;
 
@@ -463,6 +480,7 @@ const eraserWidth=()=>upgradeActive('eraserSize')?s.eraserSize:30;
 let showFullGuides=false;
 function guideStudyKey(mode=s.mode,stage=composeStage){
  if(mode==='compose')return 'compose:'+composeTemplate+':'+stage;
+ if(mode==='mug')return 'mug:'+s.mugView+':'+stage;
  return isCompositionMode(mode)?mode+':'+stage:mode;
 }
 function guideHistory(key=guideStudyKey()){
@@ -561,17 +579,37 @@ function stats(){
  $('playStage').classList.toggle('hidden',s.phase!=='draw'||specialOpen);$('specialStage').classList.toggle('hidden',!specialOpen);$('shopStage').classList.toggle('hidden',s.phase!=='shop');$('endTurn').disabled=s.phase!=='draw'||drawing||erasing;
  $('modeTools').classList.toggle('hidden',!upgradeActive('selector')||!squarePlayable());$('circleMode').classList.toggle('hidden',!circlePlayable());$('curveMode').classList.toggle('hidden',!curvePlayable());$('ovalMode').classList.toggle('hidden',!ovalPlayable());$('cylinderMode').classList.toggle('hidden',!cylinderPlayable());$('sphereMode').classList.toggle('hidden',!spherePlayable());$('triangleMode').classList.toggle('hidden',!trianglePlayable());$('squareMode').classList.toggle('hidden',!squarePlayable());$('balloonMode').classList.toggle('hidden',!balloonPlayable());$('composeMode').classList.toggle('hidden',!composerPlayable());$('composerOptions').classList.toggle('hidden',s.mode!=='compose'||!composerPlayable()||(composeTemplate==='balloon'&&(composeStage>0||practiceStrokes.length>0)));$('gridSwitch').classList.add('hidden');$('guideSwitch').classList.add('hidden');$('pencilTool').classList.toggle('hidden',!upgradeActive('eraser'));$('eraserTool').classList.toggle('hidden',!upgradeActive('eraser'));$('eraserSizeControl').classList.toggle('hidden',!upgradeActive('eraser')||!upgradeActive('eraserSize'));$('eraserSize').value=s.eraserSize;$('eraserSizeValue').textContent=s.eraserSize+' px';
  $('lineMode').classList.toggle('active',s.mode==='line');$('triangleMode').classList.toggle('active',s.mode==='triangle');$('circleMode').classList.toggle('active',s.mode==='circle');$('curveMode').classList.toggle('active',s.mode==='curve');$('ovalMode').classList.toggle('active',s.mode==='oval');$('cylinderMode').classList.toggle('active',s.mode==='cylinder');$('sphereMode').classList.toggle('active',s.mode==='sphere');$('squareMode').classList.toggle('active',s.mode==='square');$('balloonMode').classList.toggle('active',s.mode==='balloon');$('composeMode').classList.toggle('active',s.mode==='compose');for(const [id,active] of [['composeMagnifier',s.composeBase!=='square'],['composeSignpost',s.composeBase==='square'&&s.composeLine==='down'],['composeKite',s.composeBase==='square'&&s.composeLine!=='down']]){$(id).classList.toggle('active',active);$(id).disabled=composeStage>0||practiceStrokes.length>0||drawing||locked;}$('gridSwitch').textContent=s.gridOn?'▦ Grid on':'▦ Grid off';$('gridSwitch').classList.toggle('active',s.gridOn);$('guideSwitch').textContent=s.freeOn?'Freehand on':'Guided on';$('guideSwitch').classList.toggle('active',s.freeOn);$('pencilTool').classList.toggle('active',s.tool==='pencil');$('eraserTool').classList.toggle('active',s.tool==='eraser');
- const circle=s.mode==='circle',curve=s.mode==='curve',oval=s.mode==='oval',cylinder=s.mode==='cylinder',sphere=s.mode==='sphere',square=s.mode==='square',triangle=s.mode==='triangle',compose=isCompositionMode(),squareComposition=compose&&['signpost','kite'].includes(composeTemplate);
- $('activityHeading').textContent=compose?(composeTemplate==='sphere'?'Shade a sphere':composeTemplate==='cylinder'?'Draw a cylinder':composeTemplate==='balloon'?'Draw a balloon':composeTemplate==='signpost'?'Draw a signpost':composeTemplate==='kite'?'Draw a kite':'Draw a magnifying glass'):oval?'Draw an oval':curve?'Draw a curve':circle?'Draw a circle':square?'Draw a square':triangle?'Draw a triangle':s.freeOn?'Draw a straight line':'Connect the points';
- $('instruction').textContent=compose?(sphere?['Part 1 of 4: Draw the sphere contour through four guide points.','Part 2 of 4: Trace the terminator computed from the light source.','Part 3 of 4: Add tonal hatching on the shadowed hemisphere.','Part 4 of 4: Trace the cast shadow opposite the light.'][composeStage]:composeStage===0?(composeTemplate==='cylinder'?'Part 1 of 2: Draw the oval top through four guide points.':squareComposition?'Part 1 of 2: Draw the square. Each mark uses 1 stroke.':'Part 1 of 2: Draw the circular outline. Each mark uses 1 stroke.'):composeTemplate==='cylinder'?'Part 2 of 2: Trace down the left side, around the curved bottom, and up the right side from A to B.':composeTemplate==='balloon'?'Part 2 of 2: Draw the string to release your helium balloon.':'Part 2 of 2: Connect A to B to finish your object.'):oval?'Draw a smooth oval through all four guide points.':curve?'Trace the curved guide from A to B. Lift and continue if needed.':circle?(upgradeActive('dashedCircle')?'Trace the dashed circular guide. With Endurance, you can finish it using multiple strokes.':'Use the center dot and four surrounding dots to draw a circle.'):square?'Connect the four corner points with straight sides. With Endurance, you can lift and continue.':triangle?'Connect three points to form a triangle. You can use multiple strokes with Endurance.':s.freeOn?'Start anywhere and draw one smooth, straight line.':'Start on A, draw a continuous line, and finish on B.';
+ const circle=s.mode==='circle',curve=s.mode==='curve',oval=s.mode==='oval',cylinder=s.mode==='cylinder',mug=s.mode==='mug',sphere=s.mode==='sphere',square=s.mode==='square',triangle=s.mode==='triangle',compose=isCompositionMode(),squareComposition=compose&&['signpost','kite'].includes(composeTemplate);
+ $('mugMode').classList.toggle('hidden',!objectPlayable());
+ $('mugMode').classList.toggle('active',mug);
+ $('mugOptions').classList.toggle('hidden',!mug);
+ if(mug){
+  for(const [id,view] of [['mugFront','front'],['mugAbove','above']]){
+   const button=$(id),selected=s.mugView===view;
+   button.classList.toggle('active',selected);
+   button.setAttribute('aria-pressed',String(selected));
+   button.disabled=composeStage>0||practiceStrokes.length>0||drawing||erasing||locked;
+  }
+  $('mugFewerGuides').classList.toggle('active',s.mugFewerGuides);
+  $('mugFewerGuides').setAttribute('aria-pressed',String(s.mugFewerGuides));
+  paintMugReference();
+ }
+ $('activityHeading').textContent=mug?'Draw a mug':compose?(composeTemplate==='sphere'?'Shade a sphere':composeTemplate==='cylinder'?'Draw a cylinder':composeTemplate==='balloon'?'Draw a balloon':composeTemplate==='signpost'?'Draw a signpost':composeTemplate==='kite'?'Draw a kite':'Draw a magnifying glass'):oval?'Draw an oval':curve?'Draw a curve':circle?'Draw a circle':square?'Draw a square':triangle?'Draw a triangle':s.freeOn?'Draw a straight line':'Connect the points';
+ $('instruction').textContent=mug?[
+  'Draw a closed oval for the rim.',
+  'Draw from one rim edge down around the curved base and up to the other edge.',
+  'Join the two points on the right with a curve that bows outward.'
+ ][composeStage]:compose?(sphere?['Part 1 of 4: Draw the sphere contour through four guide points.','Part 2 of 4: Trace the terminator computed from the light source.','Part 3 of 4: Add tonal hatching on the shadowed hemisphere.','Part 4 of 4: Trace the cast shadow opposite the light.'][composeStage]:composeStage===0?(composeTemplate==='cylinder'?'Part 1 of 2: Draw the oval top through four guide points.':squareComposition?'Part 1 of 2: Draw the square. Each mark uses 1 stroke.':'Part 1 of 2: Draw the circular outline. Each mark uses 1 stroke.'):composeTemplate==='cylinder'?'Part 2 of 2: Trace down the left side, around the curved bottom, and up the right side from A to B.':composeTemplate==='balloon'?'Part 2 of 2: Draw the string to release your helium balloon.':'Part 2 of 2: Connect A to B to finish your object.'):oval?'Draw a smooth oval through all four guide points.':curve?'Trace the curved guide from A to B. Lift and continue if needed.':circle?(upgradeActive('dashedCircle')?'Trace the dashed circular guide. With Endurance, you can finish it using multiple strokes.':'Use the center dot and four surrounding dots to draw a circle.'):square?'Connect the four corner points with straight sides. With Endurance, you can lift and continue.':triangle?'Connect three points to form a triangle. You can use multiple strokes with Endurance.':s.freeOn?'Start anywhere and draw one smooth, straight line.':'Start on A, draw a continuous line, and finish on B.';
  const guideInfo=refreshGuideUI();
- const maxReward=compose?(sphere?550:cylinder?400:squareComposition?250:300):oval?225:curve?175:circle?200:square?150:triangle?125:100;
+ const maxReward=mug?500:compose?(sphere?550:cylinder?400:squareComposition?250:300):oval?225:curve?175:circle?200:square?150:triangle?125:100;
  $('rewardTag').textContent='UP TO '+cash(maxReward);
- $('drawHint').textContent=compose?(sphere?'Contour + terminator + tone + cast shadow · $5.50':cylinder?'Oval + body · 100% = $4.00':squareComposition?'Square + line':'Circle + line'):oval?'100% = $2.25':curve?'100% = $1.75':circle?'100% = $2.00':square?'100% = $1.50':triangle?'100% = $1.25':'';$('drawHint').classList.toggle('hidden',!compose&&!oval&&!curve&&!circle&&!square&&!triangle&&!guideInfo.enabled);
+ const mugHint=!mug?'':composeScores.length?mugScoreText(composeScores):
+  s.mugResult&&s.mugResult.view===s.mugView?'Last mug · '+mugScoreText(s.mugResult.scores):'';
+ $('drawHint').textContent=mug?mugHint:compose?(sphere?'Contour + terminator + tone + cast shadow · $5.50':cylinder?'Oval + body · 100% = $4.00':squareComposition?'Square + line':'Circle + line'):oval?'100% = $2.25':curve?'100% = $1.75':circle?'100% = $2.00':square?'100% = $1.50':triangle?'100% = $1.25':'';$('drawHint').classList.toggle('hidden',!compose&&!oval&&!curve&&!circle&&!square&&!triangle&&!guideInfo.enabled);
  if(guideInfo.enabled){
   $('drawHint').textContent+=($('drawHint').textContent?' · ':'')+
    (showFullGuides?'Guides temporarily 100%':'Guides '+Math.round(guideInfo.opacity*100)+'% · '+guideHistory().length+'/5 recent');
- }$('activityTag').textContent=compose?(sphere?'Sphere':cylinder?'Cylinder':s.mode==='balloon'?'Balloon':'Composition')+' · Part '+(composeStage+1)+'/'+(sphere?4:2):oval?'Oval study':curve?'Curve study':circle?'Circle study':square?'Square study':triangle?'Triangle study':s.freeOn?'Freehand study':'';$('activityTag').classList.toggle('hidden',!compose&&!oval&&!curve&&!circle&&!square&&!triangle&&!s.freeOn);$('paperArea').classList.toggle('eraser-cursor',s.tool==='eraser');
+ }$('activityTag').textContent=compose?(sphere?'Sphere':mug?'Mug':cylinder?'Cylinder':s.mode==='balloon'?'Balloon':'Composition')+' · Part '+(composeStage+1)+'/'+requiredStudyStrokes(s.mode):oval?'Oval study':curve?'Curve study':circle?'Circle study':square?'Square study':triangle?'Triangle study':s.freeOn?'Freehand study':'';$('activityTag').classList.toggle('hidden',!compose&&!oval&&!curve&&!circle&&!square&&!triangle&&!s.freeOn);$('paperArea').classList.toggle('eraser-cursor',s.tool==='eraser');
  if(s.owned.composer&&s.specialTrials.length<3){
   $('drawHint').textContent+=($('drawHint').textContent?' · ':'')+'Specialization trials '+s.specialTrials.length+'/3';
   $('drawHint').classList.remove('hidden');
@@ -653,11 +691,16 @@ function restorePracticeDraft(){
  discardFinishedBalloonDraft();
  const d=s.practiceDraft;
  if(s.phase!=='draw'||!d||!Array.isArray(d.strokes)||(!d.strokes.length&&!(isCompositionMode(d.mode)&&d.composeStage>0))||s.left<1||d.mode!==s.mode||(d.mode==='line'&&!!d.freeOn!==!!s.freeOn))return false;
- if((d.mode==='circle'||d.mode==='square'||d.mode==='triangle')&&!d.O||d.mode==='line'&&!d.freeOn&&(!d.A||!d.B)||d.mode==='curve'&&(!d.A||!d.B||!d.O)||d.mode==='oval'&&(!d.O||!(d.O.rx>0)||!(d.O.ry>0))||d.mode==='cylinder'&&(!d.O||!(d.O.rx>0)||!(d.O.ry>0)||!(d.O.bodyHeight>0)||!d.A||!d.B)||d.mode==='sphere'&&(!d.O||!(d.O.r>0)||!Number.isFinite(d.O.lightAngle)||!Number.isFinite(d.O.lightElevation))||isCompositionMode(d.mode)&&(!d.O||!d.A||!d.B))return false;
+ if(d.mode==='mug'&&!objectPlayable())return false;
+ if((d.mode==='cylinder'||d.mode==='mug')&&(!d.O||!(d.O.rx>0)||!(d.O.ry>0)||!(d.O.bodyHeight>0)))return false;
+ if((d.mode==='circle'||d.mode==='square'||d.mode==='triangle')&&!d.O||d.mode==='line'&&!d.freeOn&&(!d.A||!d.B)||d.mode==='curve'&&(!d.A||!d.B||!d.O)||d.mode==='oval'&&(!d.O||!(d.O.rx>0)||!(d.O.ry>0))||d.mode==='sphere'&&(!d.O||!(d.O.r>0)||!Number.isFinite(d.O.lightAngle)||!Number.isFinite(d.O.lightElevation))||isCompositionMode(d.mode)&&(!d.O||d.mode!=='mug'&&(!d.A||!d.B)))return false;
  try{
   A=d.A?pointFromIso(d.A):null;B=d.B?pointFromIso(d.B):null;
   O=d.O?{...pointFromIso(d.O.at),r:d.O.r*H,rx:(Number(d.O.rx)||0)*H,ry:(Number(d.O.ry)||0)*H,bodyHeight:(Number(d.O.bodyHeight)||0)*H,bodyLean:(Number(d.O.bodyLean)||0)*H,angle:Number.isFinite(d.O.angle)?d.O.angle:0,lightAngle:Number(d.O.lightAngle)||0,lightElevation:Number(d.O.lightElevation)||0}:null;
-  composeStage=isCompositionMode(d.mode)?(d.mode==='sphere'?clamp(Math.floor(Number(d.composeStage)||0),0,3):d.composeStage===1?1:0):0;composeScores=Array.isArray(d.composeScores)?d.composeScores.slice(0,d.mode==='sphere'?3:1):[];composeTemplate=['balloon','magnifier','signpost','kite','cylinder','sphere'].includes(d.composeTemplate)?d.composeTemplate:'balloon';
+  const lastStage=requiredStudyStrokes(d.mode)-1;
+  composeStage=clamp(Math.floor(Number(d.composeStage)||0),0,lastStage);
+  composeScores=Array.isArray(d.composeScores)?d.composeScores.slice(0,lastStage):[];
+  composeTemplate=['balloon','magnifier','signpost','kite','cylinder','mug','sphere'].includes(d.composeTemplate)?d.composeTemplate:'balloon';
   composeFirstBounds=d.composeFirstBounds&&['minX','maxX','minY','maxY'].every(k=>Number.isFinite(d.composeFirstBounds[k]))?d.composeFirstBounds:null;
    composeLensShape=d.composeLensShape&&Array.isArray(d.composeLensShape.profile)?d.composeLensShape:null;
    composeBalloonOutline=Array.isArray(d.composeBalloonOutline)?d.composeBalloonOutline:null;
@@ -667,7 +710,9 @@ function restorePracticeDraft(){
   drawing=false;locked=false;strokePts=[];
   stats();paintPaper();
   const objectName=composeTemplate==='sphere'?'sphere':composeTemplate==='cylinder'?'cylinder':composeTemplate==='balloon'?'balloon':composeTemplate==='signpost'?'signpost':composeTemplate==='kite'?'kite':'magnifying glass';
-  $('score').textContent=s.mode==='sphere'
+  $('score').textContent=s.mode==='mug'
+   ?'Continue the '+mugParts[composeStage].toLowerCase()+' · '+s.left+' stroke'+(s.left===1?'':'s')+' left'
+   :s.mode==='sphere'
    ?'Part '+(composeStage+1)+' of 4 · '+(practiceStrokes.length?'Continue ':'Draw ')+sphereStageNames[composeStage]+' · '+s.left+' stroke'+(s.left===1?'':'s')+' available'
    :isCompositionMode()
    ?composeStage===1
@@ -719,6 +764,11 @@ function createPrompt(){
     bodyHeight:randomBetween(rx*1.25,rx*1.95),bodyLean:randomBetween(-rx*.23,rx*.23)};
   const ends=cylinderSideAnchors();A={...ends.left};B={...ends.right};
   placePrompt([...ovalGuide(),...cylinderBodyGuide()]);
+ }
+ else if(s.mode==='mug'){
+  composeTemplate='mug';
+  O=mugGeometry(0,0,Math.min(104,W*.22,H*.23),s.mugView);
+  placePrompt([...ovalGuide(),...cylinderBodyGuide(),...mugHandleGuide()]);
  }
  else if(isCompositionMode()){
   // Balloon Drawing alone creates balloons. Composer offers distinct objects.
@@ -823,32 +873,32 @@ function curvePoint(t){
 function curveGuide(){return Array.from({length:101},(_,i)=>curvePoint(i/100))}
 
 /* Rotated ellipse geometry shared by the four guide points and grading. */
-function ovalPoint(theta){
- if(!O||!(O.rx>0)||!(O.ry>0))return null;
- const ca=Math.cos(O.angle||0),sa=Math.sin(O.angle||0),ct=Math.cos(theta),st=Math.sin(theta);
- return {x:O.x+O.rx*ct*ca-O.ry*st*sa,y:O.y+O.rx*ct*sa+O.ry*st*ca};
+function ovalPoint(theta,oval=O){
+ if(!oval||!(oval.rx>0)||!(oval.ry>0))return null;
+ const ca=Math.cos(oval.angle||0),sa=Math.sin(oval.angle||0),ct=Math.cos(theta),st=Math.sin(theta);
+ return {x:oval.x+oval.rx*ct*ca-oval.ry*st*sa,y:oval.y+oval.rx*ct*sa+oval.ry*st*ca};
 }
-function ovalGuide(){return Array.from({length:145},(_,i)=>ovalPoint(i*2*Math.PI/144))}
+function ovalGuide(oval=O){return Array.from({length:145},(_,i)=>ovalPoint(i*2*Math.PI/144,oval))}
 function ovalAnchors(){return [0,1,2,3].map(i=>ovalPoint(i*Math.PI/2))}
 
 
 /* Two-dimensional projected cylinder: tilted elliptical top, parallel sloping
    sides, and visible lower half-ellipse. The contour is traced continuously
    from the upper-left rim (A), through the base, to the upper-right rim (B). */
-function cylinderSideAnchors(){
- const top=ovalGuide();
+function cylinderSideAnchors(cylinder=O){
+ const top=ovalGuide(cylinder);
  return {left:{...top.reduce((a,p)=>p.x<a.x?p:a)},right:{...top.reduce((a,p)=>p.x>a.x?p:a)}};
 }
-function cylinderBodyGuide(){
- if(!O||!(O.bodyHeight>0))return [];
- const {left,right}=cylinderSideAnchors();
- const bottomLeft={x:left.x+O.bodyLean,y:left.y+O.bodyHeight},
-       bottomRight={x:right.x+O.bodyLean,y:right.y+O.bodyHeight};
+function cylinderBodyGuide(cylinder=O){
+ if(!cylinder||!(cylinder.bodyHeight>0))return [];
+ const {left,right}=cylinderSideAnchors(cylinder);
+ const bottomLeft={x:left.x+cylinder.bodyLean,y:left.y+cylinder.bodyHeight},
+       bottomRight={x:right.x+cylinder.bodyLean,y:right.y+cylinder.bodyHeight};
  const guide=[];
  for(let i=0;i<=30;i++){
   const t=i/30;guide.push({x:left.x+(bottomLeft.x-left.x)*t,y:left.y+(bottomLeft.y-left.y)*t});
  }
- const control={x:(bottomLeft.x+bottomRight.x)/2,y:(bottomLeft.y+bottomRight.y)/2+O.ry*2.05};
+ const control={x:(bottomLeft.x+bottomRight.x)/2,y:(bottomLeft.y+bottomRight.y)/2+cylinder.ry*2.05};
  for(let i=1;i<=72;i++){
   const t=i/72,u=1-t;
   guide.push({x:u*u*bottomLeft.x+2*u*t*control.x+t*t*bottomRight.x,
@@ -859,9 +909,64 @@ function cylinderBodyGuide(){
  }
  return guide;
 }
-function cylinderBodyAnchors(){
- const g=cylinderBodyGuide();
+function cylinderBodyAnchors(g=cylinderBodyGuide()){
  return g.length?[g[0],g[30],g[66],g[102],g[g.length-1]]:[];
+}
+
+const mugParts=['Rim','Body','Handle'];
+const mugRates=[1.75,1.75,1.5];
+function mugScoreText(scores){
+ return scores.map((score,index)=>mugParts[index]+' '+score+'%').join(' · ');
+}
+function mugGeometry(x,y,rx,view){
+ return {x,y,rx,ry:rx*(view==='above' ? .42 : .19),angle:0,bodyHeight:rx*1.7,bodyLean:0};
+}
+function mugHandleGuide(mug=O){
+ const x=mug.x+mug.rx,y=mug.y+mug.bodyHeight*.49;
+ const rx=mug.rx*.72,ry=mug.bodyHeight*.25;
+ return Array.from({length:65},(_,index)=>{
+  const angle=Math.PI*(index/64-.5);
+  return {x:x+rx*Math.cos(angle),y:y+ry*Math.sin(angle)};
+ });
+}
+function mugStageGuide(stage){
+ return stage===0?ovalGuide():stage===1?cylinderBodyGuide():mugHandleGuide();
+}
+function mugStageAnchors(stage,guide){
+ if(stage===0)return ovalAnchors();
+ if(stage===1)return cylinderBodyAnchors(guide);
+ return [guide[0],guide[32],guide[64]];
+}
+function paintMugReference(){
+ const canvas=$('mugReference'),ctx=canvas.getContext('2d');
+ const mug=mugGeometry(43,20,25,s.mugView),body=cylinderBodyGuide(mug);
+ canvas.setAttribute('aria-label',s.mugView==='above'?'Finished mug seen slightly from above':'Finished mug seen straight on');
+ ctx.clearRect(0,0,canvas.width,canvas.height);
+ stroke(ctx,mugHandleGuide(mug),'#426c5f',3);
+ ctx.beginPath();
+ ctx.moveTo(body[0].x,body[0].y);
+ for(const point of body.slice(1))ctx.lineTo(point.x,point.y);
+ ctx.fillStyle='#dfeee4';ctx.fill();
+ stroke(ctx,body,'#426c5f',2.6);
+ ctx.beginPath();
+ ctx.ellipse(mug.x,mug.y,mug.rx,mug.ry,0,0,2*Math.PI);
+ ctx.fillStyle='#f4fbf5';ctx.fill();
+ ctx.lineWidth=2.6;ctx.strokeStyle='#426c5f';ctx.stroke();
+}
+function paintMugStudy(reveal){
+ const guide=mugStageGuide(composeStage);
+ const reduced=s.mugFewerGuides&&!showFullGuides;
+ if(reveal||!reduced){
+  const paths=reveal?[ovalGuide(),cylinderBodyGuide(),mugHandleGuide()]:[guide];
+  dc.setLineDash(reveal?[7,5]:[5,7]);
+  for(const path of paths)stroke(dc,path,reveal?'#51a888':'#82aa9b99',reveal?2.4:2);
+  dc.setLineDash([]);
+ }
+ if(!reveal){
+  const anchors=mugStageAnchors(composeStage,guide);
+  const points=!reduced?anchors:composeStage===0?[anchors[0],anchors[2]]:[anchors[0],anchors[anchors.length-1]];
+  for(const point of points)circleDot(point.x,point.y);
+ }
 }
 
 
@@ -1022,6 +1127,9 @@ function paintPaper(reveal=feedbackReveal){dc.clearRect(0,0,W,H);
  // Only the temporary targets fade; pencil ink and earned feedback never do.
  dc.save();dc.globalAlpha=displayedGuideOpacity(reveal);
  if(s.mode==='sphere'&&O){paintSphereStudy(reveal)}
+ else if(s.mode==='mug'){
+  if(composeTemplate==='mug'&&O&&O.bodyHeight>0)paintMugStudy(reveal);
+ }
  else if(s.mode==='cylinder'&&O){
   if(composeStage===0){
    if(reveal){dc.save();dc.beginPath();dc.ellipse(O.x,O.y,O.rx,O.ry,O.angle||0,0,2*Math.PI);
@@ -1995,16 +2103,14 @@ function ovalLooksComplete(){
 }
 
 
-function cylinderBodyAccuracy(){
+function openContourAccuracy(guide=cylinderBodyGuide(),anchors=cylinderBodyAnchors(guide)){
  const parts=practiceStrokes.filter(pts=>pts.length>=2),points=parts.flat();
  if(!parts.length||points.length<2)return 0;
- const guide=cylinderBodyGuide();
  if(guide.length<3)return 0;
  const travel=parts.reduce((sum,pts)=>sum+pathLength(pts),0),ideal=pathLength(guide);
  if(travel<10)return 0;
  const guideErrors=guide.map(p=>Math.min(...parts.map(pts=>polyDist(p,pts))));
  const inkErrors=points.map(p=>polyDist(p,guide));
- const anchors=cylinderBodyAnchors();
  const anchorErrors=anchors.map(p=>Math.min(...parts.map(pts=>polyDist(p,pts))));
  const coverage=guideErrors.reduce((v,d)=>v+clamp(1-d/19),0)/guideErrors.length;
  const precision=inkErrors.reduce((v,d)=>v+clamp(1-d/19),0)/inkErrors.length;
@@ -2015,17 +2121,21 @@ function cylinderBodyAccuracy(){
     &&anchorErrors.every(d=>d<=.55)&&Math.abs(travel-ideal)<=ideal*.002)return 100;
  return clamp(Math.round(score*100),0,99);
 }
-function cylinderBodyLooksComplete(){
+function openContourLooksComplete(guide=cylinderBodyGuide(),anchors=cylinderBodyAnchors(guide)){
  const parts=practiceStrokes.filter(pts=>pts.length>=2);
  if(!parts.length)return false;
- const guide=cylinderBodyGuide();
  if(guide.length<3)return false;
  const travel=parts.reduce((v,pts)=>v+pathLength(pts),0),ideal=pathLength(guide);
  if(travel<ideal*.66)return false;
  const tol=Math.max(13,Math.min(27,O.rx*.26));
  const coverage=guide.filter(p=>parts.some(pts=>polyDist(p,pts)<=tol)).length/guide.length;
- const anchors=cylinderBodyAnchors().every(p=>parts.some(pts=>polyDist(p,pts)<=tol*1.25));
- return anchors&&coverage>=.82;
+ const joinsCovered=anchors.every(p=>parts.some(pts=>polyDist(p,pts)<=tol*1.25));
+ return joinsCovered&&coverage>=.82;
+}
+function mugStageAccuracy(stage){
+ if(stage===0)return ovalAccuracy();
+ const guide=mugStageGuide(stage);
+ return openContourAccuracy(guide,mugStageAnchors(stage,guide));
 }
 
 function triangleGuide(){
@@ -2199,7 +2309,12 @@ function circleLooksComplete(){
 }
 function componentLooksComplete(){
  if(s.mode==='sphere')return sphereStageLooksComplete();
- if(s.mode==='cylinder')return composeStage===0?ovalLooksComplete():cylinderBodyLooksComplete();
+ if(s.mode==='cylinder')return composeStage===0?ovalLooksComplete():openContourLooksComplete();
+ if(s.mode==='mug'){
+  if(composeStage===0)return ovalLooksComplete();
+  const guide=mugStageGuide(composeStage);
+  return openContourLooksComplete(guide,mugStageAnchors(composeStage,guide));
+ }
  if(s.mode==='oval')return ovalLooksComplete();
  if(s.mode==='curve')return curveLooksComplete();
  if(s.mode==='triangle')return triangleLooksComplete();
@@ -2280,36 +2395,38 @@ function alignBalloonStringToDrawnOutline(){
  B={x:end.x+dx,y:end.y+dy};
 }
 
-function finishSphereStage(){
- const stage=composeStage,accuracy=sphereStageAccuracy(stage);
+function finishStagedStudyPart(){
+ const mode=s.mode,mug=mode==='mug',stage=composeStage;
+ const accuracy=mug?mugStageAccuracy(stage):sphereStageAccuracy(stage);
  composeScores.push(accuracy);
  recordGuideAccuracy(accuracy);
  composeFirstBounds=boundsToIso(unionBounds(boundsFromIso(composeFirstBounds),drawnBounds(practiceStrokes)));
- if(stage<3){
+ if(stage<requiredStudyStrokes(mode)-1){
   composeStage=stage+1;feedbackReveal=false;
   practiceStrokes=[];strokePts=[];persistPracticeDraft();stats();paintPaper();
-  $('score').textContent='Stage '+(stage+1)+': '+accuracy+'% · Next: '+sphereStageNames[composeStage];
+  $('score').textContent=mug?'':'Stage '+(stage+1)+': '+accuracy+'% · Next: '+sphereStageNames[composeStage];
   if(s.left<=0){
    clearTimeout(advanceTimer);
-   advanceTimer=setTimeout(()=>{if(s.phase==='draw'&&s.mode==='sphere'&&composeStage===stage+1&&s.left<=0)openShop()},1370);
+   advanceTimer=setTimeout(()=>{if(s.phase==='draw'&&s.mode===mode&&composeStage===stage+1&&s.left<=0)openShop()},1370);
   }
   return;
  }
  locked=true;
- const rates=[2,1.25,1.25,1];
+ const rates=mug?mugRates:[2,1.25,1.25,1];
  const reward=composeScores.reduce((total,score,i)=>total+Math.round(clamp(score,0,100)*rates[i]),0);
  const bounds=unionBounds(boundsFromIso(composeFirstBounds),drawnBounds(practiceStrokes));
  s.cash+=reward;
- s.last=Math.round(composeScores.reduce((a,b)=>a+b,0)/4);
- s.lastPay=reward;s.lastKind='sphere';recordSpecialTrial(s.lastKind,s.last);s.practiceDraft=null;feedbackReveal=true;
+ s.last=Math.round(composeScores.reduce((a,b)=>a+b,0)/rates.length);
+ s.lastPay=reward;s.lastKind=mode;recordSpecialTrial(s.lastKind,s.last);s.practiceDraft=null;feedbackReveal=true;
+ if(mug)s.mugResult={view:s.mugView,scores:composeScores.slice()};
  save();stats();paintPaper(true);
- $('score').textContent='Sphere '+s.last+'% · +'+cash(reward);
+ $('score').textContent=(mug?'Mug ':'Sphere ')+s.last+'% · +'+cash(reward);
  showEarnings(reward,bounds);
  scheduleStudyAdvance();
 }
 function finishCompositionPart(){
- if(s.mode==='sphere'){finishSphereStage();return}
- const accuracy=composeTemplate==='cylinder'?(composeStage===0?ovalAccuracy():cylinderBodyAccuracy()):composeStage===0?(['signpost','kite'].includes(composeTemplate)?squareAccuracy():circleAccuracy()):lineAccuracy(true);
+ if(s.mode==='sphere'||s.mode==='mug'){finishStagedStudyPart();return}
+ const accuracy=composeTemplate==='cylinder'?(composeStage===0?ovalAccuracy():openContourAccuracy()):composeStage===0?(['signpost','kite'].includes(composeTemplate)?squareAccuracy():circleAccuracy()):lineAccuracy(true);
  recordGuideAccuracy(accuracy);
  composeScores.push(accuracy);
  if(composeStage===0){
@@ -2350,13 +2467,13 @@ function finishPractice(){
  paintInk();paintPaper();
  const complete=componentLooksComplete();
  if(isCompositionMode()){
-  // Reserve one stroke for the second component. With Endurance II, any
-  // spare strokes can repair an unfinished circle or an unfinished handle.
-  const reserve=s.mode==='sphere'?3-composeStage:composeStage===0?1:0;
+  // Reserve one stroke for each remaining part. Spare strokes can continue
+  // the current outline before grading it.
+  const reserve=requiredStudyStrokes(s.mode)-composeStage-1;
   if(complete||s.left<=reserve)finishCompositionPart();
   else{
    persistPracticeDraft();stats();
-   $('score').textContent='Continue '+(s.mode==='sphere'?sphereStageNames[composeStage]:composeStage===0?(composeTemplate==='cylinder'?'the top oval':['signpost','kite'].includes(composeTemplate)?'the square':'the circle'):composeTemplate==='cylinder'?'the body':composeTemplate==='balloon'?'the string':composeTemplate==='signpost'?'the post':'the handle')+' · '+s.left+' stroke'+(s.left===1?'':'s')+' left';
+   $('score').textContent='Continue '+(s.mode==='mug'?'the '+mugParts[composeStage].toLowerCase():s.mode==='sphere'?sphereStageNames[composeStage]:composeStage===0?(composeTemplate==='cylinder'?'the top oval':['signpost','kite'].includes(composeTemplate)?'the square':'the circle'):composeTemplate==='cylinder'?'the body':composeTemplate==='balloon'?'the string':composeTemplate==='signpost'?'the post':'the handle')+' · '+s.left+' stroke'+(s.left===1?'':'s')+' left';
   }
   return;
  }
@@ -2415,9 +2532,34 @@ draw.addEventListener('pointercancel',e=>{
  if(interruptedDrawing)$('score').textContent='Stroke interrupted · Partial drawing saved';
 });
 window.addEventListener('pagehide',()=>{if(drawing||erasing)preserveInterruptedStroke()});
-function changeMode(mode){if(!upgradeActive('selector')||s.phase!=='draw'||locked||drawing)return;if(isCompositionMode(mode)&&(!(mode==='sphere'?spherePlayable():mode==='balloon'?balloonPlayable():mode==='cylinder'?cylinderPlayable():composerPlayable())||s.left<requiredStudyStrokes(mode))){$('score').textContent=mode==='sphere'?'Sphere Studies requires four strokes and both prerequisites':'Two-part drawings require the active upgrade and at least 2 strokes left';return;}if(practiceStrokes.length||isCompositionMode()&&composeStage>0){$('score').textContent='Finish the current shape before switching modes';return}if(!availableStudy(mode))return;s.studyPreference=mode;s.mode=mode;s.tool='pencil';save();stats();createPrompt()}
+function changeMode(mode){
+ if(!upgradeActive('selector')||s.phase!=='draw'||locked||drawing||erasing)return;
+ if(isCompositionMode(mode)&&(!availableStudy(mode)||s.left<requiredStudyStrokes(mode))){
+  $('score').textContent=mode==='mug'?'A mug needs at least 3 strokes to start.':
+   mode==='sphere'?'Sphere Studies requires four strokes and both prerequisites':
+   'Two-part drawings require the active upgrade and at least 2 strokes left';
+  return;
+ }
+ if(practiceStrokes.length||isCompositionMode()&&composeStage>0){
+  $('score').textContent='Finish the current shape before switching modes';
+  return;
+ }
+ if(!availableStudy(mode))return;
+ s.studyPreference=mode;s.mode=mode;s.tool='pencil';save();stats();createPrompt();
+}
 $('lineMode').addEventListener('click',()=>changeMode('line'));
 $('triangleMode').addEventListener('click',()=>changeMode('triangle'));
+$('mugMode').addEventListener('click',()=>changeMode('mug'));
+for(const [id,view] of [['mugFront','front'],['mugAbove','above']]){
+ $(id).addEventListener('click',()=>{
+  if(s.phase!=='draw'||s.mode!=='mug'||s.mugView===view||locked||drawing||erasing||practiceStrokes.length||composeStage>0)return;
+  s.mugView=view;createPrompt();
+ });
+}
+$('mugFewerGuides').addEventListener('click',()=>{
+ if(s.phase!=='draw'||s.mode!=='mug')return;
+ s.mugFewerGuides=!s.mugFewerGuides;showFullGuides=false;save();stats();paintPaper();
+});
 $('circleMode').addEventListener('click',()=>changeMode('circle'));$('ovalMode').addEventListener('click',()=>changeMode('oval'));$('cylinderMode').addEventListener('click',()=>changeMode('cylinder'));$('sphereMode').addEventListener('click',()=>changeMode('sphere'));$('curveMode').addEventListener('click',()=>changeMode('curve'));$('squareMode').addEventListener('click',()=>changeMode('square'));$('balloonMode').addEventListener('click',()=>changeMode('balloon'));$('composeMode').addEventListener('click',()=>changeMode('compose'));
 for(const [button,base,line] of [['composeMagnifier','circle','diagonal'],['composeSignpost','square','down'],['composeKite','square','diagonal']]){
  $(button).addEventListener('click',()=>{
@@ -2485,6 +2627,14 @@ const cylinderShopGuide=()=>{
  return pts;
 };
 const enduranceThreeGuide=()=>sampleGuide([{x:57,y:7},{x:24,y:46},{x:47,y:46},{x:35,y:71},{x:49,y:71},{x:39,y:90},{x:80,y:39},{x:57,y:39},{x:70,y:20},{x:51,y:20},{x:57,y:7}]);
+function mugShopGuide(){
+ const mug=mugGeometry(39,25,24,'above');
+ const rim=ovalGuide(mug),body=cylinderBodyGuide(mug).reverse(),handle=mugHandleGuide(mug);
+ const right=rim[0];
+ // Return along the right wall so every connection follows part of the mug.
+ return [...rim,...sampleGuide([right,handle[0]]).slice(1),...handle.slice(1),
+  ...sampleGuide([handle[handle.length-1],right]).slice(1),...body.slice(1)];
+}
 const guideFadeShopGuide=()=>{
  // Three continuous inward spiral turns; no invisible jumps to trace.
  return Array.from({length:181},(_,i)=>{
@@ -2502,6 +2652,7 @@ const guides={
  curve:curveShopGuide(),
  oval:ovalShopGuide(),
  cylinder:cylinderShopGuide(),
+ object:mugShopGuide(),
  sphere:sphereShopGuide(),
  triangle:polygonGuide(3,34,-Math.PI/2),
  square:polygonGuide(4,34,-Math.PI/4),
@@ -2702,7 +2853,7 @@ function renderNode(id){const {ctx,strokes,symbol}=nodeCanvas[id];const guide=gu
 // buying it still requires all of its active prerequisites.
 const treeParents={
  root:[],stamina:['root'],staminaIII:['stamina'],secondWind:['stamina'],triangle:['root'],square:['triangle'],free:['root'],grid:['root'],eraser:['root'],selector:['square'],
- circle:['square'],curve:['circle'],guideFade:['curve'],oval:['curve'],cylinder:['oval','stamina'],sphere:['cylinder','staminaIII'],balloon:['curve'],composer:['stamina','balloon'],dashedCircle:['circle'],
+ circle:['square'],curve:['circle'],guideFade:['curve'],oval:['curve'],cylinder:['oval','stamina'],object:['cylinder'],sphere:['cylinder','staminaIII'],balloon:['curve'],composer:['stamina','balloon'],dashedCircle:['circle'],
  eraserSize:['eraser']
 };
 function visibleNode(id){
@@ -2718,6 +2869,7 @@ function prerequisites(id){
  if(id==='guideFade')return ['curve'];
  if(id==='oval')return ['curve'];
  if(id==='cylinder')return ['oval','stamina'];
+ if(id==='object')return ['cylinder'];
  if(id==='sphere')return ['cylinder','staminaIII'];
  if(id==='balloon')return ['root','curve'];
  if(id==='composer')return ['stamina','balloon'];
@@ -2800,6 +2952,7 @@ function renderTree(){
  drawBranch('link-balloon-endurance','balloon','root',upgradeActive('root'));
  drawBranch('link-composer-stamina','composer','stamina',upgradeActive('stamina'));
  drawBranch('link-cylinder-stamina','cylinder','stamina',upgradeActive('stamina'));
+ drawBranch('link-object','object','cylinder',cylinderPlayable());
  drawBranch('link-sphere-endurance','sphere','staminaIII',enduranceThreePlayable());
  if(inspectId&&!visibleNode(inspectId))closeInspector();
  if(inspectId)inspect(inspectId);
@@ -2877,10 +3030,11 @@ function openShop(newVisit=true){
  }
  discardFinishedBalloonDraft();
  // Available strokes are shared across both screens. Only Begin Turn refills the base maximum.
- if(newVisit&&!locked&&(practiceStrokes.length||isCompositionMode()&&composeStage===1))persistPracticeDraft();
+ if(newVisit&&!locked&&(practiceStrokes.length||isCompositionMode()&&composeStage>0))persistPracticeDraft();
  if(newVisit){s.shopBonusEarned=upgradeActive('secondWind');if(s.shopBonusEarned)s.left=Math.min(s.energy+1,s.left+1)}
   s.phase='shop';lastBalloonTime=0;s.tool='pencil';closeInspector();skillTool='trace';setSkillTool('trace');save();stats();renderTree();
  $('receipt').textContent='Turn '+s.turn+' complete · Last '+s.lastKind+': '+s.last+'% accuracy · +'+cash(s.lastPay);
+ if(s.lastKind==='mug'&&s.mugResult)$('receipt').textContent+=' · '+mugScoreText(s.mugResult.scores);
  $('shopFeedback').textContent='';
 }
 $('endTurn').addEventListener('click',()=>{

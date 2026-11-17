@@ -18,6 +18,12 @@ The Selected upgrade panel stays hidden until you hover, focus, or tap a skill-t
 - Each eraser pass uses one stroke on the drawing paper and in the skill tree.
 - With active Endurance, players may use multiple energy-consuming strokes on the same line or circle, and finish early to conserve energy. Partial shapes resume after reload.
 
+## Object Studies
+
+With Cylinder Studies active, trace the mug in the skill tree to buy **Object Studies ($18)**. A mug takes at least three strokes for the rim, body, and handle. Each part gets its own score, and a perfect mug earns $5.00 in game currency.
+
+Choose **Straight on** or **From above** before starting. The finished mug reference matches the view. Turn on **Fewer guides** to repeat the same view with two landmarks per part. Use the Study Selector to pick **Mug** when another study is active. The game saves the view, guide setting, latest mug scores, and any unfinished parts.
+
 ## iPad mini 2 / iOS 12 offline play
 
 1. Open [Learn to Draw](https://learn-to-draw.jb123i.workers.dev/) in a regular Safari tab while connected to Wi-Fi. You can bookmark that address in Safari.
