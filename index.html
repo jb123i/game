@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="ltd-build" content="2026-11-17.1">
+<meta name="ltd-build" content="2026-11-17.2">
 <meta name="theme-color" content="#f6f2e9">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -1005,6 +1005,16 @@ function squareCorners(){
   x:O.x+O.r*(dx*cos-dy*sin),y:O.y+O.r*(dx*sin+dy*cos)
  }));
 }
+function paintPolygonGuide(corners,reveal){
+ if(reveal){
+  dc.save();dc.beginPath();dc.moveTo(corners[0].x,corners[0].y);
+  for(const corner of corners.slice(1))dc.lineTo(corner.x,corner.y);
+  dc.closePath();dc.strokeStyle='#51a888';dc.lineWidth=2.4;
+  dc.setLineDash([7,5]);dc.shadowColor='rgba(69,153,118,.35)';
+  dc.shadowBlur=3;dc.stroke();dc.restore();
+ }
+ for(const corner of corners)circleDot(corner.x,corner.y);
+}
 // Keep the completed ideal outline on screen until the next prompt. A queued
 // animation frame or a responsive resize must not erase scoring feedback.
 function paintPaper(reveal=feedbackReveal){dc.clearRect(0,0,W,H);
@@ -1028,19 +1038,7 @@ function paintPaper(reveal=feedbackReveal){dc.clearRect(0,0,W,H);
    }
   }
  }
- else if(s.mode==='triangle'&&O){
-   if(reveal){
-    // Show the exact triangle used for accuracy grading, like the dashed
-    // correct line revealed after a line exercise.
-    const corners=triangleCorners();
-    dc.save();dc.beginPath();dc.moveTo(corners[0].x,corners[0].y);
-    for(let i=1;i<corners.length;i++)dc.lineTo(corners[i].x,corners[i].y);
-    dc.closePath();dc.strokeStyle='#51a888';dc.lineWidth=2.4;
-    dc.setLineDash([7,5]);dc.shadowColor='rgba(69,153,118,.35)';
-    dc.shadowBlur=3;dc.stroke();dc.restore();
-   }
-   for(const p of triangleCorners())circleDot(p.x,p.y);
-  }
+ else if(s.mode==='triangle'&&O)paintPolygonGuide(triangleCorners(),reveal);
  else if(s.mode==='oval'&&O){
   if(reveal){
    dc.save();dc.beginPath();dc.ellipse(O.x,O.y,O.rx,O.ry,O.angle||0,0,Math.PI*2);
@@ -1054,7 +1052,7 @@ function paintPaper(reveal=feedbackReveal){dc.clearRect(0,0,W,H);
   dc.setLineDash(reveal?[7,5]:[5,7]);dc.stroke();dc.restore();
   dot(A,'A','#468d7c');dot(B,'B','#d9835e');
  }
- else if((s.mode==='square'||isCompositionMode()&&composeStage===0&&['signpost','kite'].includes(composeTemplate))&&O){for(const p of squareCorners())circleDot(p.x,p.y)}
+ else if((s.mode==='square'||isCompositionMode()&&composeStage===0&&['signpost','kite'].includes(composeTemplate))&&O)paintPolygonGuide(squareCorners(),reveal);
  else if((s.mode==='circle'||isCompositionMode()&&composeStage===0)&&O){if(upgradeActive('dashedCircle')){dc.beginPath();dc.arc(O.x,O.y,O.r,0,Math.PI*2);dc.strokeStyle='#82aa9b99';dc.lineWidth=2;dc.setLineDash([5,7]);dc.stroke();dc.setLineDash([])}else{circleDot(O.x,O.y,true);for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]])circleDot(O.x+dx*O.r,O.y+dy*O.r)}if(reveal){dc.beginPath();dc.arc(O.x,O.y,O.r,0,Math.PI*2);dc.strokeStyle='#73a891';dc.lineWidth=1.2;dc.stroke()}}
  else if(A&&B){if(reveal){dc.save();dc.beginPath();dc.moveTo(A.x,A.y);dc.lineTo(B.x,B.y);dc.strokeStyle='#51a888';dc.lineWidth=2.4;dc.setLineDash([7,5]);dc.shadowColor='rgba(69,153,118,.35)';dc.shadowBlur=3;dc.stroke();dc.restore()}dot(A,'A','#468d7c');dot(B,'B','#d9835e')}
  dc.restore();stroke(dc,strokePts,'#243941',3.2);paintLens()}
@@ -1813,8 +1811,10 @@ function ensureBalloonAnimation(){
  if(balloonFrame||specialOpen||s.phase!=='draw'||!(s.balloons && s.balloons.length))return;
  balloonFrame=requestAnimationFrame(heliumFrameTick);
 }
+// Each balloon reacts once per drag so a pop can leave its latex for a later pass.
+const balloonsErasedThisStroke=new Set();
 function eraseHeliumBalloons(points,width){
- if(!(points && points.length)||!(s.balloons && s.balloons.length))return {popped:0,removed:0,tails:0};
+ if(!s.balloons.length)return;
  const half=width/2,hit=p=>points.length>1?polyDist(p,points):distance(p,points[0]);
  const touchesTail=rope=>rope.length>=2&&(
   points.some(p=>polyDist(p,rope)<=half+3)
@@ -1823,29 +1823,53 @@ function eraseHeliumBalloons(points,width){
  let popped=0,removed=0,tails=0;
  s.balloons=s.balloons.filter(o=>{
   if(!(o && o.at))return false;
+  if(balloonsErasedThisStroke.has(o))return true;
   // A tail is an independently erasable object. Checking it first also
   // prevents the eraser from accidentally popping the latex near its knot.
   if(!o.tailErased&&touchesTail(balloonRope(o))){
-   o.tailErased=true;o.rope=[];o.ropePrev=[];tails++;
+   o.tailErased=true;o.rope=[];o.ropePrev=[];
+   balloonsErasedThisStroke.add(o);tails++;
    return true;
   }
   if(o.popped){
    // A later pass can still remove the deflated membrane itself.
-   if(poppedLatexNodes(o).some(p=>hit(p)<=half+3)){removed++;return false}
+   if(poppedLatexNodes(o).some(p=>hit(p)<=half+3)){
+    balloonsErasedThisStroke.add(o);removed++;
+    return false;
+   }
    return true;
   }
   const center=pointFromIso(o.at);
   const profile=Array.isArray(o.profile)&&o.profile.length===192?o.profile:null;
   const extent=o.radius*H*(profile?Math.min(1.85,Math.max(...profile)):1);
-  if(hit(center)<=extent+half&&popHeliumBalloon(o)){popped++;return true}
+  if(hit(center)<=extent+half&&popHeliumBalloon(o)){
+   balloonsErasedThisStroke.add(o);popped++;
+  }
   return true;
  });
- if(popped||removed||tails){paintBalloons();paintLens();ensureBalloonAnimation()}
- return {popped,removed,tails};
+ if(popped||removed||tails){
+  paintBalloons();ensureBalloonAnimation();
+  $('score').textContent=tails?'Balloon tail erased · Balloon remains intact':
+   popped?'Balloon popped · Latex falling':'Popped latex erased';
+ }
 }
 
-function eraserBegin(e){if(!upgradeActive('eraser'))return;
- erasing=true;activePointer=e.pointerId;eraserPts=[pointer(e,draw)];startStablePointer(e,eraserPts[0]);if(draw.setPointerCapture)draw.setPointerCapture(e.pointerId);paintInk();$('score').textContent='Erasing pencil · No strokes used'
+function eraserBegin(e){
+ if(!upgradeActive('eraser'))return;
+ erasing=true;activePointer=e.pointerId;eraserPts=[pointer(e,draw)];
+ startStablePointer(e,eraserPts[0]);
+ if(draw.setPointerCapture)draw.setPointerCapture(e.pointerId);
+ $('score').textContent='Erasing pencil · No strokes used';
+ eraseHeliumBalloons(eraserPts,eraserWidth());
+ paintInk();
+}
+function commitEraserStroke(){
+ const size=eraserWidth();
+ eraseMagnification(eraserPts,size);
+ s.paperMarks.push({kind:'erase',space:'iso',size,points:normalizeMark(eraserPts)});
+ if(!balloonsErasedThisStroke.size)$('score').textContent='Pencil erased · No strokes used';
+ balloonsErasedThisStroke.clear();
+ erasing=false;eraserPts=[];
 }
 // Accuracy for multi-stroke studies uses the UNION of separate strokes. Never
 // connect distant endpoints across a pen lift, or count those invisible links.
@@ -2335,13 +2359,44 @@ function finishPractice(){
 }
 draw.addEventListener('pointerdown',e=>{if(s.phase!=='draw'||drawing||erasing||(locked&&s.tool!=='eraser')||(!e.isPrimary&&e.pointerType==='touch'))return;if(s.tool==='eraser'){e.preventDefault();$('endTurn').disabled=true;eraserBegin(e);return}const p=pointer(e,draw);
  if((s.mode==='line'&&!s.freeOn||s.mode==='curve')&&!practiceStrokes.length&&distance(p,A)>31){$('score').textContent='Start near point A';return}e.preventDefault();drawing=true;$('endTurn').disabled=true;activePointer=e.pointerId;strokePts=[p];startStablePointer(e,p);if(draw.setPointerCapture)draw.setPointerCapture(e.pointerId);paintPaper()});
-draw.addEventListener('pointermove',e=>{if(activePointer!==e.pointerId||(!drawing&&!erasing))return;e.preventDefault();for(const sample of stableSamples(e)){const p=stablePointer(sample);if(!p)continue;const pts=drawing?strokePts:eraserPts;const last=pts[pts.length-1];if(distance(p,last)>.65)pts.push(p)}if(drawing)requestPaperPaint();if(erasing)paintInk()});
+draw.addEventListener('pointermove',e=>{
+ if(activePointer!==e.pointerId||(!drawing&&!erasing))return;
+ e.preventDefault();
+ const pts=drawing?strokePts:eraserPts,previousLength=pts.length;
+ for(const sample of stableSamples(e)){
+  const p=stablePointer(sample);
+  if(p&&distance(p,pts[pts.length-1])>.65)pts.push(p);
+ }
+ if(pts.length===previousLength)return;
+ if(drawing)requestPaperPaint();
+ else{
+  eraseHeliumBalloons(pts.slice(previousLength-1),eraserWidth());
+  paintInk();
+ }
+});
 function preserveInterruptedStroke(){
  if(drawing&&strokePts.length>1&&pathLength(strokePts)>3)s.paperMarks.push({kind:'ink',space:'iso',points:normalizeMark(strokePts)});
- if(erasing&&eraserPts.length){eraseMagnification(eraserPts,eraserWidth());eraseHeliumBalloons(eraserPts,eraserWidth());s.paperMarks.push({kind:'erase',space:'iso',size:eraserWidth(),points:normalizeMark(eraserPts)})}
+ if(erasing)commitEraserStroke();
  drawing=false;erasing=false;$('endTurn').disabled=false;strokePts=[];eraserPts=[];activePointer=null;strokeAnchor=null;save();paintInk();paintPaper();if(pendingResize)resizePaper();
 }
-draw.addEventListener('pointerup',e=>{if(activePointer!==e.pointerId)return;e.preventDefault();const p=stablePointer(e);if(drawing){if(p)strokePts.push(p);activePointer=null;strokeAnchor=null;finishPractice()}else if(erasing){if(p)eraserPts.push(p);eraseMagnification(eraserPts,eraserWidth());const eraseResult=eraseHeliumBalloons(eraserPts,eraserWidth());s.paperMarks.push({kind:'erase',space:'iso',size:eraserWidth(),points:normalizeMark(eraserPts)});erasing=false;eraserPts=[];activePointer=null;strokeAnchor=null;$('endTurn').disabled=false;save();paintInk();stats();$('score').textContent=eraseResult.tails?'Balloon tail erased · Balloon remains intact':eraseResult.popped?'Balloon popped · Latex falling':eraseResult.removed?'Popped latex erased':'Pencil erased · No strokes used'}if(pendingResize)resizePaper()});
+draw.addEventListener('pointerup',e=>{
+ if(activePointer!==e.pointerId)return;
+ e.preventDefault();
+ const p=stablePointer(e);
+ activePointer=null;strokeAnchor=null;
+ if(drawing){
+  if(p)strokePts.push(p);
+  finishPractice();
+ }else if(erasing){
+  if(p){
+   eraseHeliumBalloons([eraserPts[eraserPts.length-1],p],eraserWidth());
+   eraserPts.push(p);
+  }
+  commitEraserStroke();
+  save();paintInk();stats();
+ }
+ if(pendingResize)resizePaper();
+});
 draw.addEventListener('pointercancel',e=>{if(activePointer!==e.pointerId)return;preserveInterruptedStroke();$('score').textContent='Stroke interrupted · Partial drawing saved';});
 window.addEventListener('pagehide',()=>{if(drawing||erasing)preserveInterruptedStroke()});
 function changeMode(mode){if(!upgradeActive('selector')||s.phase!=='draw'||locked||drawing)return;if(isCompositionMode(mode)&&(!(mode==='sphere'?spherePlayable():mode==='balloon'?balloonPlayable():mode==='cylinder'?cylinderPlayable():composerPlayable())||s.left<requiredStudyStrokes(mode))){$('score').textContent=mode==='sphere'?'Sphere Studies requires four strokes and both prerequisites':'Two-part drawings require the active upgrade and at least 2 strokes left';return;}if(practiceStrokes.length||isCompositionMode()&&composeStage>0){$('score').textContent='Finish the current shape before switching modes';return}if(!availableStudy(mode))return;s.studyPreference=mode;s.mode=mode;s.tool='pencil';save();stats();createPrompt()}
@@ -3166,6 +3221,7 @@ function resetAllProgress(){
  tracing=null;inspectPinned=false;inspectId=null;hoveredUpgradeId=null;
  drawing=false;erasing=false;locked=false;activePointer=null;strokeAnchor=null;pendingResize=false;
  strokePts=[];eraserPts=[];practiceStrokes=[];A=null;B=null;O=null;
+ balloonsErasedThisStroke.clear();
  feedbackReveal=false;showFullGuides=false;
  composeStage=0;composeScores=[];composeTemplate='balloon';composeFirstBounds=null;
  composeLensShape=null;composeBalloonOutline=null;composeBalloonId=null;
