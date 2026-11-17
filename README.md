@@ -19,18 +19,14 @@ The Selected upgrade panel stays hidden until you hover, focus, or tap a skill-t
 
 ## iPad mini 2 / iOS 12 offline play
 
-LtD is designed to run on iPad mini 2's final Safari (iOS 12.5.x) as well as newer browsers. It includes a touch-event fallback for pre-Pointer-Events Safari, uses older-compatible JavaScript syntax, and caches the game for offline launching.
+1. Open [Learn to Draw](https://learn-to-draw.jb123i.workers.dev/) in a regular Safari tab while connected to Wi-Fi. You can bookmark that address in Safari.
+2. Wait for **Ready offline** in the header. The page checks that its service worker can read the saved game files and that this Safari session can write progress.
+3. Quit Safari, enable Airplane Mode, and make sure Wi-Fi is off. Reopen Safari and load the same tab or bookmark.
+4. Draw a stroke by touch. Quit and reopen Safari again to check that the drawing and progress are still there.
 
-1. Connect the iPad to Wi-Fi and open https://learn-to-draw.jb123i.workers.dev/ **directly in Safari**.
-2. In Safari's Share sheet, horizontally swipe through the lower action row to find **Add to Home Screen**. Tap **Add**. (The iOS 12 interface does not show a modern **Open as Web App** toggle.)
-3. Open **Learn to Draw** using the new Home Screen icon **while still online**. Wait for **Ready offline** in the header.
-4. Turn on Airplane Mode, ensure Wi-Fi is disabled, fully close the Home Screen app, and relaunch it. Complete a practice stroke and confirm progress persists after closing/reopening.
+If the badge says **Offline not ready**, reconnect to Wi-Fi and reload from the same tab. Safari stores saves and game files on the device. Clearing website data can remove both.
 
-Notes:
-- iOS 12 can maintain separate service-worker caches and local game saves for Safari and the Home Screen app. Launching the Home Screen version online once lets it fill **its own** offline cache.
-- Safari's storage on the iPad does not synchronize with browser storage on a desktop computer.
-- Avoid deleting the Home Screen app or clearing its website data while traveling; these can remove offline game files and saved progress.
-- Real iPad mini 2 device testing is still required. A **Ready offline** indicator and successful Airplane Mode relaunch are the best on-device checks.
+When releasing a new offline build, set the same new build ID in the `ltd-build` meta tag in `index.html` and in `sw.js`. The worker installs only after caching the matching game. Existing saves stay in the site's local storage.
 
 ## Sketchbook specialization chapters
 

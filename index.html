@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="ltd-build" content="2026-11-17.1">
 <meta name="theme-color" content="#f6f2e9">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -12,8 +13,8 @@
 <style>
 :root{--paper:#fffefa;--background:#f6f2e9;--ink:#223b41;--muted:#737c77;--line:#dddcd2;--pine:#327e70;--warm:#bd744f;--white:#fff;--shadow:0 15px 42px #2d3b3420}
 *{box-sizing:border-box}html{color-scheme:light;overscroll-behavior:none}body{margin:0;overscroll-behavior:none;background:var(--background);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}button{font:inherit}button:focus-visible,.upgrade:focus-visible{outline:3px solid #e3a76b;outline-offset:4px}#app{max-width:1030px;margin:0 auto;padding:24px 24px 48px}
-.brand{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}.brandmark{display:flex;gap:14px;align-items:center}.logo{width:43px;height:43px;display:grid;place-items:center;background:var(--ink);border-radius:13px;color:#fff;font-size:22px;transform:rotate(-5deg)}h1{font:700 clamp(28px,4.2vw,39px)/1.04 Georgia,Times,serif;letter-spacing:-1.5px;margin:0}.eyebrow{font-size:10px;font-weight:800;letter-spacing:2.2px;text-transform:uppercase;color:#73827b;margin:0 0 5px}.series{border:1px solid #d9dbd1;border-radius:17px;padding:8px 13px;font-size:11px;letter-spacing:.11em;font-weight:800;color:#718078;white-space:nowrap}.offline-note{display:block;margin-top:3px;font-size:9px;letter-spacing:.025em;font-weight:750;color:#467d6d}
-.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:16px}.stat{background:#fffdfa;border:1px solid var(--line);border-radius:14px;padding:13px 17px;min-width:0}.stat-label{color:#83908a;text-transform:uppercase;font-size:10px;letter-spacing:1.5px;font-weight:800}.stat-value{font-size:clamp(21px,3vw,30px);font-weight:760;letter-spacing:-.75px;font-variant-numeric:tabular-nums;margin-top:4px}.stat-value.money{color:#267864}
+.brand{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}.brandmark{display:flex;align-items:center;margin-right:10px}.logo{width:43px;height:43px;flex-shrink:0;margin-right:14px;display:grid;place-items:center;background:var(--ink);border-radius:13px;color:#fff;font-size:22px;transform:rotate(-5deg)}h1{font:700 28px/1.04 Georgia,Times,serif;font-size:clamp(28px,4.2vw,39px);letter-spacing:-1.5px;margin:0}.eyebrow{font-size:10px;font-weight:800;letter-spacing:2.2px;text-transform:uppercase;color:#73827b;margin:0 0 5px}.offline-note{flex-shrink:0;max-width:40%;border:1px solid #d9dbd1;border-radius:12px;padding:6px 9px;font-size:12px;font-weight:700;color:#35695b;text-align:center}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:16px}.stat{background:#fffdfa;border:1px solid var(--line);border-radius:14px;padding:13px 17px;min-width:0}.stat-label{color:#5e6e66;text-transform:uppercase;font-size:10px;letter-spacing:1.5px;font-weight:800}.stat-value{font-size:25px;font-size:clamp(21px,3vw,30px);font-weight:700;font-weight:760;letter-spacing:-.75px;font-variant-numeric:tabular-nums;margin-top:4px}.stat-value.money{color:#216a56;overflow-wrap:break-word}
 /* Unaffordable shop upgrades gently pulse the wallet red while hovered. */
 .stat.wallet-shortfall{animation:walletShortfallCard 1s ease-in-out infinite}
 .stat.wallet-shortfall .stat-value.money{animation:walletShortfallText 1s ease-in-out infinite}
@@ -29,33 +30,29 @@
 }
 .stat-sub{margin-top:1px;font-size:11px;color:#999e97}
 .panel{background:var(--paper);border:1px solid #dedcd2;border-radius:18px;box-shadow:var(--shadow)}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 25px 17px;border-bottom:1px solid #e9e7dd}.panel-title{font:700 25px/1.2 Georgia,serif;letter-spacing:-.6px;margin:0}.panel-sub{font-size:13px;color:#788079;margin:5px 0 0;line-height:1.55}.smalltag{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#49897a;background:#e9f2e9;border:1px solid #d8eadf;border-radius:30px;padding:7px 11px;white-space:nowrap}.hidden{display:none!important}
-.paper-tools{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:11px 18px;border-bottom:1px solid #e9e7dd;background:#faf9f4}.toolgroup{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.tiny-label{font-size:10px;letter-spacing:1px;font-weight:800;color:#919990;text-transform:uppercase;margin-right:4px}.pill{border:1px solid #dddcd2;color:#586b66;background:#fffefa;border-radius:9px;font-size:12px;font-weight:700;padding:8px 10px;cursor:pointer;transition:background .18s,border-color .18s}.pill:hover{border-color:#9ab0a8}.pill.active{background:#e2f0e8;border-color:#91bfb0;color:#246656}.pill:disabled{opacity:.35;cursor:not-allowed}.eraser-size-control{display:inline-flex;align-items:center;gap:6px;background:#f0f4ed;border:1px solid #d8e3da;padding:6px 9px;border-radius:9px;color:#35695b;font-size:11px;font-weight:800;white-space:nowrap}.eraser-size-control input{width:93px;accent-color:#327e70;touch-action:pan-x;cursor:pointer}.eraser-size-control output{min-width:38px;text-align:right;font-variant-numeric:tabular-nums}.paper-area{height:440px;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;position:relative;overflow:hidden;overflow-anchor:none;overscroll-behavior:none;contain:layout paint;background:radial-gradient(ellipse at 35% 20%,#fffefd,#fcfaf5 93%);touch-action:none;cursor:crosshair}.paper-area.eraser-cursor{cursor:cell}#gridLayer,#inkLayer,#balloonLayer,#drawingLayer,#lensLayer{position:absolute;inset:0;width:100%;height:100%;display:block}#gridLayer,#inkLayer,#balloonLayer,#lensLayer{pointer-events:none}#drawingLayer{touch-action:none;user-select:none;-webkit-user-select:none}.earning-popup{position:absolute;z-index:6;pointer-events:none;white-space:nowrap;min-width:74px;text-align:center;background:#e9f6ecf5;color:#207254;border:1px solid #91ccb0;border-radius:999px;box-shadow:0 7px 19px #224d3420;padding:8px 13px;font-size:17px;font-weight:850;font-variant-numeric:tabular-nums;letter-spacing:.01em;transform:translateX(-50%);animation:earnFloat 1.30s ease-out both}
+.paper-tools{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:11px 18px;border-bottom:1px solid #e9e7dd;background:#faf9f4}.toolgroup{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.tiny-label{font-size:10px;letter-spacing:1px;font-weight:800;color:#919990;text-transform:uppercase;margin-right:4px}.pill{border:1px solid #dddcd2;color:#586b66;background:#fffefa;border-radius:9px;font-size:12px;font-weight:700;padding:8px 10px;cursor:pointer;transition:background .18s,border-color .18s}.pill:hover{border-color:#9ab0a8}.pill.active{background:#e2f0e8;border-color:#91bfb0;color:#246656}.pill:disabled{opacity:.35;cursor:not-allowed}.eraser-size-control{display:inline-flex;align-items:center;gap:6px;background:#f0f4ed;border:1px solid #d8e3da;padding:6px 9px;border-radius:9px;color:#35695b;font-size:11px;font-weight:800;white-space:nowrap}.eraser-size-control input{width:93px;accent-color:#327e70;touch-action:pan-x;cursor:pointer}.eraser-size-control output{min-width:38px;text-align:right;font-variant-numeric:tabular-nums}.paper-area{height:440px;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;position:relative;overflow:hidden;overflow-anchor:none;overscroll-behavior:none;contain:layout paint;background:radial-gradient(ellipse at 35% 20%,#fffefd,#fcfaf5 93%);touch-action:none;cursor:crosshair}.paper-area.eraser-cursor{cursor:cell}#gridLayer,#inkLayer,#balloonLayer,#drawingLayer,#lensLayer{position:absolute;top:0;left:0;width:100%;height:100%;display:block}#gridLayer,#inkLayer,#balloonLayer,#lensLayer{pointer-events:none}#drawingLayer{touch-action:none;user-select:none;-webkit-user-select:none}.earning-popup{position:absolute;z-index:6;pointer-events:none;white-space:nowrap;min-width:74px;text-align:center;background:#e9f6ecf5;color:#207254;border:1px solid #91ccb0;border-radius:999px;box-shadow:0 7px 19px #224d3420;padding:8px 13px;font-size:17px;font-weight:850;font-variant-numeric:tabular-nums;letter-spacing:.01em;transform:translateX(-50%);animation:earnFloat 1.30s ease-out both}
 @keyframes earnFloat{0%{opacity:0;transform:translate(-50%,8px) scale(.95)}17%{opacity:1;transform:translate(-50%,0) scale(1)}65%{opacity:1;transform:translate(-50%,-11px)}100%{opacity:0;transform:translate(-50%,-27px)}}
 @media(prefers-reduced-motion:reduce){.earning-popup{animation:earnFade 1.30s linear both}@keyframes earnFade{0%{opacity:0}18%{opacity:1}70%{opacity:1}100%{opacity:0}}}
 .draw-foot{padding:16px 22px;display:flex;justify-content:space-between;gap:12px;align-items:center;border-top:1px solid #e9e7dd;background:#faf9f4;border-radius:0 0 18px 18px}.draw-foot small{font-size:12px;color:#8a8e87}.draw-actions{display:flex;align-items:center;justify-content:flex-end;gap:11px;flex-wrap:wrap;margin-left:auto}.score{font-size:14px;font-weight:800;color:#317a69;text-align:right}.end-turn{padding:9px 14px;background:#e5eee8!important;border:1px solid #bfd6c6!important;color:#276452!important;font-size:12px!important}.end-turn:hover{background:#d1e5d9!important}.end-turn:disabled{opacity:.5;cursor:not-allowed;transform:none}.note{margin:12px 4px 0;color:#8a8f88;font-size:12px;text-align:center}
-.shop-head{align-items:flex-start}.shop-body{position:relative;display:grid;grid-template-columns:minmax(0,1fr);gap:12px;padding:13px 18px 0;align-items:center}.skill-wrap{padding:0;min-width:0}.skill-tree{position:relative;width:100%;max-width:650px;height:570px;isolation:isolate;margin:0 auto;background:none}.skill-tree.prebranch{height:132px;background:none}.skill-tree.eraser-branch{height:570px;margin-bottom:10px}.branches{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}.branches line,.branches path{fill:none;stroke:#cfd8d0;stroke-width:.36;stroke-dasharray:1.1 1.2}.branches line.live,.branches path.live{stroke:#9abdab;stroke-width:.48;stroke-dasharray:none}.upgrade.prereq-locked{opacity:.64}.upgrade.prereq-locked .node-name::after{content:attr(data-hint);display:block;margin-top:4px;font:750 9px/1.4 system-ui,sans-serif;color:#817f74;letter-spacing:.015em;text-transform:uppercase}.upgrade{position:absolute;width:var(--node-size,92px);height:var(--node-size,92px);transform:translate(-50%,-50%);z-index:2;outline:none}/* Purchasable upgrades glow green only when funded and prerequisites are met. */
-.upgrade.affordable::before{content:"";position:absolute;inset:8px;border-radius:50%;pointer-events:none;z-index:-1;background:radial-gradient(circle,rgba(126,204,157,.26) 18%,rgba(104,184,139,.30) 56%,rgba(104,184,139,.08) 76%,transparent 86%);box-shadow:0 0 20px 10px rgba(63,157,117,.24);animation:affordableGlow 2.8s ease-in-out infinite}
-@keyframes affordableGlow{0%,100%{opacity:.78}50%{opacity:1}}
+.shop-head{align-items:flex-start}.shop-body{position:relative;display:grid;grid-template-columns:minmax(0,1fr);gap:12px;padding:13px 18px 0;align-items:center}.skill-wrap{padding:0;min-width:0}.skill-tree{position:relative;width:100%;max-width:650px;height:570px;isolation:isolate;margin:0 auto;background:none}.skill-tree.prebranch{height:132px;background:none}.skill-tree.eraser-branch{height:570px;margin-bottom:10px}.branches{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible}.branches line,.branches path{fill:none;stroke:#cfd8d0;stroke-width:.36;stroke-dasharray:1.1 1.2}.branches line.live,.branches path.live{stroke:#9abdab;stroke-width:.48;stroke-dasharray:none}.upgrade.prereq-locked{opacity:.64}.upgrade.prereq-locked .node-name::after{content:attr(data-hint);display:block;margin-top:4px;font:750 9px/1.4 system-ui,sans-serif;color:#817f74;letter-spacing:.015em;text-transform:uppercase}.upgrade{position:absolute;width:var(--node-size,92px);height:var(--node-size,92px);transform:translate(-50%,-50%);z-index:2;outline:none}/* Purchasable upgrades glow green only when funded and prerequisites are met. */
 /* Make the first purchase unmistakable when it is both affordable and drawable. */
-.upgrade[data-id="root"].first-ready{border-radius:50%;animation:firstUpgradeReadyPulse 1s ease-in-out infinite}
+.upgrade.first-ready .node-ready-label{animation:firstUpgradeReadyPulse 1s ease-in-out infinite}
 @keyframes firstUpgradeReadyPulse{
- 0%,100%{background:rgba(65,166,105,.025);box-shadow:0 0 0 1px rgba(52,143,87,.10)}
- 50%{background:rgba(97,205,132,.23);box-shadow:0 0 0 5px rgba(63,169,103,.16),0 0 25px 8px rgba(60,165,100,.32)}
+ 0%,100%{box-shadow:none}
+ 50%{box-shadow:0 0 0 4px rgba(63,169,103,.25)}
 }
 @media(prefers-reduced-motion:reduce){
- .upgrade[data-id="root"].first-ready{animation:none;background:rgba(97,205,132,.17);box-shadow:0 0 0 3px rgba(63,169,103,.23)}
+ .upgrade.first-ready .node-ready-label{animation:none}
 }
-@media(prefers-reduced-motion:reduce){.upgrade.affordable::before{animation:none;opacity:.85}}
-/* Legacy iOS Safari: show affordability on the upgrade itself, not behind it. */
+/* A solid glow on the node also renders on Safari 12. */
 .upgrade.affordable{border-radius:50%;background:rgba(123,221,153,.19);box-shadow:0 0 0 3px rgba(49,151,87,.76),0 0 18px 8px rgba(51,166,91,.52),inset 0 0 14px rgba(95,215,135,.34);-webkit-box-shadow:0 0 0 3px rgba(49,151,87,.76),0 0 18px 8px rgba(51,166,91,.52),inset 0 0 14px rgba(95,215,135,.34)}
-.upgrade.affordable::before{display:none}
 .upgrade.affordable .node-price{color:#155436;background:#c7f3d0;border:1px solid #368956;border-radius:12px;left:50%;right:auto;transform:translateX(-50%);padding:2px 6px;white-space:nowrap}
 .node-ready-label{display:none;position:absolute;left:50%;top:-11px;transform:translateX(-50%);z-index:4;font:800 9px/1.4 system-ui,sans-serif;letter-spacing:.05em;padding:2px 6px;border:1px solid #237a46;border-radius:20px;background:#a9efbc;color:#155637;pointer-events:none;white-space:nowrap}
 .skill-tree.prebranch .upgrade.affordable .node-ready-label{display:block}
 /* Make the no-strokes notifications prominent on desktop and old iPads. */
 .shop-feedback.no-strokes{display:block;box-sizing:border-box;width:calc(100% - 28px);max-width:540px;margin:10px auto 18px;padding:17px 20px;min-height:0;border:2px solid #dfac79;border-radius:14px;background:#fff4e8;color:#824619;font-size:18px;font-weight:800;line-height:1.5;box-shadow:0 7px 22px rgba(135,79,29,.13)}
 .inspect-hint.no-strokes{font-size:17px;font-weight:800;line-height:1.5;color:#824619;background:#fff4e8;border:1px solid #dfac79;border-radius:10px;padding:12px 14px;margin-top:12px}
-.upgrade.off{display:none}.upgrade canvas{position:absolute;inset:0;display:block;width:100%;height:100%;touch-action:none;cursor:crosshair}.upgrade.owned canvas{cursor:crosshair}.upgrade.deactivated .node-symbol,.upgrade.deactivated .node-name{color:#a18b78}.upgrade.deactivated .node-price{color:#ab7462}.upgrade.deactivated{opacity:.79}.shop-tool-picker{display:flex;gap:7px;align-items:center;justify-content:center;flex-wrap:wrap;margin:0;padding:12px 12px 0}.shop-tool-picker button{background:#fffefa;color:#61736a;border:1px solid #d8ded6;border-radius:8px;font-size:11px;font-weight:750;cursor:pointer;padding:6px 11px}.shop-tool-picker button.active{background:#e3f1e9;color:#216a56;border-color:#96c2af}.shop-tool-picker button:focus-visible{outline:2px solid #e3a76b;outline-offset:2px}.shop-tool-picker button:disabled{opacity:.43;cursor:not-allowed;border-style:dashed}.upgrade.shop-erase canvas{cursor:cell}.node-symbol{position:absolute;left:0;right:0;top:30%;display:block;text-align:center;pointer-events:none;color:#537f73;font:700 25px/1 Georgia,serif}.upgrade.owned .node-symbol{color:#1d6b5c}.node-price{position:absolute;top:74%;left:0;right:0;text-align:center;font-size:10px;font-weight:800;color:#778a7f;pointer-events:none;letter-spacing:.01em}.upgrade.owned .node-price{color:#2f866b}.node-name{position:absolute;top:calc(100% + 2px);left:50%;transform:translateX(-50%);font-size:10px;color:#687970;font-weight:800;letter-spacing:.05em;text-align:center;white-space:nowrap;pointer-events:none;text-transform:uppercase}.upgrade.owned .node-name{color:#2e7062}.upgrade .tip{position:absolute;z-index:8;bottom:calc(100% + 7px);left:50%;transform:translateX(-50%);width:220px;max-width:60vw;border-radius:11px;background:#223b41;color:#edf5ee;padding:12px 13px;text-align:left;line-height:1.48;font-size:12px;box-shadow:0 10px 26px #213b413d;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .16s}.upgrade .tip strong{display:block;margin-bottom:4px;color:white;font-size:13px}.upgrade .tip .tip-cost{display:block;color:#b4e3ca;font-weight:800;margin-top:5px}.upgrade .tip{display:none!important}/* Upgrade details are shown in the on-demand inspector. */.upgrade[data-id="free"] .tip,.upgrade[data-id="eraser"] .tip,.upgrade[data-id="dashedCircle"] .tip,.upgrade[data-id="eraserSize"] .tip{left:auto;right:0;transform:none}.upgrade[data-id="stamina"] .tip,.upgrade[data-id="composer"] .tip{left:0;transform:none}.upgrade[data-id="circle"] .tip{bottom:auto;top:calc(100% + 17px)}
+.upgrade.off{display:none}.upgrade canvas{position:absolute;top:0;left:0;display:block;width:100%;height:100%;touch-action:none;cursor:crosshair}.upgrade.owned canvas{cursor:crosshair}.upgrade.deactivated .node-symbol,.upgrade.deactivated .node-name{color:#a18b78}.upgrade.deactivated .node-price{color:#ab7462}.upgrade.deactivated{opacity:.79}.shop-tool-picker{display:flex;gap:7px;align-items:center;justify-content:center;flex-wrap:wrap;margin:0;padding:12px 12px 0}.shop-tool-picker button{background:#fffefa;color:#61736a;border:1px solid #d8ded6;border-radius:8px;font-size:11px;font-weight:750;cursor:pointer;padding:6px 11px}.shop-tool-picker button.active{background:#e3f1e9;color:#216a56;border-color:#96c2af}.shop-tool-picker button:focus-visible{outline:2px solid #e3a76b;outline-offset:2px}.shop-tool-picker button:disabled{opacity:.43;cursor:not-allowed;border-style:dashed}.upgrade.shop-erase canvas{cursor:cell}.node-symbol{position:absolute;left:0;right:0;top:30%;display:block;text-align:center;pointer-events:none;color:#537f73;font:700 25px/1 Georgia,serif}.upgrade.owned .node-symbol{color:#1d6b5c}.node-price{position:absolute;top:74%;left:0;right:0;text-align:center;font-size:10px;font-weight:800;color:#778a7f;pointer-events:none;letter-spacing:.01em}.upgrade.owned .node-price{color:#2f866b}.node-name{position:absolute;top:calc(100% + 2px);left:50%;transform:translateX(-50%);font-size:10px;color:#687970;font-weight:800;letter-spacing:.05em;text-align:center;white-space:nowrap;pointer-events:none;text-transform:uppercase}.upgrade.owned .node-name{color:#2e7062}.upgrade .tip{position:absolute;z-index:8;bottom:calc(100% + 7px);left:50%;transform:translateX(-50%);width:220px;max-width:60vw;border-radius:11px;background:#223b41;color:#edf5ee;padding:12px 13px;text-align:left;line-height:1.48;font-size:12px;box-shadow:0 10px 26px #213b413d;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .16s}.upgrade .tip strong{display:block;margin-bottom:4px;color:white;font-size:13px}.upgrade .tip .tip-cost{display:block;color:#b4e3ca;font-weight:800;margin-top:5px}.upgrade .tip{display:none!important}/* Upgrade details are shown in the on-demand inspector. */.upgrade[data-id="free"] .tip,.upgrade[data-id="eraser"] .tip,.upgrade[data-id="dashedCircle"] .tip,.upgrade[data-id="eraserSize"] .tip{left:auto;right:0;transform:none}.upgrade[data-id="stamina"] .tip,.upgrade[data-id="composer"] .tip{left:0;transform:none}.upgrade[data-id="circle"] .tip{bottom:auto;top:calc(100% + 17px)}
 .inspect{position:absolute;right:18px;top:13px;width:245px;z-index:7;box-shadow:0 12px 28px #223b411c;background:#faf9f4;border:1px solid #e5e5da;border-radius:15px;padding:18px 16px;align-self:center;min-height:205px;display:flex;flex-direction:column}.inspect-top{display:flex;align-items:center;justify-content:space-between;gap:8px}.inspect-close{font-size:22px;color:#718078;background:none;border:0;cursor:pointer;padding:0 5px}.inspect .mini{font-size:10px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;color:#84958a}.inspect h3{font:700 23px Georgia,serif;margin:8px 0 12px}.inspect p{color:#6d7a73;font-size:12px;line-height:1.65;margin:0 0 14px}.inspect-price{font-weight:800;font-size:17px;color:#2c765f;margin-top:auto}.inspect-hint{color:#939c93;margin-top:7px;font-size:11px;line-height:1.45}.clear-trace{align-self:flex-start;margin:9px 0 0;padding:4px 0;font-size:11px;color:#8a6760;border:0;background:none;text-decoration:underline;cursor:pointer}.clear-trace.hidden{display:none}#shopStage.single-upgrade .shop-body{width:100%;max-width:none;grid-template-columns:minmax(0,1fr);gap:0;margin:0;padding:14px 20px 12px;align-items:center}
 #shopStage.single-upgrade .skill-tree{width:160px;height:137px;max-width:none;margin:0 auto}
 #shopStage.single-upgrade .skill-tree .upgrade[data-id="root"]{top:50%!important;left:50%!important}
@@ -70,7 +67,7 @@
 .shop-feedback:empty{display:none}.shop-feedback{text-align:center;font-size:12px;color:#3c806b;min-height:20px;padding:0 18px 10px;font-weight:750}.shop-bottom{border-top:1px solid #e9e7dd;background:#faf9f4;border-radius:0 0 18px 18px;padding:14px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px}.receipt{font-size:12px;color:#818983;line-height:1.5}.action{border:0;background:#24434a;color:white;padding:12px 17px;font-size:13px;font-weight:800;border-radius:11px;cursor:pointer;white-space:nowrap;transition:background .18s,transform .18s}.action:hover{background:#366268;transform:translateY(-1px)}.textbtn{border:0;background:transparent;font-size:12px;text-decoration:underline;color:#7d817b;cursor:pointer;padding:8px}.reset{display:block;margin:20px auto 0}.tipstrong{font-weight:800}
 @media(hover:none){.upgrade .tip,.upgrade:hover .tip,.upgrade:focus .tip{visibility:hidden;opacity:0}}
 @media(max-width:780px){.inspect{position:static;width:auto;box-shadow:none}#shopStage.single-upgrade .shop-body{grid-template-columns:1fr;max-width:none}#shopStage.single-upgrade .skill-tree{margin:0 auto}.skill-tree.eraser-branch{height:570px}#app{padding:14px 12px 30px}.shop-body{grid-template-columns:1fr;gap:0}.skill-tree{max-width:500px;height:560px;--node-size:76px}.inspect{min-height:auto;margin:0 3px 13px;padding:13px 15px}.inspect h3{font-size:18px;margin:5px 0}.inspect p{margin:0 0 8px}.brand{margin-bottom:15px}}
-@media(max-width:490px){.skill-tree.eraser-branch{height:610px;margin-bottom:10px}.eraser-size-control{flex:1;justify-content:center}.eraser-size-control input{width:clamp(70px,25vw,120px)}.series{display:none}.stats{grid-template-columns:repeat(2,1fr);gap:7px}.stat{padding:10px 13px}.stat-value{font-size:24px}.panel-head{padding:17px 16px}.panel-title{font-size:22px}.paper-area{height:clamp(280px,52svh,390px);min-height:280px}.skill-tree{height:610px;--node-size:clamp(58px,16.5vw,62px)}.skill-tree.prebranch{height:114px}.upgrade .node-symbol{font-size:20px}.node-price{font-size:9px}.node-name{font-size:9px}.shop-body{padding:12px 9px 0}.shop-bottom{padding:13px;align-items:flex-start;flex-direction:column}.shop-bottom button.action{width:100%}.draw-foot{padding:13px;font-size:12px}#shopStage.single-upgrade .shop-body{grid-template-columns:1fr;gap:3px;padding:10px 12px 8px}
+@media(max-width:490px){.skill-tree.eraser-branch{height:610px;margin-bottom:10px}.eraser-size-control{flex:1;justify-content:center}.eraser-size-control input{width:clamp(70px,25vw,120px)}.stats{grid-template-columns:repeat(2,1fr);gap:7px}.stat{padding:10px 13px}.stat-value{font-size:24px}.panel-head{padding:17px 16px}.panel-title{font-size:22px}.paper-area{height:clamp(280px,52svh,390px);min-height:280px}.skill-tree{height:610px;--node-size:clamp(58px,16.5vw,62px)}.skill-tree.prebranch{height:114px}.upgrade .node-symbol{font-size:20px}.node-price{font-size:9px}.node-name{font-size:9px}.shop-body{padding:12px 9px 0}.shop-bottom{padding:13px;align-items:flex-start;flex-direction:column}.shop-bottom button.action{width:100%}.draw-foot{padding:13px;font-size:12px}#shopStage.single-upgrade .shop-body{grid-template-columns:1fr;gap:3px;padding:10px 12px 8px}
 #shopStage.single-upgrade .skill-tree{width:100%;max-width:170px;height:116px;margin:0 auto}
 #shopStage.single-upgrade .inspect{padding:11px 13px;margin:0 2px 7px}
 #shopStage.single-upgrade .inspect h3{font-size:17px}
@@ -166,7 +163,7 @@
 </head>
 <body>
 <main id="app">
-<header class="brand"><div class="brandmark"><div class="logo" aria-hidden="true">✎</div><div><p class="eyebrow">An incremental sketchbook</p><h1>Learn to Draw</h1></div></div><div class="series">STUDY / 001<span class="offline-note" id="offlineStatus" role="status">Preparing offline</span></div></header>
+<header class="brand"><div class="brandmark"><div class="logo" aria-hidden="true">✎</div><div><p class="eyebrow">An incremental sketchbook</p><h1>Learn to Draw</h1></div></div><span class="offline-note" id="offlineStatus" role="status">Preparing offline</span></header>
 <div class="stats" role="status" aria-label="Progress"><div class="stat"><div class="stat-label">Wallet</div><div class="stat-value money" id="wallet">$0.00</div></div><div class="stat"><div class="stat-label">Turn</div><div class="stat-value" id="turn">1</div></div><div class="stat"><div class="stat-label">Strokes left</div><div class="stat-value" id="energy">1 / 1</div></div><div class="stat"><div class="stat-label">Strokes completed</div><div class="stat-value" id="strokes">0</div></div></div>
 <section class="panel" id="playStage"><div class="panel-head"><div><p class="eyebrow hidden" id="activityTag"></p><h2 class="panel-title" id="activityHeading">Connect the points</h2><p class="panel-sub" id="instruction">Start on A, draw a continuous line, and finish on B.</p></div><span class="smalltag" id="rewardTag">UP TO $1.00</span></div>
 <div class="paper-tools"><div class="toolgroup hidden" id="modeTools"><span class="tiny-label">Study</span><button class="pill active" id="lineMode" type="button">Line</button><button class="pill hidden" id="triangleMode" type="button">Triangle</button><button class="pill hidden" id="squareMode" type="button">Square</button><button class="pill hidden" id="circleMode" type="button">Circle</button><button class="pill hidden" id="curveMode" type="button">Curve</button><button class="pill hidden" id="ovalMode" type="button">Oval</button><button class="pill hidden" id="cylinderMode" type="button">Cylinder</button><button class="pill hidden" id="sphereMode" type="button">Sphere</button><button class="pill hidden" id="balloonMode" type="button">Balloon</button><button class="pill hidden" id="composeMode" type="button">Compose</button></div><div class="toolgroup hidden" id="composerOptions" aria-label="Choose a composition"><span class="tiny-label">Object</span><button class="pill" id="composeMagnifier" type="button">Magnifier</button><button class="pill" id="composeSignpost" type="button">Signpost</button><button class="pill" id="composeKite" type="button">Kite</button></div><div class="toolgroup"><span class="tiny-label">Paper</span><button class="pill hidden" id="gridSwitch" type="button" hidden aria-hidden="true">▦ Grid on</button><button class="pill hidden" id="guideSwitch" type="button" hidden aria-hidden="true">Freehand on</button><button class="pill hidden" id="pencilTool" type="button">Pencil</button><button class="pill hidden" id="eraserTool" type="button">Eraser</button><button class="pill hidden" id="showGuides" type="button" aria-pressed="false" title="Temporarily restore full guides for this exercise">Show guides</button><label class="eraser-size-control hidden" id="eraserSizeControl" for="eraserSize"><span>Eraser size</span><input id="eraserSize" type="range" min="8" max="64" step="2" value="30" aria-label="Eraser width"/><output id="eraserSizeValue" for="eraserSize">30 px</output></label></div></div>
@@ -350,7 +347,7 @@
 <script>
 (()=>{
 'use strict';
-const $=id=>document.getElementById(id),key='learn-to-draw-v4';
+const $=id=>document.getElementById(id),key='learn-to-draw-v4',legacyKey='learn-to-draw-playable-v3';
  const decodeSafeLegacy=value=>Array.isArray(value)&&value.length>0;
 const defs={
  root:{name:'Better Endurance',price:100,desc:'Increase max strokes per turn from 1 to 2.',cost:'$1.00'},
@@ -417,8 +414,8 @@ try{const q=JSON.parse(localStorage.getItem(key)||'null');if(q&&Number.isFinite(
  // Migrate legacy play-mode toggles once; from now on only erasing/retracing shop shapes changes activation.
  if(!q.disabled){if(s.owned.grid&&!q.gridOn)s.disabled.grid=true;if(s.owned.free&&!q.freeOn)s.disabled.free=true}
  s.eraserSize=Number.isFinite(Number(s.eraserSize))?Math.round(Math.min(64,Math.max(8,Number(s.eraserSize)))/2)*2:30;s.cash=Math.max(0,Math.floor(s.cash));s.energy=1+((s.owned.root&&!s.disabled.root)?1:0)+((s.owned.stamina&&!s.disabled.stamina)?1:0)+((s.owned.staminaIII&&!s.disabled.staminaIII&&s.owned.stamina&&!s.disabled.stamina)?1:0);s.left=Math.max(0,Math.min(s.energy+(s.shopBonusEarned&&s.owned.secondWind&&!s.disabled.secondWind?1:0),Number(s.left)||0));if(q.sharedEnergyV1!==true&&s.phase==='shop'&&Number.isFinite(q.shopLeft))s.left=Math.max(0,Math.min(s.energy,q.shopLeft));delete s.shopLeft;s.sharedEnergyV1=true;if((!s.owned.circle||s.disabled.circle||(s.owned.square&&s.disabled.square))&&s.mode==='circle')s.mode='line';if(s.mode==='square'&&(!s.owned.square||s.disabled.square))s.mode='line';if(s.mode==='compose'&&(!s.owned.composer||s.disabled.composer||!s.owned.circle||s.disabled.circle||(s.owned.square&&s.disabled.square)||(s.legacyComposer?(s.owned.stamina?!!s.disabled.stamina:!s.owned.root||!!s.disabled.root):!s.owned.stamina||!!s.disabled.stamina)))s.mode='line';if(!s.owned.eraser||s.disabled.eraser)s.tool='pencil';s.freeOn=!!(s.owned.free&&!s.disabled.free);s.gridOn=!!(s.owned.grid&&!s.disabled.grid);
- }else if(!q){const old=JSON.parse(localStorage.getItem('learn-to-draw-playable-v3')||'null');if(old&&Number.isFinite(old.cash)){s.cash=Math.max(0,Math.floor(old.cash));s.turn=old.turn||1;s.strokes=old.lines||0;s.last=old.last||0;s.owned.root=!!old.upgraded;s.energy=s.owned.root?2:1;s.left=Math.max(0,Math.min(s.energy,(old.left==null?s.energy:old.left)));s.phase=old.phase==='shop'?'shop':'draw';}}}catch{}
-const save=()=>{try{localStorage.setItem(key,JSON.stringify(s))}catch{}};
+ }else if(!q){const old=JSON.parse(localStorage.getItem(legacyKey)||'null');if(old&&Number.isFinite(old.cash)){s.cash=Math.max(0,Math.floor(old.cash));s.turn=old.turn||1;s.strokes=old.lines||0;s.last=old.last||0;s.owned.root=!!old.upgraded;s.energy=s.owned.root?2:1;s.left=Math.max(0,Math.min(s.energy,(old.left==null?s.energy:old.left)));s.phase=old.phase==='shop'?'shop':'draw';}}}catch{}
+const save=()=>{try{localStorage.setItem(key,JSON.stringify(s));return true}catch{return false}};
 const upgradeActive=id=>!!s.owned[id]&&!s.disabled[id];
 // Existing Circle owners retain their purchased ability. New Circle
 // purchases require Square Studies first. Deactivating a purchased Square
@@ -2736,8 +2733,8 @@ function closeInspector(){
  $('shopStage').classList.remove('has-selection');
 }
 $('closeInspect').addEventListener('click',closeInspector);
-$('shopStage').addEventListener('pointerdown',e=>{
- // Tapping empty space dismisses a pinned selection without altering saved traces.
+$('shopStage').addEventListener('click',e=>{
+ // Wait for the click so dismissing the inspector cannot move a button under a tap.
  if(!e.target.closest('.upgrade,.inspect,.shop-tool-picker')&&!tracing)closeInspector();
 });
 function inspect(id){
@@ -3157,8 +3154,10 @@ function specialPaint(){
 }
 
 function resetAllProgress(){
- specialOpen=false;specialRunning=false;specialStroke=null;specialPointer=null;
+ specialOpen=false;specialRunning=false;specialDone=false;specialStroke=null;specialPointer=null;
  if(specialFrame)cancelAnimationFrame(specialFrame);specialFrame=0;
+ specialBodies=[];specialRamps=[];specialPerspectiveMarks=[];specialGuides=[];specialBall=null;specialGoal=null;
+ specialCtx.clearRect(0,0,SCW,SCH);
  // Clear timers and cached drawing work before recreating the blank save.
  // A resize alone does NOT clear the ink if the paper dimensions are unchanged.
  clearTimeout(advanceTimer);advanceTimer=null;
@@ -3172,10 +3171,12 @@ function resetAllProgress(){
  composeLensShape=null;composeBalloonOutline=null;composeBalloonId=null;
  lastSquareAngle=null;lastBalloonTime=0;lastBalloonSave=0;balloonClock=0;lensFrame=null;
  s=blank();skillTool='trace';
+ guides.composer=composerGuide();
  for(const id in nodeCanvas)nodeCanvas[id].strokes=[];
  earningPopup.classList.add('hidden');earningPopup.textContent='';
  closeInspector();setSkillTool('trace');
- save();stats();resizePaper();
+ if(save()){try{localStorage.removeItem(legacyKey)}catch{}}
+ stats();resizePaper();
  // Paint all layers unconditionally. resizePaper intentionally does nothing
  // when width and height match, so relying on it leaves old ink on screen.
  paintGrid();paintInk();paintBalloons();paintLens();
@@ -3196,41 +3197,72 @@ if(s.phase==='draw'&&s.left<=0)openShop(true);
 <script>
 (() => {
  const status = document.getElementById('offlineStatus');
- const update = (label, detail) => {status.textContent=label;status.title=detail;};
+ const build = document.querySelector('meta[name="ltd-build"]').content;
+ const update = (label, detail) => { status.textContent = label; status.title = detail; };
+ const notReady = () => update('Offline not ready', 'Use a regular Safari tab. Connect to Wi-Fi and reload to prepare offline play.');
  if (!('serviceWorker' in navigator)) {
-  update('Offline unsupported here', 'Open the site directly in Safari rather than an embedded viewer. iOS 12 can restrict offline caching in other browsers.');
+  update('Offline unsupported here', 'Open Learn to Draw in a regular Safari tab.');
   return;
  }
  if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
-  update('Offline requires HTTPS', 'Open the secure Learn to Draw website directly in Safari.');
+  update('Offline requires HTTPS', 'Open the secure Learn to Draw website.');
   return;
  }
- navigator.serviceWorker.addEventListener('message', event => {
-  if((event.data && event.data.type) !== 'OFFLINE_STATUS') return;
-  update(event.data.ready ? 'Ready offline' : 'Offline not ready',
-   event.data.ready ? 'Cached on this iPad. Test with Airplane Mode before your flight.' :
-   'Connect to Wi-Fi, reopen Learn to Draw, and check again.');
- });
- // Check an already installed worker first: registration update checks can fail
- // in Airplane Mode even when the previously installed app is fully cached.
- (async () => {
-  let found = false;
+
+ const workers = navigator.serviceWorker;
+ let checkNumber = 0;
+ function progressStorageAvailable() {
+  const probe = 'learn-to-draw-storage-check';
   try {
-   const existing = await navigator.serviceWorker.getRegistration('/');
-   if((existing && existing.active)){
-    found = true;existing.active.postMessage({type:'CHECK_OFFLINE'});
-   }
-  } catch {}
-  try {
-   const registration = await navigator.serviceWorker.register('/sw.js', {scope:'/'});
-   await navigator.serviceWorker.ready;
-   const active = registration.active || navigator.serviceWorker.controller;
-   if(active) active.postMessage({type:'CHECK_OFFLINE'});
-   else if(!found) update('Offline not ready', 'Try reopening the app while connected to Wi-Fi.');
+   localStorage.setItem(probe, '1');
+   return localStorage.getItem(probe) === '1';
   } catch {
-   if(!found) update('Offline not ready', 'The offline file may not be deployed yet. Try again after the website updates.');
+   return false;
+  } finally {
+   try { localStorage.removeItem(probe); } catch {}
   }
- })();
+ }
+
+ async function checkOffline() {
+  const controller = workers.controller;
+  if (!controller) {
+   notReady();
+   return;
+  }
+  const number = ++checkNumber;
+  let timer;
+  try {
+   // This route exists only in the worker and checks the same cached shell
+   // used for an offline navigation. An active registration alone is insufficient.
+   const timeout = new Promise(resolve => { timer = setTimeout(() => resolve(null), 6500); });
+   const response = await Promise.race([fetch('/ltd-offline-check', {cache: 'no-store'}), timeout]);
+   if (number !== checkNumber || controller !== workers.controller) return;
+   if (!response || response.status !== 204 || response.headers.get('X-Learn-To-Draw-Build') !== build) {
+    notReady();
+   } else if (!progressStorageAvailable()) {
+    update('Progress cannot save', 'Allow website storage in a regular Safari tab, then reload.');
+   } else {
+    update('Ready offline', 'Reopen this address from the same Safari profile. Test once with Airplane Mode on and Wi-Fi off.');
+   }
+  } catch {
+   if (number === checkNumber && controller === workers.controller) notReady();
+  } finally {
+   clearTimeout(timer);
+  }
+ }
+
+ function register() {
+  workers.register('/sw.js', {scope: '/', updateViaCache: 'none'}).catch(() => {
+   if (!workers.controller) notReady();
+  });
+ }
+ workers.addEventListener('controllerchange', checkOffline);
+ window.addEventListener('pageshow', event => { if (event.persisted) checkOffline(); });
+ window.addEventListener('online', () => { register(); checkOffline(); });
+ window.addEventListener('offline', checkOffline);
+ if (workers.controller) checkOffline();
+ register();
+ setTimeout(() => { if (status.textContent === 'Preparing offline') notReady(); }, 8000);
 })();
 </script>
 </body>
