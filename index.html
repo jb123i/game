@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="ltd-build" content="2026-11-17.2">
+<meta name="ltd-build" content="2026-11-17.3">
 <meta name="theme-color" content="#f6f2e9">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -229,7 +229,7 @@
 <div class="upgrade off" data-id="guideFade" style="left:27%;top:53%;" tabindex="0" aria-label="Adaptive Guides, six dollars"><canvas width="192" height="192"></canvas><span class="node-symbol">◌</span><span class="node-price">$6.00</span><span class="node-name">Adaptive Guides</span><span class="tip"><strong>Adaptive Guides</strong>As you score consistently well in a drawing study, its guide marks fade. Lower scores bring them back. Track mastery separately for each study and stage.<span class="tip-cost">$6.00 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="composer" style="left:12%;top:63%;" tabindex="0" aria-label="Shape Composer, three dollars"><canvas width="192" height="192"></canvas><span class="node-symbol">✦</span><span class="node-price">$3.00</span><span class="node-name">Composer</span><span class="tip"><strong>Shape Composer</strong>Draw magnifiers, signposts and kites by combining basic shapes with lines.<span class="tip-cost">$3.00 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="dashedCircle" style="left:12%;top:10%;" tabindex="0" aria-label="Circle Guides, five dollars"><canvas width="192" height="192"></canvas><span class="node-symbol">◌</span><span class="node-price">$5.00</span><span class="node-name">Circle guides</span><span class="tip"><strong>Dashed Circle Guide</strong>Replace circle guide dots with a dashed outline.<span class="tip-cost">$5.00 · Trace to buy</span></span></div>
-<div class="upgrade off" data-id="eraser" style="left:70%;top:68%;" tabindex="0" aria-label="Pencil Eraser, one dollar twenty five"><canvas width="192" height="192"></canvas><span class="node-symbol eraser-symbol" aria-hidden="true"><svg viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><path d="M4 21 20 5q2-2 4 0l9 9q2 2 0 4L17 34H12L4 26q-2-2 0-5Z"/><path d="m13 12 15 15"/><path d="M12 34h19" stroke-width="1.5"/></svg></span><span class="node-price">$1.25</span><span class="node-name">Eraser</span><span class="tip"><strong>Pencil Eraser</strong>Erase pencil marks and magnification without using strokes. Guides and grid remain.<span class="tip-cost">$1.25 · Trace to buy</span></span></div>
+<div class="upgrade off" data-id="eraser" style="left:70%;top:68%;" tabindex="0" aria-label="Pencil Eraser, one dollar twenty five"><canvas width="192" height="192"></canvas><span class="node-symbol eraser-symbol" aria-hidden="true"><svg viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><path d="M4 21 20 5q2-2 4 0l9 9q2 2 0 4L17 34H12L4 26q-2-2 0-5Z"/><path d="m13 12 15 15"/><path d="M12 34h19" stroke-width="1.5"/></svg></span><span class="node-price">$1.25</span><span class="node-name">Eraser</span><span class="tip"><strong>Pencil Eraser</strong>Erase pencil marks and magnification. Each eraser pass uses 1 stroke. Guides and grid remain.<span class="tip-cost">$1.25 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="eraserSize" style="left:88%;top:88%;" tabindex="0" aria-label="Adjustable Eraser Size, two dollars fifty"><canvas width="192" height="192"></canvas><span class="node-symbol" aria-hidden="true">◉</span><span class="node-price">$2.50</span><span class="node-name">Eraser size</span><span class="tip"><strong>Adjustable Eraser</strong>Adjust your eraser width from 8 to 64 pixels.<span class="tip-cost">$2.50 · Trace to buy</span></span></div>
 </div>
 <section class="specialization-section hidden" id="specializationSection">
@@ -366,7 +366,7 @@ const defs={
  selector:{name:'Study Selector',price:125,desc:'Switch between unlocked drawing studies.',cost:'$1.25'},
  free:{name:'Freehand Lines',price:150,desc:'Draw straight lines without A and B guide points.',cost:'$1.50'},
  grid:{name:'Grid Paper',price:100,desc:'Add a grid to your drawing paper.',cost:'$1.00'},
- eraser:{name:'Pencil Eraser',price:125,desc:'Erase pencil marks and magnification without using strokes. Guides and grid remain.',cost:'$1.25'},
+ eraser:{name:'Pencil Eraser',price:125,desc:'Erase pencil marks and magnification. Each eraser pass uses 1 stroke. Guides and grid remain.',cost:'$1.25'},
  eraserSize:{name:'Adjustable Eraser',price:250,desc:'Adjust your eraser width from 8 to 64 pixels.',cost:'$2.50'},
  composer:{name:'Shape Composer',price:300,desc:'Draw a magnifying glass, signpost or kite using two-part compositions. Each drawing requires at least 2 strokes.',cost:'$3.00'},
  dashedCircle:{name:'Dashed Circle Guide',price:500,desc:'Replace circle guide dots with a dashed outline.',cost:'$5.00'},
@@ -516,6 +516,7 @@ function reconcileUpgradeEffects(){
  if(!upgradeActive('eraser'))s.tool='pencil';
 }
 const cash=c=>'$'+(c/100).toFixed(2),clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+function spendStroke(){s.left=Math.max(0,s.left-1)}
 function payoutForShape(mode,accuracy){
  const scale=mode==='circle'?2:mode==='oval'?2.25:mode==='curve'?1.75:mode==='square'?1.5:mode==='triangle'?1.25:1;
  return Math.round(Math.max(0,Math.min(100,accuracy))*scale);
@@ -1803,7 +1804,8 @@ function heliumFrameTick(time){
  if(elapsed>=29){
   lastBalloonTime=time;simulateBalloons(Math.min(.046,elapsed/1000));
   paintBalloons();paintLens();
-  if(time-lastBalloonSave>3500){lastBalloonSave=time;save()}
+  // Save live balloon erasures together with their stroke cost on release.
+  if(!erasing&&time-lastBalloonSave>3500){lastBalloonSave=time;save()}
  }
  ensureBalloonAnimation();
 }
@@ -1857,19 +1859,24 @@ function eraseHeliumBalloons(points,width){
 function eraserBegin(e){
  if(!upgradeActive('eraser'))return;
  erasing=true;activePointer=e.pointerId;eraserPts=[pointer(e,draw)];
+ $('endTurn').disabled=true;
  startStablePointer(e,eraserPts[0]);
  if(draw.setPointerCapture)draw.setPointerCapture(e.pointerId);
- $('score').textContent='Erasing pencil · No strokes used';
+ $('score').textContent='Erasing';
  eraseHeliumBalloons(eraserPts,eraserWidth());
  paintInk();
 }
 function commitEraserStroke(){
  const size=eraserWidth();
- eraseMagnification(eraserPts,size);
+ spendStroke();s.strokes++;
  s.paperMarks.push({kind:'erase',space:'iso',size,points:normalizeMark(eraserPts)});
- if(!balloonsErasedThisStroke.size)$('score').textContent='Pencil erased · No strokes used';
+ eraseMagnification(eraserPts,size);
+ const score=$('score');
+ const message=balloonsErasedThisStroke.size?score.textContent:'Eraser';
+ score.textContent=message+' · 1 stroke used';
  balloonsErasedThisStroke.clear();
  erasing=false;eraserPts=[];
+ if(s.left<=0)scheduleStudyAdvance();
 }
 // Accuracy for multi-stroke studies uses the UNION of separate strokes. Never
 // connect distant endpoints across a pen lift, or count those invisible links.
@@ -2237,6 +2244,10 @@ function showEarnings(reward,bounds){
  earningPopup.style.animation='';
  earningPopup.classList.remove('hidden');
 }
+function scheduleStudyAdvance(){
+ clearTimeout(advanceTimer);
+ advanceTimer=setTimeout(()=>{if(s.left<=0)openShop();else createPrompt()},1370);
+}
 function finalizeShape(){
  if(locked||drawing||!practiceStrokes.length)return;
  locked=true;
@@ -2252,8 +2263,7 @@ function finalizeShape(){
  $('score').textContent=accuracy+'% · +'+cash(reward);
  showEarnings(reward,rewardBounds);
  paintPaper(true);
- clearTimeout(advanceTimer);
- advanceTimer=setTimeout(()=>{if(s.left<=0)openShop();else createPrompt()},1370);
+ scheduleStudyAdvance();
 }
 
 // The player's circle may be offset from its ideal guide. Attach the string
@@ -2295,8 +2305,7 @@ function finishSphereStage(){
  save();stats();paintPaper(true);
  $('score').textContent='Sphere '+s.last+'% · +'+cash(reward);
  showEarnings(reward,bounds);
- clearTimeout(advanceTimer);
- advanceTimer=setTimeout(()=>{if(s.left<=0)openShop();else createPrompt()},1370);
+ scheduleStudyAdvance();
 }
 function finishCompositionPart(){
  if(s.mode==='sphere'){finishSphereStage();return}
@@ -2325,7 +2334,7 @@ function finishCompositionPart(){
  s.practiceDraft=null;feedbackReveal=true;save();stats();paintPaper(true);
  $('score').textContent='Composition '+s.last+'% · +'+cash(reward);
  showEarnings(reward,rewardBounds);
- clearTimeout(advanceTimer);advanceTimer=setTimeout(()=>{if(s.left<=0)openShop();else createPrompt()},1370);
+ scheduleStudyAdvance();
 }
 function finishPractice(){
  if(!drawing)return;
@@ -2337,7 +2346,7 @@ function finishPractice(){
  const mark={kind:'ink',space:'iso',points:normalizeMark(pts)};
  if(isCompositionMode()&&composeTemplate==='balloon'&&composeBalloonId)mark.balloonId=composeBalloonId;
  s.paperMarks.push(mark);
- s.strokes++;s.left=Math.max(0,s.left-1);strokePts=[];
+ s.strokes++;spendStroke();strokePts=[];
  paintInk();paintPaper();
  const complete=componentLooksComplete();
  if(isCompositionMode()){
@@ -2357,7 +2366,7 @@ function finishPractice(){
   $('score').textContent='Continue '+(s.mode==='circle'?'the circle':s.mode==='square'?'the square':s.mode==='triangle'?'the triangle':s.mode==='curve'?'the curve':s.mode==='oval'?'the oval':'the line')+' · '+s.left+' stroke'+(s.left===1?'':'s')+' left';
  }
 }
-draw.addEventListener('pointerdown',e=>{if(s.phase!=='draw'||drawing||erasing||(locked&&s.tool!=='eraser')||(!e.isPrimary&&e.pointerType==='touch'))return;if(s.tool==='eraser'){e.preventDefault();$('endTurn').disabled=true;eraserBegin(e);return}const p=pointer(e,draw);
+draw.addEventListener('pointerdown',e=>{if(s.phase!=='draw'||s.left<=0||drawing||erasing||(locked&&s.tool!=='eraser')||(!e.isPrimary&&e.pointerType==='touch'))return;if(s.tool==='eraser'){e.preventDefault();eraserBegin(e);return}const p=pointer(e,draw);
  if((s.mode==='line'&&!s.freeOn||s.mode==='curve')&&!practiceStrokes.length&&distance(p,A)>31){$('score').textContent='Start near point A';return}e.preventDefault();drawing=true;$('endTurn').disabled=true;activePointer=e.pointerId;strokePts=[p];startStablePointer(e,p);if(draw.setPointerCapture)draw.setPointerCapture(e.pointerId);paintPaper()});
 draw.addEventListener('pointermove',e=>{
  if(activePointer!==e.pointerId||(!drawing&&!erasing))return;
@@ -2377,7 +2386,8 @@ draw.addEventListener('pointermove',e=>{
 function preserveInterruptedStroke(){
  if(drawing&&strokePts.length>1&&pathLength(strokePts)>3)s.paperMarks.push({kind:'ink',space:'iso',points:normalizeMark(strokePts)});
  if(erasing)commitEraserStroke();
- drawing=false;erasing=false;$('endTurn').disabled=false;strokePts=[];eraserPts=[];activePointer=null;strokeAnchor=null;save();paintInk();paintPaper();if(pendingResize)resizePaper();
+ drawing=false;erasing=false;strokePts=[];eraserPts=[];activePointer=null;strokeAnchor=null;
+ save();paintInk();paintPaper();stats();if(pendingResize)resizePaper();
 }
 draw.addEventListener('pointerup',e=>{
  if(activePointer!==e.pointerId)return;
@@ -2389,15 +2399,21 @@ draw.addEventListener('pointerup',e=>{
   finishPractice();
  }else if(erasing){
   if(p){
-   eraseHeliumBalloons([eraserPts[eraserPts.length-1],p],eraserWidth());
-   eraserPts.push(p);
+   const last=eraserPts[eraserPts.length-1];
+   eraseHeliumBalloons([last,p],eraserWidth());
+   if(distance(last,p)>.65)eraserPts.push(p);
   }
   commitEraserStroke();
   save();paintInk();stats();
  }
  if(pendingResize)resizePaper();
 });
-draw.addEventListener('pointercancel',e=>{if(activePointer!==e.pointerId)return;preserveInterruptedStroke();$('score').textContent='Stroke interrupted · Partial drawing saved';});
+draw.addEventListener('pointercancel',e=>{
+ if(activePointer!==e.pointerId)return;
+ const interruptedDrawing=drawing;
+ preserveInterruptedStroke();
+ if(interruptedDrawing)$('score').textContent='Stroke interrupted · Partial drawing saved';
+});
 window.addEventListener('pagehide',()=>{if(drawing||erasing)preserveInterruptedStroke()});
 function changeMode(mode){if(!upgradeActive('selector')||s.phase!=='draw'||locked||drawing)return;if(isCompositionMode(mode)&&(!(mode==='sphere'?spherePlayable():mode==='balloon'?balloonPlayable():mode==='cylinder'?cylinderPlayable():composerPlayable())||s.left<requiredStudyStrokes(mode))){$('score').textContent=mode==='sphere'?'Sphere Studies requires four strokes and both prerequisites':'Two-part drawings require the active upgrade and at least 2 strokes left';return;}if(practiceStrokes.length||isCompositionMode()&&composeStage>0){$('score').textContent='Finish the current shape before switching modes';return}if(!availableStudy(mode))return;s.studyPreference=mode;s.mode=mode;s.tool='pencil';save();stats();createPrompt()}
 $('lineMode').addEventListener('click',()=>changeMode('line'));
@@ -2556,7 +2572,7 @@ function refreshSkillTools(){
  eraseButton.classList.toggle('hidden',!s.owned.eraser);
  eraseButton.disabled=!unlocked;
  eraseButton.setAttribute('aria-disabled',String(!unlocked));
- eraseButton.title=unlocked?'Erase purchased upgrade outlines':s.owned.eraser?'Retrace Pencil Eraser to unlock Erase':'Buy Pencil Eraser to unlock Erase';
+ eraseButton.title=unlocked?'Erase purchased upgrade outlines for 1 stroke per pass':s.owned.eraser?'Retrace Pencil Eraser to unlock Erase':'Buy Pencil Eraser to unlock Erase';
  if(!unlocked&&!tracing)skillTool='trace';
  for(const [id,name] of [['skillPencil','trace'],['skillEraser','erase']]){
   $(id).classList.toggle('active',skillTool===name);$(id).setAttribute('aria-pressed',String(skillTool===name));
@@ -2617,15 +2633,18 @@ for(const n of nodes){const id=n.dataset.id,c=n.querySelector('canvas'),ctx=c.ge
     $('shopFeedback').textContent=defs[id].name+' requires '+prerequisites(id).map(parent=>defs[parent].name).join(' and ')+' to be active first.';
     return;
    }
-   const p=pointer(e,c);p.x/=2;p.y/=2;
+  if(s.left<=0){$('shopFeedback').textContent='No strokes left. Begin the next turn to refill.';return}
+  const p=pointer(e,c);p.x/=2;p.y/=2;
   if(skillTool==='erase'){
    if(!upgradeActive('eraser')){refreshSkillTools();inspect(id);return}
    if(!s.owned[id]){$('shopFeedback').textContent='You can only erase upgrades you have already purchased.';return}
    if(polyDist(p,guides[id]||guides.circle)>19)return;
    e.preventDefault();tracing={id,ptr:e.pointerId,tool:'erase',last:p};
-   if(c.setPointerCapture)c.setPointerCapture(e.pointerId);eraseSkillInk(id,p,p);updateActivation(id);renderNode(id);return;
+   if(c.setPointerCapture)c.setPointerCapture(e.pointerId);
+   // Spend the stroke before erasing an Endurance upgrade can lower the maximum.
+   spendStroke();
+   eraseSkillInk(id,p,p);updateActivation(id);save();stats();renderNode(id);return;
   }
-  if(s.left<=0){$('shopFeedback').textContent='No strokes left. Begin the next turn to refill.';return}
   if(polyDist(p,guides[id]||guides.circle)>19){$('shopFeedback').textContent='Start on the faint outline and trace any missing section.';return}
   e.preventDefault();tracing={id,ptr:e.pointerId,tool:'trace',points:[p]};
   if(c.setPointerCapture)c.setPointerCapture(e.pointerId);renderNode(id)
@@ -2649,7 +2668,7 @@ for(const n of nodes){const id=n.dataset.id,c=n.querySelector('canvas'),ctx=c.ge
   if(!cancelled){const p=pointer(e,c);p.x/=2;p.y/=2;if(distance(p,task.points[task.points.length-1])>.3)task.points.push(p)}
   const pts=task.points;
   if(pts.length>=2&&pathLength(pts)>1.5){
-   s.left=Math.max(0,s.left-1);
+   spendStroke();
    if(s.owned[id]){
     const strokes=decodeStrokes(s.traces[id]);strokes.push(pts);s.traces[id]=encodeStrokes(strokes);
     updateActivation(id);save();
@@ -2660,6 +2679,10 @@ for(const n of nodes){const id=n.dataset.id,c=n.querySelector('canvas'),ctx=c.ge
  c.addEventListener('pointerup',e=>finishTrace(e));
  c.addEventListener('pointercancel',e=>finishTrace(e,true));
 }
+window.addEventListener('pagehide',()=>{
+ if(!tracing||tracing.tool!=='erase')return;
+ tracing=null;save();refreshSkillTools();
+});
 function renderNode(id){const {ctx,strokes,symbol}=nodeCanvas[id];const guide=guides[id]||guides.circle;ctx.clearRect(0,0,96,96);const owned=s.owned[id],active=nodeActive(id);
  if(!active){ctx.globalAlpha=.36;stroke(ctx,guide,'#84ae9a',8);ctx.globalAlpha=.7;ctx.setLineDash([2,5]);stroke(ctx,guide,'#578d79',1.5);ctx.setLineDash([]);ctx.globalAlpha=1}
  const drawn=owned?decodeStrokes(s.traces[id]):strokes;
@@ -2866,6 +2889,7 @@ $('endTurn').addEventListener('click',()=>{
  openShop(true);
 });
 $('nextTurn').addEventListener('click',()=>{
+ if(tracing)return;
  clearTimeout(advanceTimer);discardFinishedBalloonDraft();s.turn++;s.left=s.energy;s.shopBonusEarned=false;s.phase='draw';s.tool='pencil';
  if(s.practiceDraft)s.mode=s.practiceDraft.mode;else s.mode=selectedStudy();
  save();stats();requestAnimationFrame(()=>{resizePaper();if(!restorePracticeDraft())createPrompt();paintBalloons();ensureBalloonAnimation()});
@@ -2930,7 +2954,7 @@ function specialResetScene(){
  specialPaint();
 }
 function specialOpenWorkshop(kind){
- if(s.phase!=='draw'||!specialPlayable(kind))return;
+ if(s.phase!=='draw'||erasing||s.left<=0||!specialPlayable(kind))return;
  specialKind=kind;specialOpen=true;specialTool='ramp';
  if(balloonFrame)cancelAnimationFrame(balloonFrame);balloonFrame=0;lastBalloonTime=0;
  $('specialTitle').textContent=defs[kind].name;

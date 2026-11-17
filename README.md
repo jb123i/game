@@ -15,6 +15,7 @@ The Selected upgrade panel stays hidden until you hover, focus, or tap a skill-t
 - Grid Paper paints its graph immediately after purchase.
 - Every accuracy point pays $0.01 in line and circle studies.
 - Skill-tree Erase stays hidden until Pencil Eraser is purchased.
+- Each eraser pass uses one stroke on the drawing paper and in the skill tree.
 - With active Endurance, players may use multiple energy-consuming strokes on the same line or circle, and finish early to conserve energy. Partial shapes resume after reload.
 
 ## iPad mini 2 / iOS 12 offline play
