@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="ltd-build" content="2026-11-17.19">
+<meta name="ltd-build" content="2026-11-17.20">
 <meta name="theme-color" content="#f6f2e9">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -167,6 +167,32 @@
 .special-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:12px 0}
 #specialMessage{font-size:13px;font-weight:800;color:#28684e}
 @media(max-width:550px){.specialization-card .upgrade{width:74px;height:74px}.special-stage{padding:11px}.special-stage h2{font-size:21px}}
+.mirror-tools .pill + .pill{margin-left:5px}
+.mirror-settings{display:flex;flex:1 0 100%;align-items:center;flex-wrap:wrap;padding:7px 10px;background:#eef3eb;border-radius:9px;color:#35695b;font-size:12px;font-weight:700}
+.mirror-settings > *{margin:4px 10px 4px 0}
+.mirror-range{display:flex;align-items:center;flex-wrap:wrap;width:142px}
+.mirror-range label{flex:1}
+.mirror-range output{font-variant-numeric:tabular-nums}
+.mirror-range input{width:100%;margin:2px 0;accent-color:#327e70;touch-action:pan-x;cursor:pointer}
+.mirror-guide-choice{display:flex;align-items:center}
+.mirror-guide-choice input{margin:0 6px 0 0}
+.skill-tree.mirror-branch{height:624px;--node-size:88px}
+.branches .mirror-link{stroke:#a0b7ac}
+.branches .mirror-link.live{stroke:#568674}
+#openSymmetry{align-self:flex-start;margin-top:10px}
+.symmetry-stage{width:100%;max-width:850px;margin:0 auto}
+.symmetry-stage .panel-head{flex-wrap:wrap}
+.symmetry-body{padding:14px 18px}
+#symmetryCanvas{display:block;width:100%;height:auto;background:#fffdf7;border:1px solid #cad9cc;border-radius:12px;cursor:crosshair;touch-action:none;-webkit-user-select:none;user-select:none}
+.symmetry-actions{display:flex;align-items:center;flex-wrap:wrap;margin-top:10px}
+.symmetry-actions button{margin:0 8px 5px 0}
+.symmetry-feedback{font-size:13px;line-height:1.5;color:#35695b;margin:5px 0 0}
+.symmetry-feedback:empty{display:none}
+@media(max-width:780px){.skill-tree.mirror-branch{height:616px;--node-size:68px}}
+@media(max-width:555px){.skill-tree.mirror-branch{--node-size:calc(14vw - 11px)}}
+@media(max-width:490px){.skill-tree.mirror-branch{height:610px;--node-size:58px}.symmetry-body{padding:12px}}
+@media(max-width:400px){.skill-tree.mirror-branch .node-name{width:var(--node-size);white-space:normal;line-height:1.22}}
+@media(max-width:377px){.skill-tree.mirror-branch{--node-size:calc(18vw - 10px)}}
 </style>
 </head>
 <body>
@@ -181,7 +207,18 @@
   <button class="pill" id="mugAbove" type="button" aria-pressed="false">From above</button>
  </div>
  <button class="pill" id="mugFewerGuides" type="button" aria-pressed="false">Fewer guides</button>
-</div><div class="toolgroup"><span class="tiny-label">Paper</span><button class="pill hidden" id="gridSwitch" type="button" hidden aria-hidden="true">▦ Grid on</button><button class="pill hidden" id="guideSwitch" type="button" hidden aria-hidden="true">Freehand on</button><button class="pill hidden" id="pencilTool" type="button">Pencil</button><button class="pill hidden" id="eraserTool" type="button">Eraser</button><button class="pill hidden" id="showGuides" type="button" aria-pressed="false" title="Temporarily restore full guides for this exercise">Show guides</button><label class="eraser-size-control hidden" id="eraserSizeControl" for="eraserSize"><span>Eraser size</span><input id="eraserSize" type="range" min="8" max="64" step="2" value="30" aria-label="Eraser width"/><output id="eraserSizeValue" for="eraserSize">30 px</output></label></div></div>
+</div><div class="toolgroup"><span class="tiny-label">Paper</span><button class="pill hidden" id="gridSwitch" type="button" hidden aria-hidden="true">▦ Grid on</button><button class="pill hidden" id="guideSwitch" type="button" hidden aria-hidden="true">Freehand on</button><button class="pill hidden" id="pencilTool" type="button">Pencil</button><button class="pill hidden" id="eraserTool" type="button">Eraser</button><button class="pill hidden" id="showGuides" type="button" aria-pressed="false" title="Temporarily restore full guides for this exercise">Show guides</button><label class="eraser-size-control hidden" id="eraserSizeControl" for="eraserSize"><span>Eraser size</span><input id="eraserSize" type="range" min="8" max="64" step="2" value="30" aria-label="Eraser width"/><output id="eraserSizeValue" for="eraserSize">30 px</output></label></div>
+<div class="toolgroup mirror-tools hidden" id="mirrorTools" aria-label="Mirror Ink">
+ <button class="pill" id="mirrorToggle" type="button" aria-pressed="false">Mirror Mode</button>
+ <button class="pill" id="mirrorAdjust" type="button" aria-expanded="false" aria-controls="mirrorSettings">Adjust axis</button>
+</div>
+<div class="mirror-settings hidden" id="mirrorSettings" role="group" aria-label="Mirror axis">
+ <div class="mirror-range"><label for="mirrorPosition">Position</label><output id="mirrorPositionValue" for="mirrorPosition">0%</output><input id="mirrorPosition" type="range" min="-100" max="100" value="0"></div>
+ <div class="mirror-range"><label for="mirrorAngle">Angle</label><output id="mirrorAngleValue" for="mirrorAngle">0°</output><input id="mirrorAngle" type="range" min="-90" max="90" value="0"></div>
+ <label class="mirror-guide-choice"><input id="mirrorGuide" type="checkbox" checked> Show axis while drawing</label>
+ <button class="pill" id="mirrorResetAxis" type="button">Reset axis</button>
+</div>
+</div>
 <div class="paper-area" id="paperArea"><canvas id="gridLayer" aria-hidden="true"></canvas><canvas id="inkLayer" aria-hidden="true"></canvas><canvas id="balloonLayer" aria-hidden="true"></canvas><canvas id="drawingLayer" aria-label="Drawing canvas. Use a mouse, stylus or finger to draw."></canvas><canvas id="lensLayer" aria-hidden="true"></canvas><div id="earningPopup" class="earning-popup hidden" aria-hidden="true"></div></div>
 <div class="draw-foot"><small id="drawHint" class="hidden"></small><div class="draw-actions"><span class="score" id="score"></span><button class="pill hidden" id="openLiving" type="button">Living Ink ↗</button><button class="pill hidden" id="openPerspective" type="button">Perspective Lab ↗</button><button class="action end-turn" id="endTurn" type="button">Go to Shop →</button></div></div></section>
 <section class="panel special-stage hidden" id="specialStage">
@@ -196,6 +233,17 @@
 </div>
 <canvas id="specialCanvas" width="720" height="420" aria-label="Interactive drawing workshop"></canvas>
 <div class="special-foot"><span id="specialMessage" role="status"></span><div class="special-toolbar"><button id="specialReset" type="button">Reset scene</button><button id="specialAction" type="button" class="active">Release</button></div></div>
+</section>
+<section class="panel symmetry-stage hidden" id="symmetryStage" aria-labelledby="symmetryTitle">
+ <div class="panel-head">
+  <div><h2 class="panel-title" id="symmetryTitle" tabindex="-1">Symmetry Mastery</h2><p class="panel-sub">Draw both circles by hand. Match their size and position across the center line.</p></div>
+  <button class="pill" id="symmetryBack" type="button">Back to skill tree</button>
+ </div>
+ <div class="symmetry-body">
+  <canvas id="symmetryCanvas" width="640" height="352" aria-label="Practice canvas with two circles and a vertical mirror axis"></canvas>
+  <div class="symmetry-actions"><button class="action" id="checkSymmetry" type="button">Check symmetry</button><button class="pill" id="clearSymmetry" type="button">Clear</button></div>
+  <p class="symmetry-feedback" id="symmetryFeedback" role="status"></p>
+ </div>
 </section>
 <section class="panel hidden" id="shopStage"><div class="panel-head shop-head"><div><p class="eyebrow">Between turns</p><h2 class="panel-title">Skill tree</h2><p class="panel-sub">TRACE THE DOTTED LINES TO BUY UPGRADES</p></div></div>
 <div class="shop-tool-picker" aria-label="Skill tree tools"><button type="button" id="skillPencil" class="active" aria-pressed="true">✎ Trace</button><button type="button" id="skillEraser" class="hidden" aria-pressed="false" disabled aria-disabled="true" title="Buy Pencil Eraser to unlock">⌫ Erase</button></div>
@@ -228,6 +276,8 @@
 <line id="link-composer" x1="12" y1="43" x2="12" y2="63"/>
 <line id="link-composer-stamina" x1="12" y1="88" x2="12" y2="63"/>
 <line id="link-eraserSize" x1="70" y1="68" x2="88" y2="88"/>
+<path class="mirror-link" id="link-mirror-grid" d="M50 68 L50 101 L71 107"/>
+<path class="mirror-link" id="link-mirror-free" d="M90 66 L91 74 L76 82 L76 100 L71 107"/>
 </svg>
 <div class="upgrade off" data-id="root" style="left:50%;top:48%;" tabindex="0" aria-label="Endurance I, one dollar"><canvas width="192" height="192"></canvas><span class="node-symbol bolt-symbol" aria-hidden="true"><svg viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"><path d="M60 12 L29 48 L60 48 L36 84"/></svg></span><span class="node-price">$1.00</span><span class="node-name">Endurance I</span><span class="tip"><strong>Better Endurance</strong>Increase max strokes per turn from 1 to 2.<span class="tip-cost">$1.00 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="stamina" style="left:12%;top:88%;" tabindex="0" aria-label="Endurance II, two dollars"><canvas width="192" height="192"></canvas><span class="node-symbol bolt-symbol" aria-hidden="true"><svg viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="6" stroke-linejoin="round"><path d="M58 9 L27 52 L48 52 L38 87 L76 39 L53 39 Z"/></svg></span><span class="node-price">$2.00</span><span class="node-name">Endurance II</span><span class="tip"><strong>Endurance II</strong>Increase max strokes per turn from 2 to 3.<span class="tip-cost">$2.00 · Trace to buy</span></span></div>
@@ -252,6 +302,7 @@
 <div class="upgrade off" data-id="ovalGuides" style="left:69%;top:49%;" tabindex="0" aria-label="Oval Guides, five dollars"><canvas width="192" height="192"></canvas><span class="node-symbol">⬭</span><span class="node-price">$5.00</span><span class="node-name">Oval guides</span><span class="tip"><strong>Oval Guides</strong>Replace oval guide dots with a dashed oval outline.<span class="tip-cost">$5.00 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="eraser" style="left:70%;top:68%;" tabindex="0" aria-label="Pencil Eraser, one dollar twenty five"><canvas width="192" height="192"></canvas><span class="node-symbol eraser-symbol" aria-hidden="true"><svg viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><path d="M4 21 20 5q2-2 4 0l9 9q2 2 0 4L17 34H12L4 26q-2-2 0-5Z"/><path d="m13 12 15 15"/><path d="M12 34h19" stroke-width="1.5"/></svg></span><span class="node-price">$1.25</span><span class="node-name">Eraser</span><span class="tip"><strong>Pencil Eraser</strong>Erase pencil marks and magnification. Each eraser pass uses 1 stroke. Guides and grid remain.<span class="tip-cost">$1.25 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="eraserSize" style="left:88%;top:88%;" tabindex="0" aria-label="Adjustable Eraser Size, two dollars fifty"><canvas width="192" height="192"></canvas><span class="node-symbol" aria-hidden="true">◉</span><span class="node-price">$2.50</span><span class="node-name">Eraser size</span><span class="tip"><strong>Adjustable Eraser</strong>Adjust your eraser width from 8 to 64 pixels.<span class="tip-cost">$2.50 · Trace to buy</span></span></div>
+<div class="upgrade off" data-id="mirror" style="left:71%;top:111%;" tabindex="0" aria-label="Mirror Ink, seven dollars"><canvas width="192" height="192"></canvas><span class="node-price">$7.00</span><span class="node-name">Mirror Ink</span></div>
 </div>
 <section class="specialization-section hidden" id="specializationSection">
 <h3 id="specializationHeading">Sketchbook specializations</h3>
@@ -260,7 +311,7 @@
 <div class="specialization-card" id="livingCard"><div class="upgrade off" data-id="living" tabindex="0" aria-label="Living Ink, twelve dollars"><canvas width="192" height="192"></canvas><span class="node-symbol">◉</span><span class="node-price">$12.00</span><span class="node-name">Living Ink</span></div><div class="special-brief">Physical drawings</div></div>
 <div class="specialization-card" id="perspectiveCard"><div class="upgrade off" data-id="perspective" tabindex="0" aria-label="Perspective Lab, twelve dollars"><canvas width="192" height="192"></canvas><span class="node-symbol">⬡</span><span class="node-price">$12.00</span><span class="node-name">Perspective Lab</span></div><div class="special-brief">Three-dimensional spaces</div></div>
 </div></section></div>
-<aside class="inspect hidden" id="inspect" aria-live="polite"><div class="inspect-top"><span class="mini">Selected upgrade</span><button type="button" id="closeInspect" class="inspect-close" aria-label="Close upgrade details">×</button></div><h3 id="inspectTitle">Endurance I</h3><p id="inspectDesc">Increase max strokes per turn from 1 to 2.</p><div class="inspect-price" id="inspectPrice">$1.00</div><div class="inspect-hint" id="inspectHint">Trace at least 80% of the faint shape, using multiple strokes if needed.</div><button class="clear-trace hidden" id="clearTrace" type="button">Clear unfinished trace</button></aside></div>
+<aside class="inspect hidden" id="inspect" aria-live="polite"><div class="inspect-top"><span class="mini">Selected upgrade</span><button type="button" id="closeInspect" class="inspect-close" aria-label="Close upgrade details">×</button></div><h3 id="inspectTitle">Endurance I</h3><p id="inspectDesc">Increase max strokes per turn from 1 to 2.</p><div class="inspect-price" id="inspectPrice">$1.00</div><div class="inspect-hint" id="inspectHint">Trace at least 80% of the faint shape, using multiple strokes if needed.</div><button class="pill hidden" id="openSymmetry" type="button">Try symmetry challenge</button><button class="clear-trace hidden" id="clearTrace" type="button">Clear unfinished trace</button></aside></div>
 <div class="shop-feedback" id="shopFeedback" aria-live="polite"></div>
 <div class="shop-bottom"><span class="receipt" id="receipt">Turn 1 complete.</span><button class="action" id="nextTurn" type="button">Begin turn 2 →</button></div></section>
 <button class="textbtn reset" id="reset" type="button">Reset all progress</button>
@@ -292,7 +343,7 @@
  var active=null,lastTouch=0,mouseDown=false;
  function eligible(canvas){
   return canvas&&canvas.tagName==='CANVAS'&&
-   (canvas.id==='drawingLayer'||(canvas.closest&&canvas.closest('.upgrade')));
+   (canvas.id==='drawingLayer'||canvas.id==='symmetryCanvas'||(canvas.closest&&canvas.closest('.upgrade')));
  }
  function emit(canvas,type,sample,pointerId,pointerType,buttons,original){
   if(!canvas)return;
@@ -389,6 +440,7 @@ const defs={
  selector:{name:'Study Selector',price:125,desc:'Switch between unlocked drawing studies.',cost:'$1.25'},
  free:{name:'Freehand Lines',price:150,desc:'Draw lines without A/B endpoints. In Shape Composer, the angle and length of a connected line determine the object.',cost:'$1.50'},
  grid:{name:'Grid Paper',price:100,desc:'Add a grid to your drawing paper.',cost:'$1.00'},
+ mirror:{name:'Mirror Ink',price:700,desc:'Mirror your pencil strokes across an adjustable axis to create symmetrical drawings.',cost:'$7.00'},
  eraser:{name:'Pencil Eraser',price:125,desc:'Erase pencil marks and magnification. Each eraser pass uses 1 stroke. Guides and grid remain.',cost:'$1.25'},
  eraserSize:{name:'Adjustable Eraser',price:250,desc:'Adjust your eraser width from 8 to 64 pixels.',cost:'$2.50'},
  composer:{name:'Shape Composer',price:300,desc:'Draw a magnifying glass, signpost or kite using two-part compositions. Each drawing requires at least 2 strokes.',cost:'$3.00'},
@@ -397,7 +449,7 @@ const defs={
  living:{name:'Living Ink',price:1200,desc:'Unlock physics challenges that reward you with money.',cost:'$12.00'},
  perspective:{name:'Perspective Lab',price:1200,desc:'Unlock perspective drawing challenges that reward you with money.',cost:'$12.00'}
 };
-const blank=()=>({cash:0,turn:1,energy:1,left:1,sharedEnergyV1:true,shopRootMigrationV1:true,shopBonusEarned:false,legacyEnduranceShapes:{root:false,stamina:false},strokes:0,practiceDraft:null,phase:'draw',last:0,lastPay:0,lastKind:'line',owned:{root:false,stamina:false,staminaIII:false,secondWind:false,strokeExchange:false,circle:false,curve:false,guideFade:false,oval:false,cylinder:false,object:false,sphere:false,balloon:false,free:false,grid:false,eraser:false,eraserSize:false,dashedCircle:false,ovalGuides:false,square:false,triangle:false,composer:false,selector:false,living:false,perspective:false},specialTrials:[],specialChoice:null,specialChapter:1,specialWins:{living:0,perspective:0},legacySquare:false,legacyComposer:false,legacyBalloon:false,legacyCurvePath:false,curveGateV1:true,composeBase:'circle',composeLine:'diagonal',mugView:'front',mugFewerGuides:false,mugResult:null,disabled:{},traces:{},pendingTraces:{},paperMarks:[],magnifiers:[],balloons:[],balloonSerial:0,guideMastery:{},legacyAspect:null,eraserSize:30,gridOn:true,freeOn:false,mode:'line',studyPreference:null,tool:'pencil'});
+const blank=()=>({cash:0,turn:1,energy:1,left:1,sharedEnergyV1:true,shopRootMigrationV1:true,shopBonusEarned:false,legacyEnduranceShapes:{root:false,stamina:false},strokes:0,practiceDraft:null,phase:'draw',last:0,lastPay:0,lastKind:'line',owned:{root:false,stamina:false,staminaIII:false,secondWind:false,strokeExchange:false,circle:false,curve:false,guideFade:false,oval:false,cylinder:false,object:false,sphere:false,balloon:false,free:false,grid:false,mirror:false,eraser:false,eraserSize:false,dashedCircle:false,ovalGuides:false,square:false,triangle:false,composer:false,selector:false,living:false,perspective:false},specialTrials:[],specialChoice:null,specialChapter:1,specialWins:{living:0,perspective:0},legacySquare:false,legacyComposer:false,legacyBalloon:false,legacyCurvePath:false,curveGateV1:true,composeBase:'circle',composeLine:'diagonal',mugView:'front',mugFewerGuides:false,mugResult:null,symmetryMastered:false,mirror:{enabled:false,position:0,angle:0,showAxis:true},disabled:{},traces:{},pendingTraces:{},paperMarks:[],magnifiers:[],balloons:[],balloonSerial:0,guideMastery:{},legacyAspect:null,eraserSize:30,gridOn:true,freeOn:false,mode:'line',studyPreference:null,tool:'pencil'});
 let s=blank();
 try{const q=JSON.parse(localStorage.getItem(key)||'null');if(q&&Number.isFinite(q.cash)&&q.owned&&['draw','shop'].includes(q.phase)){
  s={...blank(),...q,owned:{...blank().owned,...q.owned},disabled:q.disabled&&typeof q.disabled==='object'?q.disabled:{},traces:q.traces&&typeof q.traces==='object'?q.traces:{},pendingTraces:q.pendingTraces&&typeof q.pendingTraces==='object'?q.pendingTraces:{},paperMarks:Array.isArray(q.paperMarks)?q.paperMarks:[],magnifiers:Array.isArray(q.magnifiers)?q.magnifiers:[],balloons:Array.isArray(q.balloons)?q.balloons.slice(0,36):[],guideMastery:q.guideMastery&&typeof q.guideMastery==='object'&&!Array.isArray(q.guideMastery)?q.guideMastery:{},practiceDraft:q.practiceDraft&&typeof q.practiceDraft==='object'?q.practiceDraft:null,
@@ -437,6 +489,14 @@ try{const q=JSON.parse(localStorage.getItem(key)||'null');if(q&&Number.isFinite(
  if(q.curveGateV1!==true){s.legacyCurvePath=!!(q.owned.balloon||q.owned.composer);s.curveGateV1=true}
  s.mugView=q.mugView==='above'?'above':'front';
  s.mugFewerGuides=q.mugFewerGuides===true;
+ s.symmetryMastered=q.symmetryMastered===true;
+ const mirror=q.mirror||{};
+ s.mirror={
+  enabled:mirror.enabled===true,
+  position:Number.isFinite(mirror.position)?Math.max(-100,Math.min(100,mirror.position)):0,
+  angle:Number.isFinite(mirror.angle)?Math.max(-90,Math.min(90,mirror.angle)):0,
+  showAxis:mirror.showAxis!==false
+ };
  const mugResult=q.mugResult;
  if(!mugResult||!['front','above'].includes(mugResult.view)||!Array.isArray(mugResult.scores)||
     mugResult.scores.length!==3||!mugResult.scores.every(score=>Number.isFinite(score)&&score>=0&&score<=100))s.mugResult=null;
@@ -464,6 +524,8 @@ const spherePlayable=()=>upgradeActive('sphere')&&cylinderPlayable()&&enduranceT
 const balloonPlayable=()=>upgradeActive('balloon')&&circlePlayable()&&upgradeActive('root')&&(s.legacyCurvePath||curvePlayable());
 const composerPlayable=()=>upgradeActive('composer')&&circlePlayable()&&(s.legacyBalloon||balloonPlayable())&&(s.legacyComposer?(s.owned.stamina?upgradeActive('stamina'):upgradeActive('root')):upgradeActive('stamina'));
 const isCompositionMode=(mode=s.mode)=>mode==='balloon'||mode==='compose'||mode==='cylinder'||mode==='mug'||mode==='sphere';
+const mirrorPlayable=()=>upgradeActive('mirror')&&upgradeActive('free')&&upgradeActive('grid');
+const mirrorModeOn=()=>mirrorPlayable()&&s.mirror.enabled;
 const isSpecialBranch=id=>id==='living'||id==='perspective';
 const specialPlayable=id=>upgradeActive(id)&&composerPlayable();
 function specialEligibility(id){
@@ -477,14 +539,19 @@ function recordSpecialTrial(kind,score){
  if(!s.owned.composer||score<80||s.specialTrials.indexOf(kind)>=0)return;
  if(['line','triangle','square','circle','curve','oval','balloon','composition','cylinder','mug','sphere'].indexOf(kind)>=0)s.specialTrials.push(kind);
 }
-const nodeActive=id=>isSpecialBranch(id)?specialPlayable(id):id==='staminaIII'?enduranceThreePlayable():id==='composer'?composerPlayable():id==='balloon'?balloonPlayable():id==='triangle'?trianglePlayable():id==='square'?squarePlayable():id==='circle'?circlePlayable():id==='curve'?curvePlayable():id==='guideFade'?adaptiveGuidesPlayable():id==='oval'?ovalPlayable():id==='cylinder'?cylinderPlayable():id==='object'?objectPlayable():id==='sphere'?spherePlayable():upgradeActive(id);
+const nodeActive=id=>isSpecialBranch(id)?specialPlayable(id):id==='staminaIII'?enduranceThreePlayable():id==='composer'?composerPlayable():id==='balloon'?balloonPlayable():id==='triangle'?trianglePlayable():id==='square'?squarePlayable():id==='circle'?circlePlayable():id==='curve'?curvePlayable():id==='guideFade'?adaptiveGuidesPlayable():id==='oval'?ovalPlayable():id==='cylinder'?cylinderPlayable():id==='object'?objectPlayable():id==='sphere'?spherePlayable():id==='mirror'?mirrorPlayable():upgradeActive(id);
 // Without Study Selector, automatically practice the newest available shape.
 // The newest shape does not permanently replace earlier exercises: purchasing
 // Study Selector lets players deliberately return to any unlocked study.
 const availableStudy=mode=>mode==='line'||mode==='triangle'&&trianglePlayable()||mode==='square'&&squarePlayable()||mode==='circle'&&circlePlayable()||mode==='curve'&&curvePlayable()||mode==='oval'&&ovalPlayable()||mode==='cylinder'&&cylinderPlayable()||mode==='mug'&&objectPlayable()||mode==='sphere'&&spherePlayable()||mode==='balloon'&&balloonPlayable()||mode==='compose'&&composerPlayable();
 const automaticStudy=()=>spherePlayable()&&s.left>=4?'sphere':objectPlayable()&&s.left>=3?'mug':cylinderPlayable()&&s.left>=2?'cylinder':composerPlayable()&&s.left>=2?'compose':balloonPlayable()&&s.left>=2?'balloon':ovalPlayable()?'oval':curvePlayable()?'curve':circlePlayable()?'circle':squarePlayable()?'square':trianglePlayable()?'triangle':'line';
 const requiredStudyStrokes=mode=>mode==='sphere'?4:mode==='mug'?3:isCompositionMode(mode)?2:1;
-const selectedStudy=()=>upgradeActive('selector')&&availableStudy(s.studyPreference)&&s.left>=requiredStudyStrokes(s.studyPreference)?s.studyPreference:automaticStudy();
+function selectedStudy(){
+ const usePreference=upgradeActive('selector')&&availableStudy(s.studyPreference)&&s.left>=requiredStudyStrokes(s.studyPreference);
+ const study=usePreference?s.studyPreference:automaticStudy();
+ if(mirrorModeOn()&&(!usePreference||isCompositionMode(study)))return 'line';
+ return study;
+}
 const eraserWidth=()=>upgradeActive('eraserSize')?s.eraserSize:30;
 
 /* Adaptive Guides retains the last five graded attempts PER drawing stage.
@@ -557,6 +624,25 @@ const lineDistance=(p,a,b)=>{const dx=b.x-a.x,dy=b.y-a.y,k=dx*dx+dy*dy,t=clamp(k
 const polyDist=(p,poly)=>{let d=1e6;for(let i=1;i<poly.length;i++)d=Math.min(d,lineDistance(p,poly[i-1],poly[i]));return d};
 const pathLength=pts=>{let d=0;for(let i=1;i<pts.length;i++)d+=distance(pts[i-1],pts[i]);return d};
 function stroke(ctx,pts,color,width){if(pts.length<2)return;ctx.beginPath();ctx.moveTo(pts[0].x,pts[0].y);for(let i=1;i<pts.length;i++)ctx.lineTo(pts[i].x,pts[i].y);ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle=color;ctx.lineWidth=width;ctx.stroke()}
+function mirrorAxis(width,height,{angle,position}){
+ const radians=angle*Math.PI/180,normalX=Math.cos(radians),normalY=Math.sin(radians);
+ // Keep the axis inside the paper at every angle. Position is a percentage
+ // of the available travel measured perpendicular to the line.
+ const extent=(Math.abs(normalX)*width+Math.abs(normalY)*height)/2;
+ const offset=position/100*Math.max(0,extent-12);
+ return {x:width/2+normalX*offset,y:height/2+normalY*offset,normalX,normalY};
+}
+function reflectPoint(point,axis){
+ const distanceToAxis=(point.x-axis.x)*axis.normalX+(point.y-axis.y)*axis.normalY;
+ return {x:point.x-2*distanceToAxis*axis.normalX,y:point.y-2*distanceToAxis*axis.normalY};
+}
+function paintAxis(ctx,axis,width,height){
+ const span=Math.hypot(width,height);
+ const dx=-span*axis.normalY,dy=span*axis.normalX;
+ ctx.save();ctx.setLineDash([6,6]);
+ stroke(ctx,[{x:axis.x-dx,y:axis.y-dy},{x:axis.x+dx,y:axis.y+dy}],'#648f81',1.5);
+ ctx.restore();
+}
 function pointer(e,canvas){const r=canvas.getBoundingClientRect();return{x:(e.clientX-r.left)*canvas.width/r.width,y:(e.clientY-r.top)*canvas.height/r.height}}
 // Touch coordinates are anchored to physical screen space for the whole stroke.
 // iOS browser chrome/scroll/viewport shifts can jump clientY without finger movement.
@@ -586,10 +672,11 @@ function refreshFirstUpgradeReady(){
  const first=$('skillTree') && $('skillTree').querySelector('.upgrade[data-id="root"]');
  if(first)first.classList.toggle('first-ready',s.phase==='shop'&&!s.owned.root&&s.cash>=defs.root.price&&s.left>=1);
 }
-let specialOpen=false;
+let specialOpen=false,symmetryOpen=false,mirrorAxisOpen=false;
 function stats(){
  $('wallet').textContent=cash(s.cash);refreshWalletWarning();refreshFirstUpgradeReady();$('turn').textContent=s.turn;$('energy').textContent=s.left+' / '+(s.energy+(s.phase==='shop'&&s.shopBonusEarned&&upgradeActive('secondWind')?1:0));$('strokes').textContent=s.strokes;
- $('playStage').classList.toggle('hidden',s.phase!=='draw'||specialOpen);$('specialStage').classList.toggle('hidden',!specialOpen);$('shopStage').classList.toggle('hidden',s.phase!=='shop');$('endTurn').disabled=s.phase!=='draw'||drawing||erasing;
+ $('playStage').classList.toggle('hidden',s.phase!=='draw'||specialOpen);$('specialStage').classList.toggle('hidden',!specialOpen);$('shopStage').classList.toggle('hidden',s.phase!=='shop'||symmetryOpen);$('symmetryStage').classList.toggle('hidden',!symmetryOpen);$('endTurn').disabled=s.phase!=='draw'||drawing||erasing;
+ refreshMirrorControls();
  $('modeTools').classList.toggle('hidden',!upgradeActive('selector')||!squarePlayable());$('circleMode').classList.toggle('hidden',!circlePlayable());$('curveMode').classList.toggle('hidden',!curvePlayable());$('ovalMode').classList.toggle('hidden',!ovalPlayable());$('cylinderMode').classList.toggle('hidden',!cylinderPlayable());$('sphereMode').classList.toggle('hidden',!spherePlayable());$('triangleMode').classList.toggle('hidden',!trianglePlayable());$('squareMode').classList.toggle('hidden',!squarePlayable());$('balloonMode').classList.toggle('hidden',!balloonPlayable()||composerPlayable());$('composeMode').classList.toggle('hidden',!composerPlayable());$('composerOptions').classList.toggle('hidden',s.mode!=='compose'||!composerPlayable());$('composeBalloon').classList.toggle('hidden',!balloonPlayable());$('gridSwitch').classList.add('hidden');$('guideSwitch').classList.add('hidden');$('pencilTool').classList.toggle('hidden',!upgradeActive('eraser'));$('eraserTool').classList.toggle('hidden',!upgradeActive('eraser'));$('eraserSizeControl').classList.toggle('hidden',!upgradeActive('eraser')||!upgradeActive('eraserSize'));$('eraserSize').value=s.eraserSize;$('eraserSizeValue').textContent=s.eraserSize+' px';
  $('lineMode').classList.toggle('active',s.mode==='line');$('triangleMode').classList.toggle('active',s.mode==='triangle');$('circleMode').classList.toggle('active',s.mode==='circle');$('curveMode').classList.toggle('active',s.mode==='curve');$('ovalMode').classList.toggle('active',s.mode==='oval');$('cylinderMode').classList.toggle('active',s.mode==='cylinder');$('sphereMode').classList.toggle('active',s.mode==='sphere');$('squareMode').classList.toggle('active',s.mode==='square');$('balloonMode').classList.toggle('active',s.mode==='balloon');$('composeMode').classList.toggle('active',s.mode==='compose');for(const [id,active] of [['composeMagnifier',s.composeBase==='circle'],['composeSignpost',s.composeBase==='square'&&s.composeLine==='down'],['composeKite',s.composeBase==='square'&&s.composeLine!=='down'],['composeBalloon',s.composeBase==='balloon'&&balloonPlayable()]]){$(id).classList.toggle('active',active);$(id).disabled=composeStage>0||practiceStrokes.length>0||drawing||locked;}$('gridSwitch').textContent=s.gridOn?'▦ Grid on':'▦ Grid off';$('gridSwitch').classList.toggle('active',s.gridOn);$('guideSwitch').textContent=s.freeOn?'Freehand on':'Guided on';$('guideSwitch').classList.toggle('active',s.freeOn);$('pencilTool').classList.toggle('active',s.tool==='pencil');$('eraserTool').classList.toggle('active',s.tool==='eraser');
  const circle=s.mode==='circle',curve=s.mode==='curve',oval=s.mode==='oval',cylinder=s.mode==='cylinder',mug=s.mode==='mug',sphere=s.mode==='sphere',square=s.mode==='square',triangle=s.mode==='triangle',compose=isCompositionMode(),squareComposition=compose&&['signpost','kite'].includes(composeTemplate);
@@ -649,6 +736,14 @@ window.addEventListener('touchmove',e=>{if(activePointer!==null&&e.cancelable)e.
 
 let composeStage=0,composeScores=[],composeTemplate='balloon',composeAutoLine=false,composeFirstBounds=null,composeLensShape=null,composeBalloonOutline=null,composeBalloonId=null;
 let W=0,H=0,A=null,B=null,O=null,strokePts=[],practiceStrokes=[],drawing=false,eraserPts=[],erasing=false,locked=false,advanceTimer=null,activePointer=null,strokeAnchor=null,pendingResize=false,paintFrame=0,feedbackReveal=false;
+let strokeMirror=null,reflectedPts=[];
+function addPencilPoint(point){
+ strokePts.push(point);
+ if(strokeMirror)reflectedPts.push(reflectPoint(point,strokeMirror));
+}
+function clearPencilStroke(){
+ strokePts=[];reflectedPts=[];strokeMirror=null;
+}
 let lastSquareAngle=null;
 // A square has 90-degree rotational symmetry. Vary its orientation across the
 // full range of distinct angles; avoid two consecutive nearly identical ones.
@@ -726,7 +821,7 @@ function restorePracticeDraft(){
    composeBalloonId=d.composeBalloonId||null;
   practiceStrokes=d.strokes.map(pts=>pts.map(pointFromIso)).filter(pts=>pts.length>=2);
   if(!practiceStrokes.length&&!(isCompositionMode(d.mode)&&composeStage>0))return false;
-  drawing=false;locked=false;strokePts=[];
+  drawing=false;locked=false;clearPencilStroke();
   stats();paintPaper();
   const objectName=composeTemplate==='sphere'?'sphere':composeTemplate==='cylinder'?'cylinder':composeTemplate==='balloon'?'balloon':composeTemplate==='signpost'?'signpost':composeTemplate==='kite'?'kite':'magnifying glass';
   $('score').textContent=s.mode==='mug'
@@ -765,7 +860,7 @@ function createPrompt(){
  s.mode=selectedStudy();
  composeAutoLine=s.mode==='compose'&&s.freeOn;
  showFullGuides=false;
- strokePts=[];practiceStrokes=[];s.practiceDraft=null;drawing=false;locked=false;feedbackReveal=false;composeStage=0;composeScores=[];composeFirstBounds=null;composeLensShape=null;composeBalloonOutline=null;composeBalloonId=null;
+ clearPencilStroke();practiceStrokes=[];s.practiceDraft=null;drawing=false;locked=false;feedbackReveal=false;composeStage=0;composeScores=[];composeFirstBounds=null;composeLensShape=null;composeBalloonOutline=null;composeBalloonId=null;
  A=null;B=null;O=null;
  if(s.mode==='sphere'){
   composeTemplate='sphere';
@@ -1187,7 +1282,13 @@ function paintPaper(reveal=feedbackReveal){dc.clearRect(0,0,W,H);
  else if((s.mode==='square'||isCompositionMode()&&composeStage===0&&['signpost','kite'].includes(composeTemplate))&&O)paintPolygonGuide(squareCorners(),reveal);
  else if((s.mode==='circle'||isCompositionMode()&&composeStage===0)&&O){if(upgradeActive('dashedCircle')){dc.beginPath();dc.arc(O.x,O.y,O.r,0,Math.PI*2);dc.strokeStyle='#82aa9b99';dc.lineWidth=2;dc.setLineDash([5,7]);dc.stroke();dc.setLineDash([])}else{circleDot(O.x,O.y,true);for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]])circleDot(O.x+dx*O.r,O.y+dy*O.r)}if(reveal){dc.beginPath();dc.arc(O.x,O.y,O.r,0,Math.PI*2);dc.strokeStyle='#73a891';dc.lineWidth=1.2;dc.stroke()}}
  else if(A&&B&&!(s.mode==='compose'&&composeAutoLine&&composeStage===1)){if(reveal){dc.save();dc.beginPath();dc.moveTo(A.x,A.y);dc.lineTo(B.x,B.y);dc.strokeStyle='#51a888';dc.lineWidth=2.4;dc.setLineDash([7,5]);dc.shadowColor='rgba(69,153,118,.35)';dc.shadowBlur=3;dc.stroke();dc.restore()}dot(A,'A','#468d7c');dot(B,'B','#d9835e')}
- dc.restore();stroke(dc,strokePts,'#243941',3.2);paintLens()}
+ dc.restore();
+ if(s.phase==='draw'&&mirrorPlayable()&&(mirrorAxisOpen||mirrorModeOn()&&s.mirror.showAxis&&!isCompositionMode()))
+  paintAxis(dc,strokeMirror||mirrorAxis(W,H,s.mirror),W,H);
+ stroke(dc,strokePts,'#243941',3.2);
+ stroke(dc,reflectedPts,'#243941',3.2);
+ paintLens();
+}
 // Keep ink in height-relative, centered coordinates. That preserves circles and
 // eraser paths even if a desktop layout change dramatically widens the paper.
 const legacyPaperAspect=()=>{
@@ -1195,7 +1296,20 @@ const legacyPaperAspect=()=>{
  if(vw<=490)return Math.max(1,vw-26)/Math.max(280,Math.min(390,vh*.52));
  return Math.max(1,Math.min(982,vw-(vw<=780?26:50)))/440;
 };
-const normalizeMark=pts=>pts.map(p=>[Math.round(((p.x-W/2)/Math.max(1,H))*10000)/10000,Math.round(clamp(p.y/Math.max(1,H))*10000)/10000]);
+function normalizeMark(points,clipY=true){
+ return points.map(point=>{
+  const [x,y]=pointToIso(point);
+  return [Math.round(x*10000)/10000,Math.round((clipY?clamp(y):y)*10000)/10000];
+ });
+}
+function storePencilMarks(points,balloonId){
+ const mark={kind:'ink',space:'iso',points:normalizeMark(points)};
+ if(balloonId)mark.balloonId=balloonId;
+ s.paperMarks.push(mark);
+ // The reflected copy is paper ink only. Preserve off-paper points so replay
+ // clips the path naturally instead of flattening it along an edge.
+ if(reflectedPts.length)s.paperMarks.push({kind:'ink',space:'iso',points:normalizeMark(reflectedPts,false)});
+}
 function applyMark(mark){if(!mark||!Array.isArray(mark.points)||mark.points.length===0)return;
  const aspect=Number(s.legacyAspect)>0?s.legacyAspect:legacyPaperAspect();const points=mark.points.filter(p=>Array.isArray(p)&&Number.isFinite(p[0])&&Number.isFinite(p[1])).map(p=>({x:mark.space==='iso'?W/2+p[0]*H:W/2+(p[0]-.5)*aspect*H,y:p[1]*H}));if(!points.length)return;
  const erase=mark.kind==='erase',diameter=erase?Math.min(64,Math.max(8,Number(mark.size)||30)):3.2;ic.save();ic.globalCompositeOperation=erase?'destination-out':'source-over';
@@ -2544,14 +2658,12 @@ function finishCompositionPart(){
 function finishPractice(){
  if(!drawing)return;
  drawing=false;$('endTurn').disabled=false;
- if(strokePts.length<2||pathLength(strokePts)<7){strokePts=[];paintPaper();return}
+ if(strokePts.length<2||pathLength(strokePts)<7){clearPencilStroke();paintPaper();return}
  const pts=strokePts.map(p=>({...p}));
  practiceStrokes.push(pts);
- // Keep each segment separate: pen lifts never create artificial connections.
- const mark={kind:'ink',space:'iso',points:normalizeMark(pts)};
- if(isCompositionMode()&&composeBalloonId&&(composeTemplate==='balloon'||composeAutoLine))mark.balloonId=composeBalloonId;
- s.paperMarks.push(mark);
- s.strokes++;spendStroke();strokePts=[];
+ const balloonId=isCompositionMode()&&(composeTemplate==='balloon'||composeAutoLine)?composeBalloonId:null;
+ storePencilMarks(pts,balloonId);
+ s.strokes++;spendStroke();clearPencilStroke();
  paintInk();paintPaper();
  const complete=componentLooksComplete();
  if(isCompositionMode()){
@@ -2571,15 +2683,25 @@ function finishPractice(){
   $('score').textContent='Continue '+(s.mode==='circle'?'the circle':s.mode==='square'?'the square':s.mode==='triangle'?'the triangle':s.mode==='curve'?'the curve':s.mode==='oval'?'the oval':'the line')+' · '+s.left+' stroke'+(s.left===1?'':'s')+' left';
  }
 }
-draw.addEventListener('pointerdown',e=>{if(s.phase!=='draw'||s.left<=0||drawing||erasing||(locked&&s.tool!=='eraser')||(!e.isPrimary&&e.pointerType==='touch'))return;if(s.tool==='eraser'){e.preventDefault();eraserBegin(e);return}const p=pointer(e,draw);
- if((s.mode==='line'&&!s.freeOn||s.mode==='curve')&&!practiceStrokes.length&&distance(p,A)>31){$('score').textContent='Start near point A';return}e.preventDefault();drawing=true;$('endTurn').disabled=true;activePointer=e.pointerId;strokePts=[p];startStablePointer(e,p);if(draw.setPointerCapture)draw.setPointerCapture(e.pointerId);paintPaper()});
+draw.addEventListener('pointerdown',e=>{
+ if(s.phase!=='draw'||specialOpen||s.left<=0||drawing||erasing||(locked&&s.tool!=='eraser')||(!e.isPrimary&&e.pointerType==='touch'))return;
+ if(s.tool==='eraser'){e.preventDefault();eraserBegin(e);return}
+ const p=pointer(e,draw);
+ if((s.mode==='line'&&!s.freeOn||s.mode==='curve')&&!practiceStrokes.length&&distance(p,A)>31){$('score').textContent='Start near point A';return}
+ e.preventDefault();drawing=true;$('endTurn').disabled=true;activePointer=e.pointerId;
+ clearPencilStroke();
+ if(mirrorModeOn()&&!isCompositionMode())strokeMirror=mirrorAxis(W,H,s.mirror);
+ addPencilPoint(p);
+ startStablePointer(e,p);if(draw.setPointerCapture)draw.setPointerCapture(e.pointerId);paintPaper();
+});
 draw.addEventListener('pointermove',e=>{
  if(activePointer!==e.pointerId||(!drawing&&!erasing))return;
  e.preventDefault();
  const pts=drawing?strokePts:eraserPts,previousLength=pts.length;
  for(const sample of stableSamples(e)){
   const p=stablePointer(sample);
-  if(p&&distance(p,pts[pts.length-1])>.65)pts.push(p);
+  if(!p||distance(p,pts[pts.length-1])<=.65)continue;
+  if(drawing)addPencilPoint(p);else eraserPts.push(p);
  }
  if(pts.length===previousLength)return;
  if(drawing)requestPaperPaint();
@@ -2589,9 +2711,15 @@ draw.addEventListener('pointermove',e=>{
  }
 });
 function preserveInterruptedStroke(){
- if(drawing&&strokePts.length>1&&pathLength(strokePts)>3)s.paperMarks.push({kind:'ink',space:'iso',points:normalizeMark(strokePts)});
+ if(drawing&&strokePts.length>1&&pathLength(strokePts)>3){
+  storePencilMarks(strokePts);
+  if(strokeMirror){
+   s.strokes++;spendStroke();
+   if(s.left<=0)scheduleStudyAdvance();
+  }
+ }
  if(erasing)commitEraserStroke();
- drawing=false;erasing=false;strokePts=[];eraserPts=[];activePointer=null;strokeAnchor=null;
+ drawing=false;erasing=false;clearPencilStroke();eraserPts=[];activePointer=null;strokeAnchor=null;
  save();paintInk();paintPaper();stats();if(pendingResize)resizePaper();
 }
 draw.addEventListener('pointerup',e=>{
@@ -2600,7 +2728,7 @@ draw.addEventListener('pointerup',e=>{
  const p=stablePointer(e);
  activePointer=null;strokeAnchor=null;
  if(drawing){
-  if(p)strokePts.push(p);
+  if(p)addPencilPoint(p);
   finishPractice();
  }else if(erasing){
   if(p){
@@ -2613,12 +2741,14 @@ draw.addEventListener('pointerup',e=>{
  }
  if(pendingResize)resizePaper();
 });
-draw.addEventListener('pointercancel',e=>{
+function interruptPaperStroke(e){
  if(activePointer!==e.pointerId)return;
  const interruptedDrawing=drawing;
  preserveInterruptedStroke();
  if(interruptedDrawing)$('score').textContent='Stroke interrupted · Partial drawing saved';
-});
+}
+draw.addEventListener('pointercancel',interruptPaperStroke);
+draw.addEventListener('lostpointercapture',interruptPaperStroke);
 window.addEventListener('pagehide',()=>{if(drawing||erasing)preserveInterruptedStroke()});
 function changeMode(mode){
  if(!upgradeActive('selector')||s.phase!=='draw'||locked||drawing||erasing)return;
@@ -2633,6 +2763,7 @@ function changeMode(mode){
   return;
  }
  if(!availableStudy(mode))return;
+ if(isCompositionMode(mode)){s.mirror.enabled=false;mirrorAxisOpen=false}
  s.studyPreference=mode;s.mode=mode;s.tool='pencil';save();stats();createPrompt();
 }
 $('lineMode').addEventListener('click',()=>changeMode('line'));
@@ -2660,6 +2791,73 @@ for(const [button,base,line] of [['composeMagnifier','circle','diagonal'],['comp
 $('pencilTool').addEventListener('click',()=>{s.tool='pencil';save();stats()});
 $('eraserTool').addEventListener('click',()=>{if(practiceStrokes.length||isCompositionMode()&&composeStage>0){$('score').textContent='Finish the current shape before erasing';return}s.tool='eraser';save();stats()});
 $('eraserSize').addEventListener('input',e=>{if(!upgradeActive('eraserSize'))return;s.eraserSize=Math.round(Math.min(64,Math.max(8,Number(e.target.value)||30))/2)*2;$('eraserSizeValue').textContent=s.eraserSize+' px';save()});
+
+function refreshMirrorControls(){
+ const available=s.phase==='draw'&&!specialOpen&&mirrorPlayable();
+ const enabled=available&&s.mirror.enabled&&!isCompositionMode();
+ const configuring=available&&mirrorAxisOpen;
+ $('mirrorTools').classList.toggle('hidden',!available);
+ $('mirrorSettings').classList.toggle('hidden',!configuring);
+ $('mirrorToggle').classList.toggle('active',enabled);
+ $('mirrorToggle').setAttribute('aria-pressed',String(enabled));
+ $('mirrorAdjust').classList.toggle('active',configuring);
+ $('mirrorAdjust').setAttribute('aria-expanded',String(configuring));
+ $('mirrorPosition').value=s.mirror.position;
+ $('mirrorAngle').value=s.mirror.angle;
+ $('mirrorPositionValue').textContent=s.mirror.position+'%';
+ $('mirrorAngleValue').textContent=s.mirror.angle+'°';
+ $('mirrorGuide').checked=s.mirror.showAxis;
+}
+function canAdjustMirror(){
+ return mirrorPlayable()&&s.phase==='draw'&&!specialOpen&&!drawing&&!erasing;
+}
+$('mirrorToggle').addEventListener('click',()=>{
+ if(!canAdjustMirror())return;
+ const enabled=!s.mirror.enabled||isCompositionMode();
+ if(enabled&&isCompositionMode()&&(composeStage>0||practiceStrokes.length||locked)){
+  $('score').textContent='Finish this study before turning on Mirror Mode.';
+  return;
+ }
+ s.mirror.enabled=enabled;
+ if(enabled)s.tool='pencil';
+ if(!locked&&!practiceStrokes.length&&composeStage===0&&selectedStudy()!==s.mode)createPrompt();
+ else{save();stats()}
+ resizePaper();requestPaperPaint();
+});
+$('mirrorAdjust').addEventListener('click',()=>{
+ if(!canAdjustMirror())return;
+ mirrorAxisOpen=!mirrorAxisOpen;
+ refreshMirrorControls();resizePaper();requestPaperPaint();
+});
+for(const [id,setting,unit] of [['mirrorPosition','position','%'],['mirrorAngle','angle','°']]){
+ const control=$(id);
+ let dirty=false;
+ function readAxisControl(){
+  if(!canAdjustMirror()){refreshMirrorControls();return}
+  const value=clamp(Number(control.value),Number(control.min),Number(control.max));
+  if(value===s.mirror[setting])return;
+  s.mirror[setting]=value;dirty=true;
+  $(id+'Value').textContent=value+unit;requestPaperPaint();
+ }
+ function saveAxisControl(){
+  readAxisControl();
+  if(dirty){dirty=false;save()}
+ }
+ control.addEventListener('input',readAxisControl);
+ control.addEventListener('change',saveAxisControl);
+ // Some WebKit touch sliders update their value without firing change.
+ control.addEventListener('touchend',saveAxisControl,{passive:true});
+ control.addEventListener('touchcancel',saveAxisControl,{passive:true});
+}
+$('mirrorGuide').addEventListener('change',e=>{
+ if(!canAdjustMirror()){refreshMirrorControls();return}
+ s.mirror.showAxis=e.target.checked;save();requestPaperPaint();
+});
+$('mirrorResetAxis').addEventListener('click',()=>{
+ if(!canAdjustMirror())return;
+ s.mirror.position=0;s.mirror.angle=0;
+ save();refreshMirrorControls();requestPaperPaint();
+});
 // Each upgrade has its own canvas. Unfinished work consists of separate strokes;
 // lifting a finger never connects strokes with a straight line or loses progress.
 const nodes=[...document.querySelectorAll('.upgrade')],nodeCanvas={};let tracing=null,inspectId=null,inspectPinned=false,hoveredUpgradeId=null;
@@ -2751,6 +2949,7 @@ const guides={
   {x:74,y:65},{x:20,y:65},{x:32,y:77},{x:20,y:65},{x:32,y:53}]),
  free:polygonGuide(5,35,-Math.PI/2),
  grid:polygonGuide(4,34,Math.PI/4),
+ mirror:sampleGuide([{x:48,y:14},{x:48,y:82},{x:48,y:48},{x:16,y:26},{x:16,y:70},{x:48,y:48},{x:80,y:26},{x:80,y:70},{x:48,y:48}]),
  eraser:eraserGuide(),
  eraserSize:polygonGuide(8,36,-Math.PI/8),
  dashedCircle:polygonGuide(6,36,-Math.PI/2),
@@ -2868,8 +3067,10 @@ for(const n of nodes){const id=n.dataset.id,c=n.querySelector('canvas'),ctx=c.ge
  n.addEventListener('blur',()=>{if(!inspectPinned&&!tracing)closeInspector()});
  n.addEventListener('click',()=>{inspectPinned=true;inspect(id)});
  c.addEventListener('pointerdown',e=>{
-  inspect(id);if(s.phase!=='shop'||tracing)return;
- if(isSpecialBranch(id)&&specialEligibility(id)){$('shopFeedback').textContent=specialEligibility(id);return;}
+  if(s.phase!=='shop'||symmetryOpen||tracing)return;
+  inspect(id);
+  const requirement=upgradeChallengeRequirement(id);
+  if(requirement){$('shopFeedback').textContent=requirement;return}
   if(!s.owned[id]&&!prerequisites(id).every(nodeActive)){
     $('shopFeedback').textContent=defs[id].name+' requires '+prerequisites(id).map(parent=>defs[parent].name).join(' and ')+' to be active first.';
     return;
@@ -2956,7 +3157,7 @@ function renderNode(id){const {ctx,strokes,symbol}=nodeCanvas[id];const guide=gu
 const treeParents={
  root:[],stamina:['root'],staminaIII:['stamina'],secondWind:['stamina'],strokeExchange:['stamina'],triangle:['root'],square:['triangle'],free:['root'],grid:['root'],eraser:['root'],selector:['square'],
  circle:['square'],curve:['circle'],guideFade:['curve'],oval:['curve'],ovalGuides:['oval'],cylinder:['oval','stamina'],object:['cylinder'],sphere:['cylinder','staminaIII'],balloon:['curve'],composer:['stamina','balloon'],dashedCircle:['circle'],
- eraserSize:['eraser']
+ eraserSize:['eraser'],mirror:['free','grid']
 };
 function visibleNode(id){
  if(isSpecialBranch(id))return !!s.owned.composer||!!s.owned[id];
@@ -2973,13 +3174,18 @@ function prerequisites(id){
  if(id==='ovalGuides')return ['oval'];
  if(id==='cylinder')return ['oval','stamina'];
  if(id==='object')return ['cylinder'];
+ if(id==='mirror')return treeParents.mirror;
  if(id==='sphere')return ['cylinder','staminaIII'];
  if(id==='balloon')return ['root','curve'];
  if(id==='composer')return ['stamina','balloon'];
  if(isSpecialBranch(id))return ['composer'];
  return [];
 }
-function eligibleToBuy(id){return visibleNode(id)&&!s.owned[id]&&prerequisites(id).every(nodeActive)&&(!isSpecialBranch(id)||!specialEligibility(id))}
+function upgradeChallengeRequirement(id){
+ if(isSpecialBranch(id))return specialEligibility(id);
+ return id==='mirror'&&!s.owned.mirror&&!s.symmetryMastered?'Complete the Symmetry Mastery Challenge.':'';
+}
+function eligibleToBuy(id){return visibleNode(id)&&!s.owned[id]&&prerequisites(id).every(nodeActive)&&!upgradeChallengeRequirement(id)}
 // Cache complete branch geometry so a missing dependency can show only the
 // child-side half of its dotted connection without changing the saved tree.
 const branchGeometry={};
@@ -3025,6 +3231,7 @@ function updateSpecializationUI(){
 function renderTree(){
  refreshSkillTools();
  $('skillTree').classList.toggle('prebranch',!s.owned.root);
+ $('skillTree').classList.toggle('mirror-branch',visibleNode('mirror'));
  $('shopStage').classList.toggle('single-upgrade',!s.owned.root);
  for(const n of nodes){
   const id=n.dataset.id,visible=visibleNode(id),parents=prerequisites(id);
@@ -3033,13 +3240,14 @@ function renderTree(){
   n.classList.toggle('owned',!!s.owned[id]);
   n.classList.toggle('deactivated',!!s.owned[id]&&!nodeActive(id));
   n.classList.toggle('prereq-locked',visible&&!s.owned[id]&&!parentReady);
-  if(isSpecialBranch(id))n.classList.toggle('challenge-locked',!s.owned[id]&&!!specialEligibility(id));
+  const requirement=upgradeChallengeRequirement(id);
+  if(isSpecialBranch(id)||id==='mirror')n.classList.toggle('challenge-locked',visible&&!s.owned[id]&&!!requirement);
   const purchasable=!s.owned[id]&&eligibleToBuy(id)&&s.cash>=defs[id].price;
   n.classList.toggle('affordable',purchasable);
   if(s.owned[id])n.classList.remove('first-ready');
   if(parents.length){
    n.querySelector('.node-name').dataset.hint=!parentReady&&!missing.length?'REACTIVATE SKILLS':'';
-   n.setAttribute('aria-label',defs[id].name+', '+defs[id].cost+'. '+(missing.length?'Requires '+missing.map(x=>defs[x].name).join(' and ')+'.':!parentReady?'Reactivate prerequisite upgrades.':'Ready to trace.'));
+   n.setAttribute('aria-label',defs[id].name+', '+defs[id].cost+'. '+(missing.length?'Requires '+missing.map(x=>defs[x].name).join(' and ')+'.':!parentReady?'Reactivate prerequisite upgrades.':requirement||'Ready to trace.'));
   }
   n.querySelector('.node-price').textContent=s.owned[id]?'':defs[id].cost;
   renderNode(id);
@@ -3059,6 +3267,8 @@ function renderTree(){
  drawBranch('link-cylinder-stamina','cylinder','stamina',upgradeActive('stamina'));
  drawBranch('link-object','object','cylinder',cylinderPlayable());
  drawBranch('link-sphere-endurance','sphere','staminaIII',enduranceThreePlayable());
+ drawBranch('link-mirror-grid','mirror','grid',upgradeActive('grid'));
+ drawBranch('link-mirror-free','mirror','free',upgradeActive('free'));
  if(inspectId&&!visibleNode(inspectId))closeInspector();
  if(inspectId)inspect(inspectId);
 }
@@ -3081,6 +3291,9 @@ function inspect(id){
  const d=defs[id];$('inspectTitle').textContent=d.name;$('inspectDesc').textContent=d.desc;
  const owned=s.owned[id],active=nodeActive(id);
  $('inspectPrice').textContent=owned?(active?'Owned · On':'Owned · Off'):d.cost;
+ const symmetryButton=$('openSymmetry');
+ symmetryButton.classList.toggle('hidden',id!=='mirror');
+ symmetryButton.textContent=s.symmetryMastered?'Practice symmetry':'Try symmetry challenge';
  const count=(nodeCanvas[id] && nodeCanvas[id].strokes.length)||0,progress=traceStats(id,(nodeCanvas[id] && nodeCanvas[id].strokes)||[]);
  $('clearTrace').classList.toggle('hidden',owned||count===0);
  // The title, ability description, and Owned status are sufficient after purchase.
@@ -3094,11 +3307,12 @@ function inspect(id){
   const prefix=specialHint?specialHint+' ':missing.length?'Buy '+missing.map(x=>defs[x].name).join(' and ')+'. ':
    inactive.length?'Reactivate '+inactive.map(x=>defs[x].name).join(' and ')+'. ':
    s.cash<defs[id].price?'Need '+cash(defs[id].price-s.cash)+' more. ':'';
-  const hint=skillTool==='erase'?'Choose Trace to buy.':s.left<=0?'No strokes left. Begin the next turn.':count?
+  const masteryNeeded=id==='mirror'&&!s.symmetryMastered;
+  const hint=masteryNeeded?upgradeChallengeRequirement(id):skillTool==='erase'?'Choose Trace to buy.':s.left<=0?'No strokes left. Begin the next turn.':count?
    Math.round(progress.coverage*100)+'% traced · '+count+' stroke'+(count===1?'':'s')+'.':
    'Trace 80% to buy.';
-  $('inspectHint').textContent=prefix+hint;
-  $('inspectHint').classList.toggle('no-strokes',s.left<=0&&skillTool!=='erase');
+  $('inspectHint').textContent=(id==='mirror'&&s.symmetryMastered?'Symmetry Mastery complete. ':'')+prefix+hint;
+  $('inspectHint').classList.toggle('no-strokes',!masteryNeeded&&s.left<=0&&skillTool!=='erase');
  }
 }
 $('clearTrace').addEventListener('click',()=>{
@@ -3117,7 +3331,8 @@ function attemptPurchase(id){
   $('shopFeedback').textContent=defs[id].name+' requires '+prerequisites(id).map(parent=>defs[parent].name).join(' and ')+' to be active. Your trace is saved.';
   return;
  }
- if(isSpecialBranch(id)&&specialEligibility(id)){$('shopFeedback').textContent=specialEligibility(id);return}
+ const requirement=upgradeChallengeRequirement(id);
+ if(requirement){$('shopFeedback').textContent=requirement;return}
  if(s.cash<defs[id].price){$('shopFeedback').textContent='Shape complete! '+cash(defs[id].price-s.cash)+' more needed for '+defs[id].name+'. Your trace is saved.';return}
  const previousEnergy=s.energy;
  s.cash-=defs[id].price;s.owned[id]=true;
@@ -3126,15 +3341,19 @@ function attemptPurchase(id){
  const purchasedNode=nodes.find(n=>n.dataset.id===id);
  if(purchasedNode)purchasedNode.classList.remove('affordable','first-ready');
  if(isSpecialBranch(id)&&!s.specialChoice)s.specialChoice=id;delete s.disabled[id];s.traces[id]=encodeStrokes(strokes);nodeCanvas[id].strokes=[];delete s.pendingTraces[id];
- reconcileUpgradeEffects();if(s.energy>previousEnergy)s.left=Math.min(s.energy,s.left+s.energy-previousEnergy);save();stats();paintGrid();paintPaper();renderTree();$('shopFeedback').textContent=id==='secondWind'?'Second Wind unlocked. Gain 1 bonus stroke the next time you enter the skill tree.':'';inspect(id)
+ reconcileUpgradeEffects();if(s.energy>previousEnergy)s.left=Math.min(s.energy,s.left+s.energy-previousEnergy);save();stats();paintGrid();paintPaper();renderTree();
+ $('shopFeedback').textContent=id==='mirror'?'Mirror Ink unlocked. Use Mirror Mode on the paper and Adjust axis to move or rotate the guide.':
+  id==='secondWind'?'Second Wind unlocked. Gain 1 bonus stroke the next time you enter the skill tree.':'';
+ inspect(id);
 }
 function openShop(newVisit=true){
  if(s.phase==='shop'&&newVisit===true)return;
+ mirrorAxisOpen=false;
  // Finishing a composition clears its draft, but the guide and pen points
  // remain in memory for the score animation. Discard them on shop entry so
  // resizing on the next turn cannot create a ghost unfinished composition.
  if(locked){
-  practiceStrokes=[];strokePts=[];composeStage=0;composeScores=[];
+  practiceStrokes=[];clearPencilStroke();composeStage=0;composeScores=[];
   composeFirstBounds=null;composeLensShape=null;composeBalloonOutline=null;composeBalloonId=null;
   s.practiceDraft=null;feedbackReveal=false;
  }
@@ -3157,7 +3376,7 @@ $('nextTurn').addEventListener('click',()=>{
  // Shop strokes are real resources until the next turn begins. Exchange only
  // what the player did not spend tracing, including leftover Second Wind bonus.
  // The transition and payout are saved together, preventing duplicate claims.
- if(tracing||s.phase!=='shop')return;
+ if(tracing||symmetryOpen||s.phase!=='shop')return;
  const unusedStrokes=upgradeActive('strokeExchange')?Math.max(0,Math.floor(Number(s.left)||0)):0;
  const strokeCash=unusedStrokes*100;
  if(strokeCash)s.cash+=strokeCash;
@@ -3167,6 +3386,148 @@ $('nextTurn').addEventListener('click',()=>{
   resizePaper();if(!restorePracticeDraft())createPrompt();paintBalloons();ensureBalloonAnimation();
   if(strokeCash)$('score').textContent='Stroke Exchange: '+unusedStrokes+' unused stroke'+(unusedStrokes===1?'':'s')+' → +'+cash(strokeCash);
  });
+});
+
+/* This exercise uses only the player's original marks. Each gesture belongs
+   to the side where it began, so the player must draw each circle separately. */
+const symmetryCanvas=$('symmetryCanvas'),symmetryCtx=symmetryCanvas.getContext('2d');
+const symmetryAxis=mirrorAxis(symmetryCanvas.width,symmetryCanvas.height,{angle:0,position:0});
+const symmetryRadius=68;
+const symmetryCenters=[{x:176,y:176},{x:464,y:176}];
+const symmetryTargets=symmetryCenters.map(center=>Array.from({length:72},(_,index)=>{
+ const angle=index*2*Math.PI/72;
+ return {x:center.x+symmetryRadius*Math.cos(angle),y:center.y+symmetryRadius*Math.sin(angle)};
+}));
+let symmetryPaths=[[],[]],symmetryStroke=null,symmetryFrame=0;
+function paintSymmetry(){
+ const ctx=symmetryCtx;
+ ctx.clearRect(0,0,symmetryCanvas.width,symmetryCanvas.height);
+ paintAxis(ctx,symmetryAxis,symmetryCanvas.width,symmetryCanvas.height);
+ for(const center of symmetryCenters){
+  ctx.save();ctx.setLineDash([5,6]);ctx.strokeStyle='#92b0a2';ctx.lineWidth=2;
+  ctx.beginPath();ctx.arc(center.x,center.y,symmetryRadius,0,2*Math.PI);ctx.stroke();ctx.restore();
+  ctx.beginPath();ctx.arc(center.x,center.y,3,0,2*Math.PI);ctx.fillStyle='#648f81';ctx.fill();
+ }
+ for(const side of symmetryPaths)for(const points of side)stroke(ctx,points,'#243941',3.2);
+ if(symmetryStroke)stroke(ctx,symmetryStroke.points,'#243941',3.2);
+}
+function requestSymmetryPaint(){
+ if(symmetryFrame)return;
+ symmetryFrame=requestAnimationFrame(()=>{symmetryFrame=0;paintSymmetry()});
+}
+function clearSymmetryAttempt(){
+ if(symmetryFrame)cancelAnimationFrame(symmetryFrame);
+ symmetryFrame=0;symmetryStroke=null;symmetryPaths=[[],[]];
+ $('symmetryFeedback').textContent='';
+ paintSymmetry();
+}
+$('openSymmetry').addEventListener('click',()=>{
+ if(s.phase!=='shop'||symmetryOpen||tracing||inspectId!=='mirror'||!visibleNode('mirror'))return;
+ symmetryOpen=true;
+ clearSymmetryAttempt();stats();
+ $('symmetryTitle').focus();
+});
+$('symmetryBack').addEventListener('click',()=>{
+ if(!symmetryOpen)return;
+ symmetryOpen=false;inspectPinned=true;clearSymmetryAttempt();stats();renderTree();inspect('mirror');
+ if(s.symmetryMastered)$('shopFeedback').textContent='Symmetry Mastery complete.';
+ nodeCanvas.mirror.c.parentElement.focus();
+});
+$('clearSymmetry').addEventListener('click',()=>{if(symmetryOpen)clearSymmetryAttempt()});
+function symmetryPoint(event){
+ const p=pointer(event,symmetryCanvas);
+ return {x:clamp(p.x,0,symmetryCanvas.width),y:clamp(p.y,0,symmetryCanvas.height)};
+}
+symmetryCanvas.addEventListener('pointerdown',event=>{
+ if(!symmetryOpen||symmetryStroke||event.button!==0||event.pointerType==='touch'&&!event.isPrimary)return;
+ event.preventDefault();
+ const point=symmetryPoint(event);
+ symmetryStroke={pointerId:event.pointerId,side:point.x<symmetryAxis.x?0:1,points:[point]};
+ $('symmetryFeedback').textContent='';
+ if(symmetryCanvas.setPointerCapture)symmetryCanvas.setPointerCapture(event.pointerId);
+});
+symmetryCanvas.addEventListener('pointermove',event=>{
+ if(!symmetryStroke||symmetryStroke.pointerId!==event.pointerId)return;
+ event.preventDefault();
+ const points=symmetryStroke.points;
+ for(const sample of stableSamples(event)){
+  const point=symmetryPoint(sample);
+  if(distance(point,points[points.length-1])>=1.5)points.push(point);
+ }
+ requestSymmetryPaint();
+});
+function finishSymmetryStroke(event){
+ if(!symmetryStroke||symmetryStroke.pointerId!==event.pointerId)return;
+ const {side,points}=symmetryStroke;
+ symmetryStroke=null;
+ if(event.type==='pointerup')points.push(symmetryPoint(event));
+ if(points.length>1&&pathLength(points)>7)symmetryPaths[side].push(points);
+ requestSymmetryPaint();
+}
+for(const event of ['pointerup','pointercancel','lostpointercapture'])
+ symmetryCanvas.addEventListener(event,finishSymmetryStroke);
+
+// Sample by distance along the path so gesture speed and input sampling do
+// not change the relative weight of different parts of an outline.
+function evenlySpacedPoints(path,spacing){
+ const points=[path[0]];
+ let next=spacing;
+ for(let i=1;i<path.length;i++){
+  const a=path[i-1],b=path[i],length=distance(a,b);
+  if(!length)continue;
+  for(;next<=length;next+=spacing){
+   const t=next/length;
+   points.push({x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t});
+  }
+  next-=length;
+ }
+ const last=path[path.length-1];
+ if(distance(last,points[points.length-1])>spacing/2)points.push(last);
+ return points;
+}
+const distanceToPaths=(point,paths)=>paths.reduce((best,path)=>Math.min(best,polyDist(point,path)),Infinity);
+function measureSymmetryCircle(side,travel){
+ const paths=symmetryPaths[side],center=symmetryCenters[side],target=symmetryTargets[side];
+ const points=paths.flatMap(path=>evenlySpacedPoints(path,symmetryRadius*.085));
+ const bounds=drawnBounds(paths),r=symmetryRadius;
+ const centerError=distance(center,{x:(bounds.minX+bounds.maxX)/2,y:(bounds.minY+bounds.maxY)/2});
+ const coverage=target.filter(p=>distanceToPaths(p,paths)<=r*.30).length/target.length;
+ const precision=points.filter(p=>Math.abs(distance(p,center)-r)<=r*.30).length/points.length;
+ const shaped=coverage>=.84&&precision>=.76&&travel>=2*Math.PI*r*.70&&
+  bounds.maxX-bounds.minX>=r*1.3&&bounds.maxY-bounds.minY>=r*1.3;
+ return {points,shaped,positioned:centerError<=r*.40,shape:(coverage+precision)/2,placement:clamp(1-centerError/r)};
+}
+$('checkSymmetry').addEventListener('click',()=>{
+ if(!symmetryOpen||symmetryStroke)return;
+ const feedback=$('symmetryFeedback');
+ if(!symmetryPaths[0].length||!symmetryPaths[1].length){
+  feedback.textContent='Draw a separate circle on each side before checking.';
+  return;
+ }
+ const travel=symmetryPaths.map(paths=>paths.reduce((sum,path)=>sum+pathLength(path),0));
+ if(travel.some(length=>length>2*Math.PI*symmetryRadius*1.75)){
+  feedback.textContent='Try one clean loop on each side. Use Clear to start a fresh attempt.';
+  return;
+ }
+ const circles=travel.map((length,side)=>measureSymmetryCircle(side,length));
+ const errors=circles.flatMap((circle,side)=>circle.points.map(point=>
+  distanceToPaths(reflectPoint(point,symmetryAxis),symmetryPaths[1-side])
+ ));
+ const reflection=errors.reduce((sum,d)=>sum+clamp(1-d/symmetryRadius),0)/errors.length;
+ const matched=reflection>=.75&&errors.filter(d=>d<=symmetryRadius*.32).length/errors.length>=.78;
+ const percent=value=>Math.round(value*100)+'%';
+ const scores='Shape '+percent(Math.min(...circles.map(c=>c.shape)))+' · Reflection '+percent(reflection)+
+  ' · Placement '+percent(Math.min(...circles.map(c=>c.placement)))+'. ';
+ const misplaced=circles.findIndex(circle=>!circle.positioned);
+ const misshapen=circles.findIndex(circle=>!circle.shaped);
+ const sideName=index=>index===0?'left':'right';
+ if(misplaced>=0)feedback.textContent=scores+'Center the '+sideName(misplaced)+' circle on its dot.';
+ else if(misshapen>=0)feedback.textContent=scores+'Follow the '+sideName(misshapen)+' outline and close the loop.';
+ else if(!matched)feedback.textContent=scores+'Match the width and height of both circles across the axis.';
+ else{
+  s.symmetryMastered=true;save();renderTree();
+  feedback.textContent=scores+'Symmetry Mastery complete. Return to the skill tree for Mirror Ink.';
+ }
 });
 
 /* Specialization workshops. Stored achievements live in the existing save.
@@ -3507,6 +3868,8 @@ function specialPaint(){
 }
 
 function resetAllProgress(){
+ symmetryOpen=false;mirrorAxisOpen=false;
+ clearSymmetryAttempt();
  specialOpen=false;specialRunning=false;specialDone=false;specialStroke=null;specialPointer=null;
  if(specialFrame)cancelAnimationFrame(specialFrame);specialFrame=0;
  specialBodies=[];specialRamps=[];specialPerspectiveMarks=[];specialGuides=[];specialBall=null;specialGoal=null;
@@ -3518,7 +3881,7 @@ function resetAllProgress(){
  if(balloonFrame)cancelAnimationFrame(balloonFrame);balloonFrame=0;
  tracing=null;inspectPinned=false;inspectId=null;hoveredUpgradeId=null;
  drawing=false;erasing=false;locked=false;activePointer=null;strokeAnchor=null;pendingResize=false;
- strokePts=[];eraserPts=[];practiceStrokes=[];A=null;B=null;O=null;
+ clearPencilStroke();eraserPts=[];practiceStrokes=[];A=null;B=null;O=null;
  balloonsErasedThisStroke.clear();
  feedbackReveal=false;showFullGuides=false;
  composeStage=0;composeScores=[];composeTemplate='balloon';composeFirstBounds=null;

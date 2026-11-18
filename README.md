@@ -55,3 +55,11 @@ Oval Guides is unlocked after Oval Studies. Trace its skill-tree oval and pay $5
 ## Stroke Exchange ($8.00)
 
 Stroke Exchange branches from Endurance II. Trace and buy it for $8.00. At the transition from the skill-tree shop to the next drawing turn, any unspent strokes (including any unused Second Wind shop bonus) convert into $1.00 per stroke. The conversion happens before strokes refill, and its cash reward and turn transition are saved together. Strokes spent tracing upgrades are not converted. Disabling an owned Stroke Exchange by erasing its trace disables the conversion until reactivated. The shop remains usable before the exchange, and existing saves load with the upgrade unpurchased.
+
+## Mirror Ink ($7.00)
+
+Select **Mirror Ink** in the skill tree and choose **Try symmetry challenge**. Draw a circle by hand on each side of the center line. **Check symmetry** scores the shape, reflection, and placement. Practice is free and you can clear the canvas to retry. Mastery is saved. Once Freehand Lines and Grid Paper are active, trace the Mirror Ink symbol to buy the upgrade.
+
+On the paper, turn on **Mirror Mode** to reflect pencil strokes. Use **Adjust axis** to move or rotate the axis, toggle its guide, or reset it to vertical at the center. New ink uses the current axis. Saved ink stays where it was drawn. Each gesture spends one stroke, and the player's original marks determine study scores and rewards. The eraser follows its own path across the paper.
+
+Mirror Mode works with Freehand Lines and flat studies. With Mirror Mode on, automatic study selection uses Freehand Lines. Choosing a staged study turns mirroring off for that study. Workshops use their existing tools. The game saves mastery, the axis settings, and both pencil paths for offline play.
