@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="ltd-build" content="2026-11-17.7">
+<meta name="ltd-build" content="2026-11-17.8">
 <meta name="theme-color" content="#f6f2e9">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -2354,8 +2354,13 @@ function analyzeFreeCompositionLine(){
  const straight=clamp(len/Math.max(travel,1));
  const precision=points.reduce((sum,p)=>sum+clamp(1-lineDistance(p,start,end)/19),0)/points.length;
  const attached=clamp(1-attach/tolerance);
+ // Do not bridge gaps between separate pen strokes: the ink itself must cover
+ // the connecting line, including any pen-up joins.
+ const coverage=Array.from({length:37},(_,i)=>({x:start.x+dx*i/36,y:start.y+dy*i/36}))
+  .filter(p=>paths.some(path=>polyDist(p,path)<=Math.max(10,Math.min(18,r*.27)))).length/37;
  const outward=square?dy>Math.max(14,r*.23):distance(end,center)>distance(start,center)+Math.max(9,r*.14);
- const valid=len>=Math.max(25,r*.43)&&outward&&straight>=.70&&precision>=.65;
+ const valid=len>=Math.max(25,r*.43)&&outward&&straight>=.70&&precision>=.65
+  &&travel>=len*.74&&coverage>=.79;
  if(!valid)return {valid:false,accuracy:0};
  // Classification uses BOTH direction and size, scaled to the drawn outline.
  const balloon= !square&&balloonPlayable()&&start.y>=center.y+r*.44
@@ -2363,7 +2368,7 @@ function analyzeFreeCompositionLine(){
  const signpost=square&&start.y>=O.y+r*.35
   &&dy>=Math.max(42,r*.80)&&Math.abs(dx)<=dy*.40;
  const kind=square?(signpost?'signpost':'kite'):(balloon?'balloon':'magnifier');
- const score=Math.round(100*(.49*precision+.30*straight+.21*attached));
+ const score=Math.round(100*(.44*precision+.27*straight+.19*attached+.10*coverage));
  const perfect=attach<=.55&&pixelPerfectLine(paths,points,start,end,travel);
  return {valid:true,kind,accuracy:perfect?100:clamp(score,0,99),start,end};
 }
