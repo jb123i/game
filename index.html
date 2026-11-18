@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="ltd-build" content="2026-11-17.12">
+<meta name="ltd-build" content="2026-11-17.13">
 <meta name="theme-color" content="#f6f2e9">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -2909,7 +2909,19 @@ for(const n of nodes){const id=n.dataset.id,c=n.querySelector('canvas'),ctx=c.ge
     updateActivation(id);save();
    }else{nodeCanvas[id].strokes.push(pts);persistTrace(id);if(!cancelled)attemptPurchase(id)}
   }
-  save();stats();renderNode(id);inspect(id)
+  save();stats();
+  if(s.owned[id]){
+   // Re-traced owned upgrades can turn on (or off) without a new purchase.
+   // Refresh every node and branch immediately, not just the traced canvas.
+   // Repaint once more after pointer capture ends: older Safari otherwise
+   // sometimes keeps the previous disabled guide until the next turn.
+   renderTree();inspect(id);
+   requestAnimationFrame(()=>{
+    if(s.phase!=='shop'||tracing)return;
+    renderTree();
+    if(inspectId===id)inspect(id);
+   });
+  }else{renderNode(id);inspect(id)}
  }
  c.addEventListener('pointerup',e=>finishTrace(e));
  c.addEventListener('pointercancel',e=>finishTrace(e,true));
