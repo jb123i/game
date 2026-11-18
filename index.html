@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="ltd-build" content="2026-11-17.20">
+<meta name="ltd-build" content="2026-11-17.21">
 <meta name="theme-color" content="#f6f2e9">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -215,6 +215,7 @@
 <div class="mirror-settings hidden" id="mirrorSettings" role="group" aria-label="Mirror axis">
  <div class="mirror-range"><label for="mirrorPosition">Position</label><output id="mirrorPositionValue" for="mirrorPosition">0%</output><input id="mirrorPosition" type="range" min="-100" max="100" value="0"></div>
  <div class="mirror-range"><label for="mirrorAngle">Angle</label><output id="mirrorAngleValue" for="mirrorAngle">0°</output><input id="mirrorAngle" type="range" min="-90" max="90" value="0"></div>
+ <label class="mirror-guide-choice"><input id="mirrorAlignStudy" type="checkbox" checked> Align to study</label>
  <label class="mirror-guide-choice"><input id="mirrorGuide" type="checkbox" checked> Show axis while drawing</label>
  <button class="pill" id="mirrorResetAxis" type="button">Reset axis</button>
 </div>
@@ -449,7 +450,7 @@ const defs={
  living:{name:'Living Ink',price:1200,desc:'Unlock physics challenges that reward you with money.',cost:'$12.00'},
  perspective:{name:'Perspective Lab',price:1200,desc:'Unlock perspective drawing challenges that reward you with money.',cost:'$12.00'}
 };
-const blank=()=>({cash:0,turn:1,energy:1,left:1,sharedEnergyV1:true,shopRootMigrationV1:true,shopBonusEarned:false,legacyEnduranceShapes:{root:false,stamina:false},strokes:0,practiceDraft:null,phase:'draw',last:0,lastPay:0,lastKind:'line',owned:{root:false,stamina:false,staminaIII:false,secondWind:false,strokeExchange:false,circle:false,curve:false,guideFade:false,oval:false,cylinder:false,object:false,sphere:false,balloon:false,free:false,grid:false,mirror:false,eraser:false,eraserSize:false,dashedCircle:false,ovalGuides:false,square:false,triangle:false,composer:false,selector:false,living:false,perspective:false},specialTrials:[],specialChoice:null,specialChapter:1,specialWins:{living:0,perspective:0},legacySquare:false,legacyComposer:false,legacyBalloon:false,legacyCurvePath:false,curveGateV1:true,composeBase:'circle',composeLine:'diagonal',mugView:'front',mugFewerGuides:false,mugResult:null,symmetryMastered:false,mirror:{enabled:false,position:0,angle:0,showAxis:true},disabled:{},traces:{},pendingTraces:{},paperMarks:[],magnifiers:[],balloons:[],balloonSerial:0,guideMastery:{},legacyAspect:null,eraserSize:30,gridOn:true,freeOn:false,mode:'line',studyPreference:null,tool:'pencil'});
+const blank=()=>({cash:0,turn:1,energy:1,left:1,sharedEnergyV1:true,shopRootMigrationV1:true,shopBonusEarned:false,legacyEnduranceShapes:{root:false,stamina:false},strokes:0,practiceDraft:null,phase:'draw',last:0,lastPay:0,lastKind:'line',owned:{root:false,stamina:false,staminaIII:false,secondWind:false,strokeExchange:false,circle:false,curve:false,guideFade:false,oval:false,cylinder:false,object:false,sphere:false,balloon:false,free:false,grid:false,mirror:false,eraser:false,eraserSize:false,dashedCircle:false,ovalGuides:false,square:false,triangle:false,composer:false,selector:false,living:false,perspective:false},specialTrials:[],specialChoice:null,specialChapter:1,specialWins:{living:0,perspective:0},legacySquare:false,legacyComposer:false,legacyBalloon:false,legacyCurvePath:false,curveGateV1:true,composeBase:'circle',composeLine:'diagonal',mugView:'front',mugFewerGuides:false,mugResult:null,symmetryMastered:false,mirror:{enabled:false,position:0,angle:0,showAxis:true,alignStudy:true},disabled:{},traces:{},pendingTraces:{},paperMarks:[],magnifiers:[],balloons:[],balloonSerial:0,guideMastery:{},legacyAspect:null,eraserSize:30,gridOn:true,freeOn:false,mode:'line',studyPreference:null,tool:'pencil'});
 let s=blank();
 try{const q=JSON.parse(localStorage.getItem(key)||'null');if(q&&Number.isFinite(q.cash)&&q.owned&&['draw','shop'].includes(q.phase)){
  s={...blank(),...q,owned:{...blank().owned,...q.owned},disabled:q.disabled&&typeof q.disabled==='object'?q.disabled:{},traces:q.traces&&typeof q.traces==='object'?q.traces:{},pendingTraces:q.pendingTraces&&typeof q.pendingTraces==='object'?q.pendingTraces:{},paperMarks:Array.isArray(q.paperMarks)?q.paperMarks:[],magnifiers:Array.isArray(q.magnifiers)?q.magnifiers:[],balloons:Array.isArray(q.balloons)?q.balloons.slice(0,36):[],guideMastery:q.guideMastery&&typeof q.guideMastery==='object'&&!Array.isArray(q.guideMastery)?q.guideMastery:{},practiceDraft:q.practiceDraft&&typeof q.practiceDraft==='object'?q.practiceDraft:null,
@@ -495,7 +496,8 @@ try{const q=JSON.parse(localStorage.getItem(key)||'null');if(q&&Number.isFinite(
   enabled:mirror.enabled===true,
   position:Number.isFinite(mirror.position)?Math.max(-100,Math.min(100,mirror.position)):0,
   angle:Number.isFinite(mirror.angle)?Math.max(-90,Math.min(90,mirror.angle)):0,
-  showAxis:mirror.showAxis!==false
+  showAxis:mirror.showAxis!==false,
+  alignStudy:mirror.alignStudy!==false
  };
  const mugResult=q.mugResult;
  if(!mugResult||!['front','above'].includes(mugResult.view)||!Array.isArray(mugResult.scores)||
@@ -548,9 +550,8 @@ const automaticStudy=()=>spherePlayable()&&s.left>=4?'sphere':objectPlayable()&&
 const requiredStudyStrokes=mode=>mode==='sphere'?4:mode==='mug'?3:isCompositionMode(mode)?2:1;
 function selectedStudy(){
  const usePreference=upgradeActive('selector')&&availableStudy(s.studyPreference)&&s.left>=requiredStudyStrokes(s.studyPreference);
- const study=usePreference?s.studyPreference:automaticStudy();
- if(mirrorModeOn()&&(!usePreference||isCompositionMode(study)))return 'line';
- return study;
+ if(usePreference)return s.studyPreference;
+ return mirrorModeOn()&&!s.mirror.alignStudy?'line':automaticStudy();
 }
 const eraserWidth=()=>upgradeActive('eraserSize')?s.eraserSize:30;
 
@@ -719,6 +720,11 @@ function stats(){
   $('drawHint').textContent+=($('drawHint').textContent?' · ':'')+'Specialization trials '+s.specialTrials.length+'/3';
   $('drawHint').classList.remove('hidden');
  }
+ if(mirrorModeOn()&&s.mode!=='line'&&!locked){
+  const hint=studyMirrorKind()?s.mirror.alignStudy?'Mirror · Draw along one side of the outline.':'Match the axis to the outline or use Align to study.':'Draw this part by hand.';
+  $('drawHint').textContent+=($('drawHint').textContent?' · ':'')+hint;
+  $('drawHint').classList.remove('hidden');
+ }
  $('nextTurn').textContent='Begin turn '+(s.turn+1)+' →';
  $('openLiving').classList.toggle('hidden',!specialPlayable('living'));
  $('openPerspective').classList.toggle('hidden',!specialPlayable('perspective'));
@@ -734,15 +740,18 @@ for(const name of ['touchstart','touchmove'])draw.addEventListener(name,e=>{if(e
 // Prevent page scrolling during an active touch stroke, even on older mobile browsers.
 window.addEventListener('touchmove',e=>{if(activePointer!==null&&e.cancelable)e.preventDefault()},{passive:false});
 
-let composeStage=0,composeScores=[],composeTemplate='balloon',composeAutoLine=false,composeFirstBounds=null,composeLensShape=null,composeBalloonOutline=null,composeBalloonId=null;
+let composeStage=0,composeScores=[],composeManualScores=[],composeTemplate='balloon',composeAutoLine=false,composeFirstBounds=null,composeLensShape=null,composeBalloonOutline=null,composeBalloonId=null;
 let W=0,H=0,A=null,B=null,O=null,strokePts=[],practiceStrokes=[],drawing=false,eraserPts=[],erasing=false,locked=false,advanceTimer=null,activePointer=null,strokeAnchor=null,pendingResize=false,paintFrame=0,feedbackReveal=false;
-let strokeMirror=null,reflectedPts=[];
+let strokeMirror=null,reflectedPts=[],strokeMirrorAssists=false,practiceReflections=[];
 function addPencilPoint(point){
  strokePts.push(point);
  if(strokeMirror)reflectedPts.push(reflectPoint(point,strokeMirror));
 }
 function clearPencilStroke(){
- strokePts=[];reflectedPts=[];strokeMirror=null;
+ strokePts=[];reflectedPts=[];strokeMirror=null;strokeMirrorAssists=false;
+}
+function clearPracticePaths(){
+ practiceStrokes=[];practiceReflections=[];
 }
 let lastSquareAngle=null;
 // A square has 90-degree rotational symmetry. Vary its orientation across the
@@ -763,7 +772,7 @@ function resizePaper(){if(drawing||erasing){pendingResize=true;return}pendingRes
  if(ow&&oh){
   if(practiceStrokes.length||isCompositionMode()&&composeStage>0){
    const iso=p=>{p.x=w/2+(p.x-ow/2)*h/oh;p.y*=h/oh};
-   for(const p of [A,B,...strokePts,...practiceStrokes.flat()].filter(Boolean))iso(p);
+   for(const p of [A,B,...strokePts,...practiceStrokes.flat(),...practiceReflections.flat()].filter(Boolean))iso(p);
    if(O){iso(O);if(Number.isFinite(O.r))O.r*=h/oh;if(Number.isFinite(O.rx))O.rx*=h/oh;if(Number.isFinite(O.ry))O.ry*=h/oh;if(Number.isFinite(O.bodyHeight))O.bodyHeight*=h/oh;if(Number.isFinite(O.bodyLean))O.bodyLean*=h/oh}
    persistPracticeDraft();
   }else if(A||O){
@@ -781,10 +790,11 @@ function persistPracticeDraft(){
  // layout changes must never resurrect them as unfinished practice drafts.
  if(locked){s.practiceDraft=null;save();return}
  if(!practiceStrokes.length&&!(isCompositionMode()&&composeStage>0)){s.practiceDraft=null;save();return}
- s.practiceDraft={mode:s.mode,freeOn:!!s.freeOn,composeStage,composeScores:[...composeScores],composeTemplate,composeAutoLine,
+ s.practiceDraft={mode:s.mode,freeOn:!!s.freeOn,composeStage,composeScores:[...composeScores],manualScores:[...composeManualScores],composeTemplate,composeAutoLine,
   A:A?pointToIso(A):null,B:B?pointToIso(B):null,
   O:O?{at:pointToIso(O),r:Number(O.r||0)/Math.max(1,H),rx:Number(O.rx||0)/Math.max(1,H),ry:Number(O.ry||0)/Math.max(1,H),bodyHeight:Number(O.bodyHeight||0)/Math.max(1,H),bodyLean:Number(O.bodyLean||0)/Math.max(1,H),angle:Number(O.angle)||0,lightAngle:Number(O.lightAngle)||0,lightElevation:Number(O.lightElevation)||0}:null,
-  strokes:practiceStrokes.map(pts=>pts.map(pointToIso)),composeFirstBounds,composeLensShape,composeBalloonOutline,composeBalloonId};
+  strokes:practiceStrokes.map(pts=>pts.map(pointToIso)),reflections:practiceReflections.map(pts=>pts.map(pointToIso)),
+  composeFirstBounds,composeLensShape,composeBalloonOutline,composeBalloonId};
  save();
 }
 // Repair affected saves from before completed-work cleanup existed. Completed
@@ -813,6 +823,7 @@ function restorePracticeDraft(){
   const lastStage=requiredStudyStrokes(d.mode)-1;
   composeStage=clamp(Math.floor(Number(d.composeStage)||0),0,lastStage);
   composeScores=Array.isArray(d.composeScores)?d.composeScores.slice(0,lastStage):[];
+  composeManualScores=composeScores.map((score,i)=>Array.isArray(d.manualScores)&&Number.isFinite(d.manualScores[i])?d.manualScores[i]:score);
   composeTemplate=['balloon','magnifier','signpost','kite','cylinder','mug','sphere'].includes(d.composeTemplate)?d.composeTemplate:'balloon';
   composeAutoLine=d.mode==='compose'&&d.composeAutoLine===true;
   composeFirstBounds=d.composeFirstBounds&&['minX','maxX','minY','maxY'].every(k=>Number.isFinite(d.composeFirstBounds[k]))?d.composeFirstBounds:null;
@@ -820,6 +831,7 @@ function restorePracticeDraft(){
    composeBalloonOutline=Array.isArray(d.composeBalloonOutline)?d.composeBalloonOutline:null;
    composeBalloonId=d.composeBalloonId||null;
   practiceStrokes=d.strokes.map(pts=>pts.map(pointFromIso)).filter(pts=>pts.length>=2);
+  practiceReflections=Array.isArray(d.reflections)?d.reflections.map(pts=>pts.map(pointFromIso)).filter(pts=>pts.length>=2):[];
   if(!practiceStrokes.length&&!(isCompositionMode(d.mode)&&composeStage>0))return false;
   drawing=false;locked=false;clearPencilStroke();
   stats();paintPaper();
@@ -860,7 +872,7 @@ function createPrompt(){
  s.mode=selectedStudy();
  composeAutoLine=s.mode==='compose'&&s.freeOn;
  showFullGuides=false;
- clearPencilStroke();practiceStrokes=[];s.practiceDraft=null;drawing=false;locked=false;feedbackReveal=false;composeStage=0;composeScores=[];composeFirstBounds=null;composeLensShape=null;composeBalloonOutline=null;composeBalloonId=null;
+ clearPencilStroke();clearPracticePaths();s.practiceDraft=null;drawing=false;locked=false;feedbackReveal=false;composeStage=0;composeScores=[];composeManualScores=[];composeFirstBounds=null;composeLensShape=null;composeBalloonOutline=null;composeBalloonId=null;
  A=null;B=null;O=null;
  if(s.mode==='sphere'){
   composeTemplate='sphere';
@@ -875,8 +887,9 @@ function createPrompt(){
   composeTemplate='cylinder';
   const maximum=Math.max(26,Math.min(W*.16,H*.14,92));
   const rx=randomBetween(maximum*.73,maximum),ry=rx*randomBetween(.34,.58);
-  O={x:0,y:0,rx,ry,angle:randomBetween(-.20,.20),
-    bodyHeight:randomBetween(rx*1.25,rx*1.95),bodyLean:randomBetween(-rx*.23,rx*.23)};
+  const upright=mirrorModeOn()&&s.mirror.alignStudy;
+  O={x:0,y:0,rx,ry,angle:upright?0:randomBetween(-.20,.20),
+    bodyHeight:randomBetween(rx*1.25,rx*1.95),bodyLean:upright?0:randomBetween(-rx*.23,rx*.23)};
   const ends=cylinderSideAnchors();A={...ends.left};B={...ends.right};
   placePrompt([...ovalGuide(),...cylinderBodyGuide()]);
  }
@@ -1136,10 +1149,13 @@ function sphereShadeGuide(){
  }
  return out;
 }
+function sphereShadowGeometry(){
+ const light=sphereLightVector(),r=O.r,dx=light.x,dy=light.y;
+ return {cx:O.x-dx*r*.77,cy:O.y+r*.98-dy*r*.41,rx:r*.89,ry:r*.20,rotation:dx*.10};
+}
 function sphereShadowGuide(){
  if(!O||!(O.r>0))return [];
- const light=sphereLightVector(),r=O.r,dx=light.x,dy=light.y;
- const cx=O.x-dx*r*.77,cy=O.y+r*.98-dy*r*.41,rx=r*.89,ry=r*.20,rotation=dx*.10;
+ const {cx,cy,rx,ry,rotation}=sphereShadowGeometry();
  const ca=Math.cos(rotation),sa=Math.sin(rotation);
  return Array.from({length:105},(_,i)=>{
   const a=2*Math.PI*i/104,x=rx*Math.cos(a),y=ry*Math.sin(a);
@@ -1152,10 +1168,10 @@ function sphereGuide(stage=composeStage){
 // Geometry, coverage, efficient use of ink and placement within the physically
 // shadowed hemisphere all influence accuracy. Reversing the light direction
 // cannot earn the same shading score.
-function sphereStageAccuracy(stage=composeStage){
- const parts=practiceStrokes.filter(p=>p.length>=2),points=parts.flat();
+function sphereStageAccuracy(stage=composeStage,paths=practiceStrokes){
+ const parts=paths.filter(p=>p.length>=2),points=parts.flat();
  const guide=sphereGuide(stage);if(!parts.length||guide.length<2)return 0;
- if(stage===0)return circleAccuracy();
+ if(stage===0)return circleAccuracy(paths);
  const ideal=pathLength(guide),travel=parts.reduce((v,p)=>v+pathLength(p),0);
  if(ideal<1||travel<7)return 0;
  const guideErrors=guide.map(p=>Math.min(...parts.map(q=>polyDist(p,q))));
@@ -1171,9 +1187,9 @@ function sphereStageAccuracy(stage=composeStage){
   &&Math.abs(travel-ideal)<=ideal*.003&&shadowConsistency>=.999;
  return perfect?100:clamp(score,0,99);
 }
-function sphereStageLooksComplete(stage=composeStage){
- if(stage===0)return circleLooksComplete();
- const parts=practiceStrokes.filter(pts=>pts.length>=2),guide=sphereGuide(stage);
+function sphereStageLooksComplete(stage=composeStage,paths=practiceStrokes){
+ if(stage===0)return circleLooksComplete(paths);
+ const parts=paths.filter(pts=>pts.length>=2),guide=sphereGuide(stage);
  if(!parts.length||guide.length<2)return false;
  const ideal=pathLength(guide),travel=parts.reduce((v,p)=>v+pathLength(p),0);
  if(travel<ideal*.66)return false;
@@ -1249,6 +1265,51 @@ function paintOvalStudyGuide(reveal){
  }
  if(!dashed)for(const p of ovalAnchors())circleDot(p.x,p.y);
 }
+function studyMirrorKind(){
+ if(!O)return null;
+ if(s.mode==='sphere')return ['circle','terminator',null,'shadow'][composeStage];
+ if(s.mode==='mug')return ['oval','body',null][composeStage];
+ if(s.mode==='cylinder')return composeStage===0?'oval':!O.angle&&!O.bodyLean?'body':null;
+ if(isCompositionMode())return composeStage===0?(['signpost','kite'].includes(composeTemplate)?'square':'circle'):null;
+ return s.mode==='line'?null:s.mode;
+}
+function alignedStudyAxis(kind=studyMirrorKind()){
+ if(!kind)return null;
+ let x=O.x,y=O.y,angle=Number(O.angle)||0;
+ if(kind==='curve'&&A&&B)angle=Math.atan2(B.y-A.y,B.x-A.x);
+ else if(kind==='terminator'){
+  const light=sphereLightVector();
+  angle=Math.atan2(light.y,light.x)+Math.PI/2;
+ }else if(kind==='shadow'){
+  const shadow=sphereShadowGeometry();
+  x=shadow.cx;y=shadow.cy;angle=shadow.rotation;
+ }
+ return {x,y,normalX:Math.cos(angle),normalY:Math.sin(angle)};
+}
+function studyMirrorGuide(kind){
+ switch(kind){
+  case 'circle':return sphereContourGuide();
+  case 'oval':return ovalGuide();
+  case 'square':{const guide=squareGuide();return [...guide,guide[0]]}
+  case 'triangle':{const guide=triangleGuide();return [...guide,guide[0]]}
+  case 'curve':return curveGuide();
+  case 'body':return cylinderBodyGuide();
+  case 'terminator':return sphereTerminatorGuide();
+  case 'shadow':return sphereShadowGuide();
+  default:return [];
+ }
+}
+function currentMirrorAxis(){
+ return s.mirror.alignStudy&&alignedStudyAxis()||mirrorAxis(W,H,s.mirror);
+}
+function mirrorFitsStudy(axis){
+ const kind=studyMirrorKind();
+ if(!axis||!kind)return false;
+ if(s.mirror.alignStudy)return true;
+ const guide=studyMirrorGuide(kind),step=Math.max(1,Math.floor(guide.length/36));
+ return guide.length>1&&guide.every((point,i)=>
+  i%step!==0&&i!==guide.length-1||polyDist(reflectPoint(point,axis),guide)<=4);
+}
 function paintPaper(reveal=feedbackReveal){dc.clearRect(0,0,W,H);
  // Only the temporary targets fade; pencil ink and earned feedback never do.
  dc.save();dc.globalAlpha=displayedGuideOpacity(reveal);
@@ -1283,8 +1344,8 @@ function paintPaper(reveal=feedbackReveal){dc.clearRect(0,0,W,H);
  else if((s.mode==='circle'||isCompositionMode()&&composeStage===0)&&O){if(upgradeActive('dashedCircle')){dc.beginPath();dc.arc(O.x,O.y,O.r,0,Math.PI*2);dc.strokeStyle='#82aa9b99';dc.lineWidth=2;dc.setLineDash([5,7]);dc.stroke();dc.setLineDash([])}else{circleDot(O.x,O.y,true);for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]])circleDot(O.x+dx*O.r,O.y+dy*O.r)}if(reveal){dc.beginPath();dc.arc(O.x,O.y,O.r,0,Math.PI*2);dc.strokeStyle='#73a891';dc.lineWidth=1.2;dc.stroke()}}
  else if(A&&B&&!(s.mode==='compose'&&composeAutoLine&&composeStage===1)){if(reveal){dc.save();dc.beginPath();dc.moveTo(A.x,A.y);dc.lineTo(B.x,B.y);dc.strokeStyle='#51a888';dc.lineWidth=2.4;dc.setLineDash([7,5]);dc.shadowColor='rgba(69,153,118,.35)';dc.shadowBlur=3;dc.stroke();dc.restore()}dot(A,'A','#468d7c');dot(B,'B','#d9835e')}
  dc.restore();
- if(s.phase==='draw'&&mirrorPlayable()&&(mirrorAxisOpen||mirrorModeOn()&&s.mirror.showAxis&&!isCompositionMode()))
-  paintAxis(dc,strokeMirror||mirrorAxis(W,H,s.mirror),W,H);
+ if(s.phase==='draw'&&mirrorPlayable()&&(mirrorAxisOpen||mirrorModeOn()&&s.mirror.showAxis&&(!isCompositionMode()||studyMirrorKind())))
+  paintAxis(dc,strokeMirror||currentMirrorAxis(),W,H);
  stroke(dc,strokePts,'#243941',3.2);
  stroke(dc,reflectedPts,'#243941',3.2);
  paintLens();
@@ -1308,7 +1369,7 @@ function storePencilMarks(points,balloonId){
  s.paperMarks.push(mark);
  // The reflected copy is paper ink only. Preserve off-paper points so replay
  // clips the path naturally instead of flattening it along an edge.
- if(reflectedPts.length)s.paperMarks.push({kind:'ink',space:'iso',points:normalizeMark(reflectedPts,false)});
+ if(reflectedPts.length)s.paperMarks.push({...mark,points:normalizeMark(reflectedPts,false)});
 }
 function applyMark(mark){if(!mark||!Array.isArray(mark.points)||mark.points.length===0)return;
  const aspect=Number(s.legacyAspect)>0?s.legacyAspect:legacyPaperAspect();const points=mark.points.filter(p=>Array.isArray(p)&&Number.isFinite(p[0])&&Number.isFinite(p[1])).map(p=>({x:mark.space==='iso'?W/2+p[0]*H:W/2+(p[0]-.5)*aspect*H,y:p[1]*H}));if(!points.length)return;
@@ -2174,9 +2235,9 @@ function lineAccuracy(forceGuided=false){
  return clamp(Math.round(100*v),0,99);
 }
 // Score ink coverage without connecting separate pencil strokes.
-function curveAccuracy(){
+function curveAccuracy(paths=practiceStrokes){
  if(!A||!B||!O)return 0;
- const segments=practiceStrokes.filter(pts=>pts.length>=2);
+ const segments=paths.filter(pts=>pts.length>=2);
  if(!segments.length)return 0;
  const guide=curveGuide(),travel=segments.reduce((v,pts)=>v+pathLength(pts),0),ideal=pathLength(guide);
  const points=segments.flat();
@@ -2192,9 +2253,9 @@ function curveAccuracy(){
  if(toA<=.55&&toB<=.55&&guideErrors.every(d=>d<=.55)&&inkErrors.every(d=>d<=.4)&&Math.abs(travel-ideal)<ideal*.002)return 100;
  return clamp(Math.round(100*value),0,99);
 }
-function curveLooksComplete(){
+function curveLooksComplete(paths=practiceStrokes){
  if(!A||!B||!O)return false;
- const parts=practiceStrokes.filter(pts=>pts.length>=2);
+ const parts=paths.filter(pts=>pts.length>=2);
  if(!parts.length)return false;
  const guide=curveGuide(),ideal=pathLength(guide),travel=parts.reduce((v,pts)=>v+pathLength(pts),0);
  if(travel<ideal*.67)return false;
@@ -2204,9 +2265,9 @@ function curveLooksComplete(){
  return guide.filter(p=>parts.some(pts=>polyDist(p,pts)<=tolerance)).length/guide.length>=.79;
 }
 
-function ovalAccuracy(){
+function ovalAccuracy(paths=practiceStrokes){
  if(!O||!(O.rx>0)||!(O.ry>0))return 0;
- const parts=practiceStrokes.filter(pts=>pts.length>=2),points=parts.flat();
+ const parts=paths.filter(pts=>pts.length>=2),points=parts.flat();
  if(!parts.length||points.length<2)return 0;
  const guide=ovalGuide(),anchors=ovalAnchors();
  const travel=parts.reduce((sum,pts)=>sum+pathLength(pts),0),ideal=pathLength(guide);
@@ -2223,9 +2284,9 @@ function ovalAccuracy(){
     &&anchorErrors.every(d=>d<=.55)&&Math.abs(travel-ideal)<=ideal*.002)return 100;
  return clamp(result,0,99);
 }
-function ovalLooksComplete(){
+function ovalLooksComplete(paths=practiceStrokes){
  if(!O||!(O.rx>0)||!(O.ry>0))return false;
- const parts=practiceStrokes.filter(pts=>pts.length>=2);
+ const parts=paths.filter(pts=>pts.length>=2);
  if(!parts.length)return false;
  const guide=ovalGuide(),ideal=pathLength(guide),travel=parts.reduce((sum,pts)=>sum+pathLength(pts),0);
  if(travel<ideal*.67)return false;
@@ -2236,8 +2297,8 @@ function ovalLooksComplete(){
 }
 
 
-function openContourAccuracy(guide=cylinderBodyGuide(),anchors=cylinderBodyAnchors(guide)){
- const parts=practiceStrokes.filter(pts=>pts.length>=2),points=parts.flat();
+function openContourAccuracy(paths=practiceStrokes,guide=cylinderBodyGuide(),anchors=cylinderBodyAnchors(guide)){
+ const parts=paths.filter(pts=>pts.length>=2),points=parts.flat();
  if(!parts.length||points.length<2)return 0;
  if(guide.length<3)return 0;
  const travel=parts.reduce((sum,pts)=>sum+pathLength(pts),0),ideal=pathLength(guide);
@@ -2254,8 +2315,8 @@ function openContourAccuracy(guide=cylinderBodyGuide(),anchors=cylinderBodyAncho
     &&anchorErrors.every(d=>d<=.55)&&Math.abs(travel-ideal)<=ideal*.002)return 100;
  return clamp(Math.round(score*100),0,99);
 }
-function openContourLooksComplete(guide=cylinderBodyGuide(),anchors=cylinderBodyAnchors(guide)){
- const parts=practiceStrokes.filter(pts=>pts.length>=2);
+function openContourLooksComplete(paths=practiceStrokes,guide=cylinderBodyGuide(),anchors=cylinderBodyAnchors(guide)){
+ const parts=paths.filter(pts=>pts.length>=2);
  if(!parts.length)return false;
  if(guide.length<3)return false;
  const travel=parts.reduce((v,pts)=>v+pathLength(pts),0),ideal=pathLength(guide);
@@ -2265,10 +2326,10 @@ function openContourLooksComplete(guide=cylinderBodyGuide(),anchors=cylinderBody
  const joinsCovered=anchors.every(p=>parts.some(pts=>polyDist(p,pts)<=tol*1.25));
  return joinsCovered&&coverage>=.82;
 }
-function mugStageAccuracy(stage){
- if(stage===0)return ovalAccuracy();
+function mugStageAccuracy(stage,paths=practiceStrokes){
+ if(stage===0)return ovalAccuracy(paths);
  const guide=mugStageGuide(stage);
- return openContourAccuracy(guide,mugStageAnchors(stage,guide));
+ return openContourAccuracy(paths,guide,mugStageAnchors(stage,guide));
 }
 
 function triangleGuide(){
@@ -2281,9 +2342,9 @@ function triangleGuide(){
  }
  return guide;
 }
-function triangleAccuracy(){
+function triangleAccuracy(paths=practiceStrokes){
  if(!O)return 0;
- const segments=practiceStrokes.filter(pts=>pts.length>=2),points=segments.flat();
+ const segments=paths.filter(pts=>pts.length>=2),points=segments.flat();
  if(!segments.length||points.length<2)return 0;
  const ideal=3*Math.sqrt(3)*O.r,travel=segments.reduce((sum,pts)=>sum+pathLength(pts),0);
  if(travel<10)return 0;
@@ -2299,9 +2360,9 @@ function triangleAccuracy(){
  if(corners.every(d=>d<=.55)&&guideErrors.every(d=>d<=.55)&&errors.every(d=>d<=.4)&&Math.abs(travel-ideal)<ideal*.002)return 100;
  return clamp(result,0,99);
 }
-function triangleLooksComplete(){
+function triangleLooksComplete(paths=practiceStrokes){
  if(!O)return false;
- const segments=practiceStrokes.filter(pts=>pts.length>=2);
+ const segments=paths.filter(pts=>pts.length>=2);
  if(!segments.length)return false;
  const travel=segments.reduce((v,pts)=>v+pathLength(pts),0),ideal=3*Math.sqrt(3)*O.r;
  if(travel<ideal*.67)return false;
@@ -2319,9 +2380,9 @@ function squareGuide(){
  }
  return guide;
 }
-function squareAccuracy(){
+function squareAccuracy(paths=practiceStrokes){
  if(!O)return 0;
- const segments=practiceStrokes.filter(pts=>pts.length>=2),points=segments.flat();
+ const segments=paths.filter(pts=>pts.length>=2),points=segments.flat();
  if(!segments.length||points.length<2)return 0;
  const travel=segments.reduce((v,pts)=>v+pathLength(pts),0),ideal=8*O.r;
  if(travel<10)return 0;
@@ -2337,9 +2398,9 @@ function squareAccuracy(){
  if(corners.every(d=>d<=.55)&&guideErrors.every(d=>d<=.55)&&errors.every(d=>d<=.4)&&Math.abs(travel-ideal)<ideal*.002)return 100;
  return clamp(result,0,99);
 }
-function squareLooksComplete(){
+function squareLooksComplete(paths=practiceStrokes){
  if(!O)return false;
- const segments=practiceStrokes.filter(pts=>pts.length>=2);
+ const segments=paths.filter(pts=>pts.length>=2);
  if(!segments.length)return false;
  const travel=segments.reduce((v,pts)=>v+pathLength(pts),0),ideal=8*O.r;
  if(travel<ideal*.67)return false;
@@ -2348,8 +2409,8 @@ function squareLooksComplete(){
  const corners=squareCorners().every(p=>segments.some(pts=>polyDist(p,pts)<=tol*1.2));
  return corners&&near>=.83;
 }
-function circleAccuracy(){
- const segments=practiceStrokes.filter(pts=>pts.length>=2),points=segments.flat();
+function circleAccuracy(paths=practiceStrokes){
+ const segments=paths.filter(pts=>pts.length>=2),points=segments.flat();
  if(!segments.length||points.length<2)return 0;
  const actual=segments.reduce((v,pts)=>v+pathLength(pts),0),circ=2*Math.PI*O.r;
  if(actual<35)return 0;
@@ -2404,9 +2465,9 @@ function lineLooksComplete(forceGuided=false){
  // Both endpoints plus most of the segment signal an intentional end.
  return covered/61>=.79;
 }
-function circleLooksComplete(){
+function circleLooksComplete(paths=practiceStrokes){
  if(!O)return false;
- const parts=practiceStrokes.filter(pts=>pts.length>=2);
+ const parts=paths.filter(pts=>pts.length>=2);
  if(!parts.length)return false;
  const length=parts.reduce((sum,pts)=>sum+pathLength(pts),0);
  const circumference=2*Math.PI*O.r;
@@ -2498,21 +2559,34 @@ function analyzeFreeCompositionLine(){
  const perfect=attach<=.55&&pixelPerfectLine(paths,points,start,end,travel);
  return {valid:true,kind,accuracy:perfect?100:clamp(score,0,99),start,end};
 }
-function componentLooksComplete(){
+function componentLooksComplete(paths){
  if(freeCompositionLineMode())return analyzeFreeCompositionLine().valid;
- if(s.mode==='sphere')return sphereStageLooksComplete();
- if(s.mode==='cylinder')return composeStage===0?ovalLooksComplete():openContourLooksComplete();
+ if(s.mode==='sphere')return sphereStageLooksComplete(composeStage,paths);
+ if(s.mode==='cylinder')return composeStage===0?ovalLooksComplete(paths):openContourLooksComplete(paths);
  if(s.mode==='mug'){
-  if(composeStage===0)return ovalLooksComplete();
+  if(composeStage===0)return ovalLooksComplete(paths);
   const guide=mugStageGuide(composeStage);
-  return openContourLooksComplete(guide,mugStageAnchors(composeStage,guide));
+  return openContourLooksComplete(paths,guide,mugStageAnchors(composeStage,guide));
  }
- if(s.mode==='oval')return ovalLooksComplete();
- if(s.mode==='curve')return curveLooksComplete();
- if(s.mode==='triangle')return triangleLooksComplete();
- if(s.mode==='circle'||isCompositionMode()&&composeStage===0&&!['signpost','kite'].includes(composeTemplate))return circleLooksComplete();
- if(s.mode==='square'||isCompositionMode()&&composeStage===0&&['signpost','kite'].includes(composeTemplate))return squareLooksComplete();
+ if(s.mode==='oval')return ovalLooksComplete(paths);
+ if(s.mode==='curve')return curveLooksComplete(paths);
+ if(s.mode==='triangle')return triangleLooksComplete(paths);
+ if(s.mode==='circle'||isCompositionMode()&&composeStage===0&&!['signpost','kite'].includes(composeTemplate))return circleLooksComplete(paths);
+ if(s.mode==='square'||isCompositionMode()&&composeStage===0&&['signpost','kite'].includes(composeTemplate))return squareLooksComplete(paths);
  return lineLooksComplete(isCompositionMode());
+}
+function practicePathsForScoring(){
+ if(!practiceReflections.length)return practiceStrokes;
+ const guide=studyMirrorGuide(studyMirrorKind()),step=Math.max(1,Math.floor(guide.length/48));
+ const samples=guide.filter((_,i)=>i%step===0);
+ const tolerance=clamp(pathLength(guide)*.035,8,14);
+ // Retracing the same part of the guide cannot satisfy a length or coverage check.
+ const added=samples.filter(point=>distanceToPaths(point,practiceStrokes)>tolerance&&distanceToPaths(point,practiceReflections)<=tolerance).length;
+ return added>=Math.max(2,Math.ceil(samples.length*.06))?practiceStrokes.concat(practiceReflections):practiceStrokes;
+}
+function scorePractice(score,paths){
+ const manual=score(practiceStrokes);
+ return {manual,accuracy:paths===practiceStrokes?manual:Math.max(manual,score(paths))};
 }
 // Use the actual ink's bounding box so the payout appears centered just beneath
 // the finished drawing, not at a fixed location on the paper.
@@ -2555,17 +2629,18 @@ function scheduleStudyAdvance(){
  clearTimeout(advanceTimer);
  advanceTimer=setTimeout(()=>{if(s.left<=0)openShop();else createPrompt()},1370);
 }
-function finalizeShape(){
+function finalizeShape(paths){
  if(locked||drawing||!practiceStrokes.length)return;
  locked=true;
- const accuracy=s.mode==='circle'?circleAccuracy():s.mode==='square'?squareAccuracy():s.mode==='triangle'?triangleAccuracy():s.mode==='curve'?curveAccuracy():s.mode==='oval'?ovalAccuracy():lineAccuracy();
+ const score=s.mode==='circle'?circleAccuracy:s.mode==='square'?squareAccuracy:s.mode==='triangle'?triangleAccuracy:s.mode==='curve'?curveAccuracy:s.mode==='oval'?ovalAccuracy:()=>lineAccuracy();
+ const {accuracy,manual}=scorePractice(score,paths);
  // Rewards scale by complexity: line 1x, triangle 1.25x, square 1.5x, circle 2x.
  // Keep balances in whole cents; accuracy remains a 0–100 percentage.
  const reward=payoutForShape(s.mode,accuracy);
- const rewardBounds=drawnBounds(practiceStrokes);
- s.cash+=reward;s.last=accuracy;s.lastPay=reward;s.lastKind=s.mode;recordSpecialTrial(s.lastKind,s.last);
+ const rewardBounds=drawnBounds(paths);
+ s.cash+=reward;s.last=accuracy;s.lastPay=reward;s.lastKind=s.mode;recordSpecialTrial(s.lastKind,manual);
  s.practiceDraft=null;feedbackReveal=true;
- recordGuideAccuracy(accuracy);
+ recordGuideAccuracy(manual);
  save();stats();
  $('score').textContent=accuracy+'% · +'+cash(reward);
  showEarnings(reward,rewardBounds);
@@ -2575,9 +2650,9 @@ function finalizeShape(){
 
 // The player's circle may be offset from its ideal guide. Attach the string
 // to its actual lowest inked point, within the available paper bounds.
-function alignBalloonStringToDrawnOutline(){
- if(!O||!A||!B||!practiceStrokes.length)return;
- const pts=practiceStrokes.flat().filter(p=>Number.isFinite(p.x)&&Number.isFinite(p.y));
+function alignBalloonStringToDrawnOutline(paths){
+ if(!O||!A||!B||!paths.length)return;
+ const pts=paths.flat().filter(p=>Number.isFinite(p.x)&&Number.isFinite(p.y));
  if(!pts.length)return;
  const lowest=pts.reduce((a,p)=>p.y>a.y?p:a);
  const first={...A},end={...B};
@@ -2587,15 +2662,15 @@ function alignBalloonStringToDrawnOutline(){
  B={x:end.x+dx,y:end.y+dy};
 }
 
-function finishStagedStudyPart(){
+function finishStagedStudyPart(paths){
  const mode=s.mode,mug=mode==='mug',stage=composeStage;
- const accuracy=mug?mugStageAccuracy(stage):sphereStageAccuracy(stage);
- composeScores.push(accuracy);
- recordGuideAccuracy(accuracy);
- composeFirstBounds=boundsToIso(unionBounds(boundsFromIso(composeFirstBounds),drawnBounds(practiceStrokes)));
+ const {accuracy,manual}=scorePractice(ink=>mug?mugStageAccuracy(stage,ink):sphereStageAccuracy(stage,ink),paths);
+ composeScores.push(accuracy);composeManualScores.push(manual);
+ recordGuideAccuracy(manual);
+ composeFirstBounds=boundsToIso(unionBounds(boundsFromIso(composeFirstBounds),drawnBounds(paths)));
  if(stage<requiredStudyStrokes(mode)-1){
   composeStage=stage+1;feedbackReveal=false;
-  practiceStrokes=[];strokePts=[];persistPracticeDraft();stats();paintPaper();
+  clearPracticePaths();persistPracticeDraft();stats();paintPaper();
   $('score').textContent=mug?'':'Stage '+(stage+1)+': '+accuracy+'% · Next: '+sphereStageNames[composeStage];
   if(s.left<=0){
    clearTimeout(advanceTimer);
@@ -2606,35 +2681,41 @@ function finishStagedStudyPart(){
  locked=true;
  const rates=mug?mugRates:[2,1.25,1.25,1];
  const reward=composeScores.reduce((total,score,i)=>total+Math.round(clamp(score,0,100)*rates[i]),0);
- const bounds=unionBounds(boundsFromIso(composeFirstBounds),drawnBounds(practiceStrokes));
+ const bounds=boundsFromIso(composeFirstBounds);
  s.cash+=reward;
  s.last=Math.round(composeScores.reduce((a,b)=>a+b,0)/rates.length);
- s.lastPay=reward;s.lastKind=mode;recordSpecialTrial(s.lastKind,s.last);s.practiceDraft=null;feedbackReveal=true;
+ s.lastPay=reward;s.lastKind=mode;recordCompositionTrial();s.practiceDraft=null;feedbackReveal=true;
  if(mug)s.mugResult={view:s.mugView,scores:composeScores.slice()};
  save();stats();paintPaper(true);
  $('score').textContent=(mug?'Mug ':'Sphere ')+s.last+'% · +'+cash(reward);
  showEarnings(reward,bounds);
  scheduleStudyAdvance();
 }
-function finishCompositionPart(){
- if(s.mode==='sphere'||s.mode==='mug'){finishStagedStudyPart();return}
+function recordCompositionTrial(){
+ const average=composeManualScores.reduce((sum,score)=>sum+score,0)/composeManualScores.length;
+ recordSpecialTrial(s.lastKind,Math.round(average));
+}
+function finishCompositionPart(paths){
+ if(s.mode==='sphere'||s.mode==='mug'){finishStagedStudyPart(paths);return}
  const freeLine=freeCompositionLineMode()?analyzeFreeCompositionLine():null;
  if(freeLine&&freeLine.valid){
   composeTemplate=freeLine.kind;
   s.composeBase=freeLine.kind==='balloon'?'balloon':['signpost','kite'].includes(freeLine.kind)?'square':'circle';
   s.composeLine=freeLine.kind==='signpost'?'down':'diagonal';
  }
- const accuracy=composeTemplate==='cylinder'?(composeStage===0?ovalAccuracy():openContourAccuracy()):composeStage===0?(['signpost','kite'].includes(composeTemplate)?squareAccuracy():circleAccuracy()):freeLine?freeLine.accuracy:lineAccuracy(true);
- recordGuideAccuracy(accuracy);
- composeScores.push(accuracy);
+ const score=composeTemplate==='cylinder'?(composeStage===0?ovalAccuracy:openContourAccuracy):
+  composeStage===0?(['signpost','kite'].includes(composeTemplate)?squareAccuracy:circleAccuracy):()=>freeLine?freeLine.accuracy:lineAccuracy(true);
+ const {accuracy,manual}=scorePractice(score,paths);
+ recordGuideAccuracy(manual);
+ composeScores.push(accuracy);composeManualScores.push(manual);
  if(composeStage===0){
-  composeFirstBounds=boundsToIso(drawnBounds(practiceStrokes));
-  if(composeTemplate==='magnifier'||composeAutoLine&&s.mode==='compose'&&!['signpost','kite'].includes(composeTemplate))composeLensShape=captureDrawnLens(practiceStrokes);
+  composeFirstBounds=boundsToIso(drawnBounds(paths));
+  if(composeTemplate==='magnifier'||composeAutoLine&&s.mode==='compose'&&!['signpost','kite'].includes(composeTemplate))composeLensShape=captureDrawnLens(paths);
   if(composeTemplate==='balloon'||composeAutoLine&&s.mode==='compose'&&!['signpost','kite'].includes(composeTemplate)){
-   composeBalloonOutline=practiceStrokes.map(pts=>pts.map(pointToIso));
-   if(!composeAutoLine)alignBalloonStringToDrawnOutline();
+   composeBalloonOutline=paths.map(pts=>pts.map(pointToIso));
+   if(!composeAutoLine)alignBalloonStringToDrawnOutline(paths);
   }
-  composeStage=1;feedbackReveal=false;practiceStrokes=[];strokePts=[];persistPracticeDraft();stats();paintPaper();
+  composeStage=1;feedbackReveal=false;clearPracticePaths();persistPracticeDraft();stats();paintPaper();
   $('score').textContent=(composeTemplate==='cylinder'?'Oval ':['signpost','kite'].includes(composeTemplate)?'Square ':'Circle ')+accuracy+'% · Now '+(composeAutoLine?'choose an object with a connected line':'draw the '+(composeTemplate==='cylinder'?'body':composeTemplate==='balloon'?'string':composeTemplate==='signpost'?'post':composeTemplate==='kite'?'tail':'handle'));
   // A two-part drawing may use its last stroke on the first component.
   // Save the second stage and enter the shop after showing the feedback.
@@ -2645,8 +2726,8 @@ function finishCompositionPart(){
  // Each component is paid at its study rate: square/circle plus a line.
  const firstMode=['signpost','kite'].includes(composeTemplate)?'square':'circle';
  const reward=composeTemplate==='cylinder'?payoutForShape('oval',composeScores[0])+payoutForShape('curve',composeScores[1]):payoutForShape(firstMode,composeScores[0])+(freeLine&&!freeLine.valid?0:payoutForShape('line',composeScores[1]));
- const rewardBounds=unionBounds(boundsFromIso(composeFirstBounds),drawnBounds(practiceStrokes));
- s.cash+=reward;s.last=Math.round((composeScores[0]+composeScores[1])/2);s.lastPay=reward;s.lastKind=composeTemplate==='cylinder'?'cylinder':composeTemplate==='balloon'?'balloon':'composition';recordSpecialTrial(s.lastKind,s.last);
+ const rewardBounds=unionBounds(boundsFromIso(composeFirstBounds),drawnBounds(paths));
+ s.cash+=reward;s.last=Math.round((composeScores[0]+composeScores[1])/2);s.lastPay=reward;s.lastKind=composeTemplate==='cylinder'?'cylinder':composeTemplate==='balloon'?'balloon':'composition';recordCompositionTrial();
  if((!freeLine||freeLine.valid)&&composeTemplate==='magnifier'&&O)s.magnifiers.push(composeLensShape||{at:pointToIso(O),r:O.r/Math.max(1,H)});
  if((!freeLine||freeLine.valid)&&composeTemplate==='balloon')finishHeliumBalloon();
  s.practiceDraft=null;feedbackReveal=true;save();stats();paintPaper(true);
@@ -2661,23 +2742,26 @@ function finishPractice(){
  if(strokePts.length<2||pathLength(strokePts)<7){clearPencilStroke();paintPaper();return}
  const pts=strokePts.map(p=>({...p}));
  practiceStrokes.push(pts);
+ if(strokeMirrorAssists)practiceReflections.push(reflectedPts);
  const balloonId=isCompositionMode()&&(composeTemplate==='balloon'||composeAutoLine)?composeBalloonId:null;
  storePencilMarks(pts,balloonId);
  s.strokes++;spendStroke();clearPencilStroke();
  paintInk();paintPaper();
- const complete=componentLooksComplete();
+ const manualComplete=componentLooksComplete(practiceStrokes);
+ const paths=manualComplete?practiceStrokes:practicePathsForScoring();
+ const complete=manualComplete||paths!==practiceStrokes&&componentLooksComplete(paths);
  if(isCompositionMode()){
   // Reserve one stroke for each remaining part. Spare strokes can continue
   // the current outline before grading it.
   const reserve=requiredStudyStrokes(s.mode)-composeStage-1;
-  if(complete||s.left<=reserve)finishCompositionPart();
+  if(complete||s.left<=reserve)finishCompositionPart(paths);
   else{
    persistPracticeDraft();stats();
    $('score').textContent='Continue '+(freeCompositionLineMode()?'the connected line':s.mode==='mug'?'the '+mugParts[composeStage].toLowerCase():s.mode==='sphere'?sphereStageNames[composeStage]:composeStage===0?(composeTemplate==='cylinder'?'the top oval':['signpost','kite'].includes(composeTemplate)?'the square':'the circle'):composeTemplate==='cylinder'?'the body':composeTemplate==='balloon'?'the string':composeTemplate==='signpost'?'the post':'the handle')+' · '+s.left+' stroke'+(s.left===1?'':'s')+' left';
   }
   return;
  }
- if(complete||s.left<=0)finalizeShape();
+ if(complete||s.left<=0)finalizeShape(paths);
  else{
   persistPracticeDraft();stats();
   $('score').textContent='Continue '+(s.mode==='circle'?'the circle':s.mode==='square'?'the square':s.mode==='triangle'?'the triangle':s.mode==='curve'?'the curve':s.mode==='oval'?'the oval':'the line')+' · '+s.left+' stroke'+(s.left===1?'':'s')+' left';
@@ -2687,10 +2771,13 @@ draw.addEventListener('pointerdown',e=>{
  if(s.phase!=='draw'||specialOpen||s.left<=0||drawing||erasing||(locked&&s.tool!=='eraser')||(!e.isPrimary&&e.pointerType==='touch'))return;
  if(s.tool==='eraser'){e.preventDefault();eraserBegin(e);return}
  const p=pointer(e,draw);
- if((s.mode==='line'&&!s.freeOn||s.mode==='curve')&&!practiceStrokes.length&&distance(p,A)>31){$('score').textContent='Start near point A';return}
+ const axis=mirrorModeOn()&&(!isCompositionMode()||studyMirrorKind())?currentMirrorAxis():null;
+ const assists=mirrorFitsStudy(axis);
+ if((s.mode==='line'&&!s.freeOn||s.mode==='curve'&&!assists)&&!practiceStrokes.length&&distance(p,A)>31){$('score').textContent='Start near point A';return}
  e.preventDefault();drawing=true;$('endTurn').disabled=true;activePointer=e.pointerId;
  clearPencilStroke();
- if(mirrorModeOn()&&!isCompositionMode())strokeMirror=mirrorAxis(W,H,s.mirror);
+ strokeMirror=!isCompositionMode()||assists?axis:null;
+ strokeMirrorAssists=assists;
  addPencilPoint(p);
  startStablePointer(e,p);if(draw.setPointerCapture)draw.setPointerCapture(e.pointerId);paintPaper();
 });
@@ -2712,7 +2799,7 @@ draw.addEventListener('pointermove',e=>{
 });
 function preserveInterruptedStroke(){
  if(drawing&&strokePts.length>1&&pathLength(strokePts)>3){
-  storePencilMarks(strokePts);
+  storePencilMarks(strokePts,strokeMirrorAssists?composeBalloonId:null);
   if(strokeMirror){
    s.strokes++;spendStroke();
    if(s.left<=0)scheduleStudyAdvance();
@@ -2763,7 +2850,6 @@ function changeMode(mode){
   return;
  }
  if(!availableStudy(mode))return;
- if(isCompositionMode(mode)){s.mirror.enabled=false;mirrorAxisOpen=false}
  s.studyPreference=mode;s.mode=mode;s.tool='pencil';save();stats();createPrompt();
 }
 $('lineMode').addEventListener('click',()=>changeMode('line'));
@@ -2794,14 +2880,18 @@ $('eraserSize').addEventListener('input',e=>{if(!upgradeActive('eraserSize'))ret
 
 function refreshMirrorControls(){
  const available=s.phase==='draw'&&!specialOpen&&mirrorPlayable();
- const enabled=available&&s.mirror.enabled&&!isCompositionMode();
+ const enabled=available&&s.mirror.enabled;
  const configuring=available&&mirrorAxisOpen;
+ const aligned=s.mirror.alignStudy&&!!studyMirrorKind();
  $('mirrorTools').classList.toggle('hidden',!available);
  $('mirrorSettings').classList.toggle('hidden',!configuring);
  $('mirrorToggle').classList.toggle('active',enabled);
  $('mirrorToggle').setAttribute('aria-pressed',String(enabled));
  $('mirrorAdjust').classList.toggle('active',configuring);
  $('mirrorAdjust').setAttribute('aria-expanded',String(configuring));
+ $('mirrorAlignStudy').checked=s.mirror.alignStudy;
+ $('mirrorPosition').parentElement.classList.toggle('hidden',aligned);
+ $('mirrorAngle').parentElement.classList.toggle('hidden',aligned);
  $('mirrorPosition').value=s.mirror.position;
  $('mirrorAngle').value=s.mirror.angle;
  $('mirrorPositionValue').textContent=s.mirror.position+'%';
@@ -2811,18 +2901,17 @@ function refreshMirrorControls(){
 function canAdjustMirror(){
  return mirrorPlayable()&&s.phase==='draw'&&!specialOpen&&!drawing&&!erasing;
 }
-$('mirrorToggle').addEventListener('click',()=>{
- if(!canAdjustMirror())return;
- const enabled=!s.mirror.enabled||isCompositionMode();
- if(enabled&&isCompositionMode()&&(composeStage>0||practiceStrokes.length||locked)){
-  $('score').textContent='Finish this study before turning on Mirror Mode.';
-  return;
- }
- s.mirror.enabled=enabled;
- if(enabled)s.tool='pencil';
- if(!locked&&!practiceStrokes.length&&composeStage===0&&selectedStudy()!==s.mode)createPrompt();
+function updateMirrorStudy(){
+ const upright=mirrorModeOn()&&s.mirror.alignStudy&&s.mode==='cylinder'&&O&&(O.angle||O.bodyLean);
+ if(!locked&&!practiceStrokes.length&&composeStage===0&&(upright||selectedStudy()!==s.mode))createPrompt();
  else{save();stats()}
  resizePaper();requestPaperPaint();
+}
+$('mirrorToggle').addEventListener('click',()=>{
+ if(!canAdjustMirror())return;
+ s.mirror.enabled=!s.mirror.enabled;
+ if(s.mirror.enabled)s.tool='pencil';
+ updateMirrorStudy();
 });
 $('mirrorAdjust').addEventListener('click',()=>{
  if(!canAdjustMirror())return;
@@ -2853,10 +2942,15 @@ $('mirrorGuide').addEventListener('change',e=>{
  if(!canAdjustMirror()){refreshMirrorControls();return}
  s.mirror.showAxis=e.target.checked;save();requestPaperPaint();
 });
+$('mirrorAlignStudy').addEventListener('change',e=>{
+ if(!canAdjustMirror()){refreshMirrorControls();return}
+ s.mirror.alignStudy=e.target.checked;updateMirrorStudy();
+});
 $('mirrorResetAxis').addEventListener('click',()=>{
  if(!canAdjustMirror())return;
+ if(studyMirrorKind())s.mirror.alignStudy=false;
  s.mirror.position=0;s.mirror.angle=0;
- save();refreshMirrorControls();requestPaperPaint();
+ save();stats();resizePaper();requestPaperPaint();
 });
 // Each upgrade has its own canvas. Unfinished work consists of separate strokes;
 // lifting a finger never connects strokes with a straight line or loses progress.
@@ -3353,7 +3447,7 @@ function openShop(newVisit=true){
  // remain in memory for the score animation. Discard them on shop entry so
  // resizing on the next turn cannot create a ghost unfinished composition.
  if(locked){
-  practiceStrokes=[];clearPencilStroke();composeStage=0;composeScores=[];
+  clearPracticePaths();clearPencilStroke();composeStage=0;composeScores=[];composeManualScores=[];
   composeFirstBounds=null;composeLensShape=null;composeBalloonOutline=null;composeBalloonId=null;
   s.practiceDraft=null;feedbackReveal=false;
  }
@@ -3881,10 +3975,10 @@ function resetAllProgress(){
  if(balloonFrame)cancelAnimationFrame(balloonFrame);balloonFrame=0;
  tracing=null;inspectPinned=false;inspectId=null;hoveredUpgradeId=null;
  drawing=false;erasing=false;locked=false;activePointer=null;strokeAnchor=null;pendingResize=false;
- clearPencilStroke();eraserPts=[];practiceStrokes=[];A=null;B=null;O=null;
+ clearPencilStroke();eraserPts=[];clearPracticePaths();A=null;B=null;O=null;
  balloonsErasedThisStroke.clear();
  feedbackReveal=false;showFullGuides=false;
- composeStage=0;composeScores=[];composeTemplate='balloon';composeFirstBounds=null;
+ composeStage=0;composeScores=[];composeManualScores=[];composeTemplate='balloon';composeFirstBounds=null;
  composeLensShape=null;composeBalloonOutline=null;composeBalloonId=null;
  lastSquareAngle=null;lastBalloonTime=0;lastBalloonSave=0;balloonClock=0;lensFrame=null;
  s=blank();skillTool='trace';
