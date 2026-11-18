@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="ltd-build" content="2026-11-17.6">
+<meta name="ltd-build" content="2026-11-17.7">
 <meta name="theme-color" content="#f6f2e9">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -225,7 +225,7 @@
 <div class="upgrade off" data-id="staminaIII" style="left:38%;top:88%;" tabindex="0" aria-label="Endurance III, eight dollars"><canvas width="192" height="192"></canvas><span class="node-symbol bolt-symbol" aria-hidden="true"><svg viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M57 7 L24 46 L47 46 L35 71 L49 71 L39 90 L80 39 L57 39 L70 20 L51 20 Z"/></svg></span><span class="node-price">$8.00</span><span class="node-name">Endurance III</span><span class="tip"><strong>Endurance III</strong>Increase max strokes per turn from 3 to 4.<span class="tip-cost">$8.00 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="secondWind" style="left:26%;top:73%;" tabindex="0" aria-label="Second Wind, two dollars"><canvas width="192" height="192"></canvas><span class="node-symbol">↻</span><span class="node-price">$2.00</span><span class="node-name">Second Wind</span><span class="tip"><strong>Second Wind</strong>Gain 1 bonus stroke whenever you enter the skill tree. The bonus is for that visit only.<span class="tip-cost">$2.00 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="circle" style="left:30%;top:10%;" tabindex="0" aria-label="Circle Studies, two dollars"><canvas width="192" height="192"></canvas><span class="node-symbol">○</span><span class="node-price">$2.00</span><span class="node-name">Circles</span><span class="tip"><strong>Circle Studies</strong>Draw circles. Perfect accuracy earns $2.00.<span class="tip-cost">$2.00 · Trace to buy</span></span></div>
-<div class="upgrade off" data-id="free" style="left:88%;top:59%;" tabindex="0" aria-label="Freehand Lines, one dollar fifty"><canvas width="192" height="192"></canvas><span class="node-symbol">⬟</span><span class="node-price">$1.50</span><span class="node-name">Free lines</span><span class="tip"><strong>Freehand Lines</strong>Draw straight lines without A and B guide points.<span class="tip-cost">$1.50 · Trace to buy</span></span></div>
+<div class="upgrade off" data-id="free" style="left:88%;top:59%;" tabindex="0" aria-label="Freehand Lines, one dollar fifty"><canvas width="192" height="192"></canvas><span class="node-symbol">⬟</span><span class="node-price">$1.50</span><span class="node-name">Free lines</span><span class="tip"><strong>Freehand Lines</strong>Draw straight lines without A/B points. In Compose, the connected line determines the object.<span class="tip-cost">$1.50 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="grid" style="left:50%;top:68%;" tabindex="0" aria-label="Grid Paper, one dollar"><canvas width="192" height="192"></canvas><span class="node-symbol">□</span><span class="node-price">$1.00</span><span class="node-name">Grid</span><span class="tip"><strong>Grid Paper</strong>Add a grid to your drawing paper.<span class="tip-cost">$1.00 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="triangle" style="left:50%;top:28%;" tabindex="0" aria-label="Triangle Studies, one dollar"><canvas width="192" height="192"></canvas><span class="node-symbol">▴</span><span class="node-price">$1.00</span><span class="node-name">Triangles</span><span class="tip"><strong>Triangle Studies</strong>Connect three points to draw triangles. Perfect accuracy earns $1.25.<span class="tip-cost">$1.00 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="square" style="left:50%;top:10%;" tabindex="0" aria-label="Square Studies, one dollar fifty"><canvas width="192" height="192"></canvas><span class="node-symbol">▢</span><span class="node-price">$1.50</span><span class="node-name">Squares</span><span class="tip"><strong>Square Studies</strong>Connect four corner points to draw squares. Perfect accuracy earns $1.50.<span class="tip-cost">$1.50 · Trace to buy</span></span></div>
@@ -375,7 +375,7 @@ const defs={
  triangle:{name:'Triangle Studies',price:100,desc:'Connect three points to draw triangles. Perfect accuracy earns $1.25.',cost:'$1.00'},
  square:{name:'Square Studies',price:150,desc:'Connect four corner points to draw squares. Perfect accuracy earns $1.50.',cost:'$1.50'},
  selector:{name:'Study Selector',price:125,desc:'Switch between unlocked drawing studies.',cost:'$1.25'},
- free:{name:'Freehand Lines',price:150,desc:'Draw straight lines without A and B guide points.',cost:'$1.50'},
+ free:{name:'Freehand Lines',price:150,desc:'Draw lines without A/B endpoints. In Shape Composer, the angle and length of a connected line determine the object.',cost:'$1.50'},
  grid:{name:'Grid Paper',price:100,desc:'Add a grid to your drawing paper.',cost:'$1.00'},
  eraser:{name:'Pencil Eraser',price:125,desc:'Erase pencil marks and magnification. Each eraser pass uses 1 stroke. Guides and grid remain.',cost:'$1.25'},
  eraserSize:{name:'Adjustable Eraser',price:250,desc:'Adjust your eraser width from 8 to 64 pixels.',cost:'$2.50'},
@@ -600,6 +600,11 @@ function stats(){
   'Draw from one rim edge down around the curved base and up to the other edge.',
   'Join the two points on the right with a curve that bows outward.'
  ][composeStage]:compose?(sphere?['Part 1 of 4: Draw the sphere contour through four guide points.','Part 2 of 4: Trace the terminator computed from the light source.','Part 3 of 4: Add tonal hatching on the shadowed hemisphere.','Part 4 of 4: Trace the cast shadow opposite the light.'][composeStage]:composeStage===0?(composeTemplate==='cylinder'?'Part 1 of 2: Draw the oval top through four guide points.':squareComposition?'Part 1 of 2: Draw the square. Each mark uses 1 stroke.':'Part 1 of 2: Draw the circular outline. Each mark uses 1 stroke.'):composeTemplate==='cylinder'?'Part 2 of 2: Trace down the left side, around the curved bottom, and up the right side from A to B.':composeTemplate==='balloon'?'Part 2 of 2: Draw the string to release your helium balloon.':'Part 2 of 2: Connect A to B to finish your object.'):oval?'Draw a smooth oval through all four guide points.':curve?'Trace the curved guide from A to B. Lift and continue if needed.':circle?(upgradeActive('dashedCircle')?'Trace the dashed circular guide. With Endurance, you can finish it using multiple strokes.':'Use the center dot and four surrounding dots to draw a circle.'):square?'Connect the four corner points with straight sides. With Endurance, you can lift and continue.':triangle?'Connect three points to form a triangle. You can use multiple strokes with Endurance.':s.freeOn?'Start anywhere and draw one smooth, straight line.':'Start on A, draw a continuous line, and finish on B.';
+ if(s.mode==='compose'&&composeAutoLine&&!locked){
+  const squareBase=['signpost','kite'].includes(composeTemplate);
+  $('activityHeading').textContent=composeStage===0?(squareBase?'Draw a square':'Draw a circle'):'Add a connected line';
+  $('instruction').textContent=composeStage===0?'Part 1 of 2: Draw the outline. The next line decides which object it becomes.':squareBase?'Part 2 of 2: Connect a freehand line to the square. A long vertical post makes a signpost; a diagonal downward tail makes a kite.':'Part 2 of 2: Connect a freehand line to the circle. A long downward string makes a balloon (if unlocked); an angled or shorter handle makes a magnifier.';
+ }
  const guideInfo=refreshGuideUI();
  const maxReward=mug?500:compose?(sphere?550:cylinder?400:squareComposition?250:300):oval?225:curve?175:circle?200:square?150:triangle?125:100;
  $('rewardTag').textContent='UP TO '+cash(maxReward);
@@ -629,7 +634,7 @@ for(const name of ['touchstart','touchmove'])draw.addEventListener(name,e=>{if(e
 // Prevent page scrolling during an active touch stroke, even on older mobile browsers.
 window.addEventListener('touchmove',e=>{if(activePointer!==null&&e.cancelable)e.preventDefault()},{passive:false});
 
-let composeStage=0,composeScores=[],composeTemplate='balloon',composeFirstBounds=null,composeLensShape=null,composeBalloonOutline=null,composeBalloonId=null;
+let composeStage=0,composeScores=[],composeTemplate='balloon',composeAutoLine=false,composeFirstBounds=null,composeLensShape=null,composeBalloonOutline=null,composeBalloonId=null;
 let W=0,H=0,A=null,B=null,O=null,strokePts=[],practiceStrokes=[],drawing=false,eraserPts=[],erasing=false,locked=false,advanceTimer=null,activePointer=null,strokeAnchor=null,pendingResize=false,paintFrame=0,feedbackReveal=false;
 let lastSquareAngle=null;
 // A square has 90-degree rotational symmetry. Vary its orientation across the
@@ -668,7 +673,7 @@ function persistPracticeDraft(){
  // layout changes must never resurrect them as unfinished practice drafts.
  if(locked){s.practiceDraft=null;save();return}
  if(!practiceStrokes.length&&!(isCompositionMode()&&composeStage>0)){s.practiceDraft=null;save();return}
- s.practiceDraft={mode:s.mode,freeOn:!!s.freeOn,composeStage,composeScores:[...composeScores],composeTemplate,
+ s.practiceDraft={mode:s.mode,freeOn:!!s.freeOn,composeStage,composeScores:[...composeScores],composeTemplate,composeAutoLine,
   A:A?pointToIso(A):null,B:B?pointToIso(B):null,
   O:O?{at:pointToIso(O),r:Number(O.r||0)/Math.max(1,H),rx:Number(O.rx||0)/Math.max(1,H),ry:Number(O.ry||0)/Math.max(1,H),bodyHeight:Number(O.bodyHeight||0)/Math.max(1,H),bodyLean:Number(O.bodyLean||0)/Math.max(1,H),angle:Number(O.angle)||0,lightAngle:Number(O.lightAngle)||0,lightElevation:Number(O.lightElevation)||0}:null,
   strokes:practiceStrokes.map(pts=>pts.map(pointToIso)),composeFirstBounds,composeLensShape,composeBalloonOutline,composeBalloonId};
@@ -701,6 +706,7 @@ function restorePracticeDraft(){
   composeStage=clamp(Math.floor(Number(d.composeStage)||0),0,lastStage);
   composeScores=Array.isArray(d.composeScores)?d.composeScores.slice(0,lastStage):[];
   composeTemplate=['balloon','magnifier','signpost','kite','cylinder','mug','sphere'].includes(d.composeTemplate)?d.composeTemplate:'balloon';
+  composeAutoLine=d.mode==='compose'&&d.composeAutoLine===true;
   composeFirstBounds=d.composeFirstBounds&&['minX','maxX','minY','maxY'].every(k=>Number.isFinite(d.composeFirstBounds[k]))?d.composeFirstBounds:null;
    composeLensShape=d.composeLensShape&&Array.isArray(d.composeLensShape.profile)?d.composeLensShape:null;
    composeBalloonOutline=Array.isArray(d.composeBalloonOutline)?d.composeBalloonOutline:null;
@@ -744,6 +750,7 @@ function createPrompt(){
  // Preserve the selected exercise and composition type; randomize each new
  // target without changing grading or already saved unfinished drawings.
  s.mode=selectedStudy();
+ composeAutoLine=s.mode==='compose'&&s.freeOn;
  showFullGuides=false;
  strokePts=[];practiceStrokes=[];s.practiceDraft=null;drawing=false;locked=false;feedbackReveal=false;composeStage=0;composeScores=[];composeFirstBounds=null;composeLensShape=null;composeBalloonOutline=null;composeBalloonId=null;
  A=null;B=null;O=null;
@@ -774,7 +781,7 @@ function createPrompt(){
   // Composer also offers Balloon when both upgrades are active; use the
   // existing two-stage balloon drawing and physics just like Balloon mode.
   composeTemplate=s.mode==='balloon'||s.composeBase==='balloon'&&balloonPlayable()?'balloon':s.composeBase==='square'?(s.composeLine==='down'?'signpost':'kite'):'magnifier';
-  if(composeTemplate==='balloon')composeBalloonId=++s.balloonSerial;
+  if(composeTemplate==='balloon'||composeAutoLine&&['balloon','magnifier'].includes(composeTemplate))composeBalloonId=++s.balloonSerial;
   const maxR=Math.min(W*.14,H*.17,82),r=randomBetween(Math.max(22,maxR*.62),Math.max(22,maxR));
   const squareBased=['signpost','kite'].includes(composeTemplate);
   O={x:0,y:0,r,angle:composeTemplate==='kite'?nextSquareAngle():0};
@@ -1163,7 +1170,7 @@ function paintPaper(reveal=feedbackReveal){dc.clearRect(0,0,W,H);
  }
  else if((s.mode==='square'||isCompositionMode()&&composeStage===0&&['signpost','kite'].includes(composeTemplate))&&O)paintPolygonGuide(squareCorners(),reveal);
  else if((s.mode==='circle'||isCompositionMode()&&composeStage===0)&&O){if(upgradeActive('dashedCircle')){dc.beginPath();dc.arc(O.x,O.y,O.r,0,Math.PI*2);dc.strokeStyle='#82aa9b99';dc.lineWidth=2;dc.setLineDash([5,7]);dc.stroke();dc.setLineDash([])}else{circleDot(O.x,O.y,true);for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]])circleDot(O.x+dx*O.r,O.y+dy*O.r)}if(reveal){dc.beginPath();dc.arc(O.x,O.y,O.r,0,Math.PI*2);dc.strokeStyle='#73a891';dc.lineWidth=1.2;dc.stroke()}}
- else if(A&&B){if(reveal){dc.save();dc.beginPath();dc.moveTo(A.x,A.y);dc.lineTo(B.x,B.y);dc.strokeStyle='#51a888';dc.lineWidth=2.4;dc.setLineDash([7,5]);dc.shadowColor='rgba(69,153,118,.35)';dc.shadowBlur=3;dc.stroke();dc.restore()}dot(A,'A','#468d7c');dot(B,'B','#d9835e')}
+ else if(A&&B&&!(s.mode==='compose'&&composeAutoLine&&composeStage===1)){if(reveal){dc.save();dc.beginPath();dc.moveTo(A.x,A.y);dc.lineTo(B.x,B.y);dc.strokeStyle='#51a888';dc.lineWidth=2.4;dc.setLineDash([7,5]);dc.shadowColor='rgba(69,153,118,.35)';dc.shadowBlur=3;dc.stroke();dc.restore()}dot(A,'A','#468d7c');dot(B,'B','#d9835e')}
  dc.restore();stroke(dc,strokePts,'#243941',3.2);paintLens()}
 // Keep ink in height-relative, centered coordinates. That preserves circles and
 // eraser paths even if a desktop layout change dramatically widens the paper.
@@ -2307,7 +2314,61 @@ function circleLooksComplete(){
   &&pathLength(pts)>=circumference*.64
  );
 }
+
+/* Free Lines turns the second part of Shape Composer into a genuine
+   drawing choice. Use the user's line and its attachment to the inked outline,
+   not the previously selected template's A/B guide. Existing guided studies,
+   including the standalone Balloon mode, retain their original scoring. */
+const freeCompositionLineMode=()=>s.mode==='compose'&&composeAutoLine&&composeStage===1;
+function analyzeFreeCompositionLine(){
+ const paths=practiceStrokes.filter(pts=>pts.length>=2);
+ if(!freeCompositionLineMode()||!O||!paths.length)return {valid:false,accuracy:0};
+ const square=['signpost','kite'].includes(composeTemplate);
+ const outline=composeLensShape&&!square?composeLensShape:null;
+ const center=outline?pointFromIso(outline.at):O;
+ const r=outline?outline.r*H:O.r;
+ if(!(r>0))return {valid:false,accuracy:0};
+ const corners=square?squareCorners():null;
+ const gap=p=>{
+  if(square)return Math.min(...corners.map((v,i)=>lineDistance(p,v,corners[(i+1)%corners.length])));
+  const angle=Math.atan2(p.y-center.y,p.x-center.x);
+  return Math.abs(distance(p,center)-r*lensRadiusAt(outline&&outline.profile,angle));
+ };
+ const ends=paths.reduce((result,pts)=>result.concat([pts[0],pts[pts.length-1]]),[]);
+ const tolerance=Math.max(17,Math.min(27,r*.31));
+ let best=null;
+ for(const start of ends){
+  const attach=gap(start);
+  if(attach>tolerance)continue;
+  for(const end of ends){
+   if(end===start)continue;
+   const len=distance(start,end),priority=len-attach*2;
+   if(!best||priority>best.priority)best={start,end,len,attach,priority};
+  }
+ }
+ if(!best)return {valid:false,accuracy:0};
+ const {start,end,len,attach}=best;
+ const dx=end.x-start.x,dy=end.y-start.y;
+ const travel=paths.reduce((total,pts)=>total+pathLength(pts),0);
+ const points=paths.flat();
+ const straight=clamp(len/Math.max(travel,1));
+ const precision=points.reduce((sum,p)=>sum+clamp(1-lineDistance(p,start,end)/19),0)/points.length;
+ const attached=clamp(1-attach/tolerance);
+ const outward=square?dy>Math.max(14,r*.23):distance(end,center)>distance(start,center)+Math.max(9,r*.14);
+ const valid=len>=Math.max(25,r*.43)&&outward&&straight>=.70&&precision>=.65;
+ if(!valid)return {valid:false,accuracy:0};
+ // Classification uses BOTH direction and size, scaled to the drawn outline.
+ const balloon= !square&&balloonPlayable()&&start.y>=center.y+r*.44
+  &&dy>=Math.max(44,r*.83)&&Math.abs(dx)<=dy*.48;
+ const signpost=square&&start.y>=O.y+r*.35
+  &&dy>=Math.max(42,r*.80)&&Math.abs(dx)<=dy*.40;
+ const kind=square?(signpost?'signpost':'kite'):(balloon?'balloon':'magnifier');
+ const score=Math.round(100*(.49*precision+.30*straight+.21*attached));
+ const perfect=attach<=.55&&pixelPerfectLine(paths,points,start,end,travel);
+ return {valid:true,kind,accuracy:perfect?100:clamp(score,0,99),start,end};
+}
 function componentLooksComplete(){
+ if(freeCompositionLineMode())return analyzeFreeCompositionLine().valid;
  if(s.mode==='sphere')return sphereStageLooksComplete();
  if(s.mode==='cylinder')return composeStage===0?ovalLooksComplete():openContourLooksComplete();
  if(s.mode==='mug'){
@@ -2426,15 +2487,24 @@ function finishStagedStudyPart(){
 }
 function finishCompositionPart(){
  if(s.mode==='sphere'||s.mode==='mug'){finishStagedStudyPart();return}
- const accuracy=composeTemplate==='cylinder'?(composeStage===0?ovalAccuracy():openContourAccuracy()):composeStage===0?(['signpost','kite'].includes(composeTemplate)?squareAccuracy():circleAccuracy()):lineAccuracy(true);
+ const freeLine=freeCompositionLineMode()?analyzeFreeCompositionLine():null;
+ if(freeLine&&freeLine.valid){
+  composeTemplate=freeLine.kind;
+  s.composeBase=freeLine.kind==='balloon'?'balloon':['signpost','kite'].includes(freeLine.kind)?'square':'circle';
+  s.composeLine=freeLine.kind==='signpost'?'down':'diagonal';
+ }
+ const accuracy=composeTemplate==='cylinder'?(composeStage===0?ovalAccuracy():openContourAccuracy()):composeStage===0?(['signpost','kite'].includes(composeTemplate)?squareAccuracy():circleAccuracy()):freeLine?freeLine.accuracy:lineAccuracy(true);
  recordGuideAccuracy(accuracy);
  composeScores.push(accuracy);
  if(composeStage===0){
   composeFirstBounds=boundsToIso(drawnBounds(practiceStrokes));
-  if(composeTemplate==='magnifier')composeLensShape=captureDrawnLens(practiceStrokes);
-  if(composeTemplate==='balloon'){composeBalloonOutline=practiceStrokes.map(pts=>pts.map(pointToIso));alignBalloonStringToDrawnOutline()}
+  if(composeTemplate==='magnifier'||composeAutoLine&&s.mode==='compose'&&!['signpost','kite'].includes(composeTemplate))composeLensShape=captureDrawnLens(practiceStrokes);
+  if(composeTemplate==='balloon'||composeAutoLine&&s.mode==='compose'&&!['signpost','kite'].includes(composeTemplate)){
+   composeBalloonOutline=practiceStrokes.map(pts=>pts.map(pointToIso));
+   if(!composeAutoLine)alignBalloonStringToDrawnOutline();
+  }
   composeStage=1;feedbackReveal=false;practiceStrokes=[];strokePts=[];persistPracticeDraft();stats();paintPaper();
-  $('score').textContent=(composeTemplate==='cylinder'?'Oval ':['signpost','kite'].includes(composeTemplate)?'Square ':'Circle ')+accuracy+'% · Now draw the '+(composeTemplate==='cylinder'?'body':composeTemplate==='balloon'?'string':composeTemplate==='signpost'?'post':composeTemplate==='kite'?'tail':'handle');
+  $('score').textContent=(composeTemplate==='cylinder'?'Oval ':['signpost','kite'].includes(composeTemplate)?'Square ':'Circle ')+accuracy+'% · Now '+(composeAutoLine?'choose an object with a connected line':'draw the '+(composeTemplate==='cylinder'?'body':composeTemplate==='balloon'?'string':composeTemplate==='signpost'?'post':composeTemplate==='kite'?'tail':'handle'));
   // A two-part drawing may use its last stroke on the first component.
   // Save the second stage and enter the shop after showing the feedback.
   if(s.left<=0){clearTimeout(advanceTimer);advanceTimer=setTimeout(()=>{if(s.phase==='draw'&&composeStage===1&&s.left<=0)openShop()},1370)}
@@ -2443,13 +2513,14 @@ function finishCompositionPart(){
  locked=true;
  // Each component is paid at its study rate: square/circle plus a line.
  const firstMode=['signpost','kite'].includes(composeTemplate)?'square':'circle';
- const reward=composeTemplate==='cylinder'?payoutForShape('oval',composeScores[0])+payoutForShape('curve',composeScores[1]):payoutForShape(firstMode,composeScores[0])+payoutForShape('line',composeScores[1]);
+ const reward=composeTemplate==='cylinder'?payoutForShape('oval',composeScores[0])+payoutForShape('curve',composeScores[1]):payoutForShape(firstMode,composeScores[0])+(freeLine&&!freeLine.valid?0:payoutForShape('line',composeScores[1]));
  const rewardBounds=unionBounds(boundsFromIso(composeFirstBounds),drawnBounds(practiceStrokes));
  s.cash+=reward;s.last=Math.round((composeScores[0]+composeScores[1])/2);s.lastPay=reward;s.lastKind=composeTemplate==='cylinder'?'cylinder':composeTemplate==='balloon'?'balloon':'composition';recordSpecialTrial(s.lastKind,s.last);
- if(composeTemplate==='magnifier'&&O)s.magnifiers.push(composeLensShape||{at:pointToIso(O),r:O.r/Math.max(1,H)});
- if(composeTemplate==='balloon')finishHeliumBalloon();
+ if((!freeLine||freeLine.valid)&&composeTemplate==='magnifier'&&O)s.magnifiers.push(composeLensShape||{at:pointToIso(O),r:O.r/Math.max(1,H)});
+ if((!freeLine||freeLine.valid)&&composeTemplate==='balloon')finishHeliumBalloon();
  s.practiceDraft=null;feedbackReveal=true;save();stats();paintPaper(true);
- $('score').textContent='Composition '+s.last+'% · +'+cash(reward);
+ $('score').textContent=freeLine&&!freeLine.valid?'Connect a straight line to the outline · +'+cash(reward):
+  (freeLine?composeTemplate.charAt(0).toUpperCase()+composeTemplate.slice(1):'Composition')+' '+s.last+'% · +'+cash(reward);
  showEarnings(reward,rewardBounds);
  scheduleStudyAdvance();
 }
@@ -2461,7 +2532,7 @@ function finishPractice(){
  practiceStrokes.push(pts);
  // Keep each segment separate: pen lifts never create artificial connections.
  const mark={kind:'ink',space:'iso',points:normalizeMark(pts)};
- if(isCompositionMode()&&composeTemplate==='balloon'&&composeBalloonId)mark.balloonId=composeBalloonId;
+ if(isCompositionMode()&&composeBalloonId&&(composeTemplate==='balloon'||composeAutoLine))mark.balloonId=composeBalloonId;
  s.paperMarks.push(mark);
  s.strokes++;spendStroke();strokePts=[];
  paintInk();paintPaper();
@@ -2473,7 +2544,7 @@ function finishPractice(){
   if(complete||s.left<=reserve)finishCompositionPart();
   else{
    persistPracticeDraft();stats();
-   $('score').textContent='Continue '+(s.mode==='mug'?'the '+mugParts[composeStage].toLowerCase():s.mode==='sphere'?sphereStageNames[composeStage]:composeStage===0?(composeTemplate==='cylinder'?'the top oval':['signpost','kite'].includes(composeTemplate)?'the square':'the circle'):composeTemplate==='cylinder'?'the body':composeTemplate==='balloon'?'the string':composeTemplate==='signpost'?'the post':'the handle')+' · '+s.left+' stroke'+(s.left===1?'':'s')+' left';
+   $('score').textContent='Continue '+(freeCompositionLineMode()?'the connected line':s.mode==='mug'?'the '+mugParts[composeStage].toLowerCase():s.mode==='sphere'?sphereStageNames[composeStage]:composeStage===0?(composeTemplate==='cylinder'?'the top oval':['signpost','kite'].includes(composeTemplate)?'the square':'the circle'):composeTemplate==='cylinder'?'the body':composeTemplate==='balloon'?'the string':composeTemplate==='signpost'?'the post':'the handle')+' · '+s.left+' stroke'+(s.left===1?'':'s')+' left';
   }
   return;
  }

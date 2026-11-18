@@ -43,3 +43,7 @@ After purchasing Shape Composer, players can choose **Living Ink ($12)** or **Pe
 - **Perspective Lab:** Draw four depth lines per challenge toward one-point or two-point vanishing guides. Each edge must reach 70% accuracy. Three one-time challenges teach receding edges and reward in-game currency.
 - **Chapter 1** allows one specialization. Completing three challenges in that chosen workshop opens **Chapter 2**, allowing the other branch to be bought. Ownership, trials, completed challenges, and chapter progress are saved alongside the existing game state.
 - Both workshops are part of the self-contained `index.html` and include a pre-Pointer-Events touch fallback for iPad mini 2. Workshop sketches are reset when you leave the activity; challenge milestones and the rest of the sketchbook are preserved.
+
+## Free Lines composition recognition
+
+With Shape Composer and Free Lines active, the second stage has no fixed A/B endpoints. Draw a straight line connected to the circle or square; its direction and length decide the finished object. A long downward string from the bottom of a circle creates a balloon (when Balloon Drawing is unlocked), while a shorter or angled handle creates a magnifier. A long, mostly vertical line below a square makes a signpost; a diagonal downward tail makes a kite. Disconnected lines cannot create the physical magnifier or balloon. Existing guided studies and partially saved drawings keep their original behavior.
