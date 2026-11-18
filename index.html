@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="ltd-build" content="2026-11-17.9">
+<meta name="ltd-build" content="2026-11-17.10">
 <meta name="theme-color" content="#f6f2e9">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -1299,10 +1299,8 @@ function eraseMagnification(points,width){
  for(const glass of s.magnifiers||[]){
   if(within(glass)){if(!Array.isArray(glass.erasures))glass.erasures=[];glass.erasures.push(erase)}
  }
- if(isCompositionMode()&&composeTemplate==='magnifier'&&composeStage===1&&O){
-  if(!composeLensShape)composeLensShape={at:pointToIso(O),r:O.r/H};
-  if(within(composeLensShape)){if(!Array.isArray(composeLensShape.erasures))composeLensShape.erasures=[];composeLensShape.erasures.push(erase);persistPracticeDraft()}
- }
+ // Unfinished composition outlines are plain pencil ink, not active lenses.
+ // Only magnifiers saved after the connected handle is completed can be erased.
 }
 function paintLensErasures(glass){
  const masks=Array.isArray(glass.erasures)?glass.erasures:[];
@@ -1344,10 +1342,8 @@ function paintLens(){
   paintMagnifierLens({...pointFromIso(glass.at),r:glass.r*H,profile:glass.profile,erasures:glass.erasures});
  }
  if(upgradedOldLens)save();
- // The active lens starts working after its circle is finished; avoid
- // double rendering once the completed lens is saved.
- if(isCompositionMode()&&composeTemplate==='magnifier'&&composeStage===1&&O&&!feedbackReveal)
-  paintMagnifierLens(composeLensShape?{...pointFromIso(composeLensShape.at),r:composeLensShape.r*H,profile:composeLensShape.profile,erasures:composeLensShape.erasures}:O);
+ // An outline awaiting a handle is not a magnifier. Magnification starts
+ // only after finishCompositionPart() saves the completed lens in s.magnifiers.
 }
 function paintMagnifierLens(glass){
  // Old save files contain round lenses; new ones have an exact hand-drawn
