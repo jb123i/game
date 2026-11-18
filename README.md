@@ -51,3 +51,7 @@ With Shape Composer and Free Lines active, the second stage has no fixed A/B end
 ## Oval Guides ($5.00)
 
 Oval Guides is unlocked after Oval Studies. Trace its skill-tree oval and pay $5.00 to replace four oval guide dots with a dashed, rotated outline, matching the behavior of Circle Guides. The outline also replaces guide dots on the oval-top stage of Cylinder Studies and the oval-rim stage of Mug Studies. Drawing accuracy, rewards, and required stroke counts are unchanged. Existing saves gain the new unowned upgrade without a reset.
+
+## Stroke Exchange ($8.00)
+
+Stroke Exchange branches from Endurance II. Trace and buy it for $8.00. At the transition from the skill-tree shop to the next drawing turn, any unspent strokes (including any unused Second Wind shop bonus) convert into $1.00 per stroke. The conversion happens before strokes refill, and its cash reward and turn transition are saved together. Strokes spent tracing upgrades are not converted. Disabling an owned Stroke Exchange by erasing its trace disables the conversion until reactivated. The shop remains usable before the exchange, and existing saves load with the upgrade unpurchased.
