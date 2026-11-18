@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="ltd-build" content="2026-11-17.16">
+<meta name="ltd-build" content="2026-11-17.17">
 <meta name="theme-color" content="#f6f2e9">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -3369,7 +3369,7 @@ function specialCompleteMission(){
   if(s.specialChoice===specialKind&&s.specialWins[specialKind]===3)s.specialChapter=2;
   save();stats();renderTree();
   let notice='Challenge complete · +'+cash(reward)+' awarded once.';
-  if(s.specialChapter===2&&done===2)notice+=' Chapter 2 unlocked — the other branch is now available in the shop.';
+  if(s.specialChapter===2&&done===2)notice+=' Chapter 2 unlocked';
   specialSetMessage(notice);
  }else specialSetMessage('Practice complete. No repeat reward.');
  $('specialAction').textContent=(s.specialWins[specialKind]||0)>=3?'Free practice':'Next challenge';
