@@ -1,5 +1,5 @@
 /* The game is a single HTML document. Keep an offline copy of this build. */
-const BUILD = '2026-11-17.11';
+const BUILD = '2026-11-17.12';
 const CACHE_PREFIX = 'learn-to-draw-offline-';
 const CACHE_NAME = CACHE_PREFIX + BUILD;
 const SHELL_URL = self.registration.scope;

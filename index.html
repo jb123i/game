@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="ltd-build" content="2026-11-17.11">
+<meta name="ltd-build" content="2026-11-17.12">
 <meta name="theme-color" content="#f6f2e9">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -210,6 +210,7 @@
 <path id="link-square-legacy" d="M50 48 L50 10"/>
 <line id="link-circle" x1="50" y1="10" x2="30" y2="10"/>
 <line id="link-dashedCircle" x1="30" y1="10" x2="12" y2="10"/>
+<line id="link-ovalGuides" x1="68" y1="31" x2="69" y2="12"/>
 <line id="link-selector" x1="50" y1="10" x2="88" y2="10"/>
 <line id="link-curve" x1="30" y1="10" x2="30" y2="28"/>
 <path id="link-oval" d="M30 28 L37 38 L60 38 L68 31"/>
@@ -244,6 +245,7 @@
 <div class="upgrade off" data-id="guideFade" style="left:27%;top:53%;" tabindex="0" aria-label="Adaptive Guides, six dollars"><canvas width="192" height="192"></canvas><span class="node-symbol">◌</span><span class="node-price">$6.00</span><span class="node-name">Adaptive Guides</span><span class="tip"><strong>Adaptive Guides</strong>As you score consistently well in a drawing study, its guide marks fade. Lower scores bring them back. Track mastery separately for each study and stage.<span class="tip-cost">$6.00 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="composer" style="left:12%;top:63%;" tabindex="0" aria-label="Shape Composer, three dollars"><canvas width="192" height="192"></canvas><span class="node-symbol">✦</span><span class="node-price">$3.00</span><span class="node-name">Composer</span><span class="tip"><strong>Shape Composer</strong>Draw magnifiers, signposts and kites by combining basic shapes with lines.<span class="tip-cost">$3.00 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="dashedCircle" style="left:12%;top:10%;" tabindex="0" aria-label="Circle Guides, five dollars"><canvas width="192" height="192"></canvas><span class="node-symbol">◌</span><span class="node-price">$5.00</span><span class="node-name">Circle guides</span><span class="tip"><strong>Dashed Circle Guide</strong>Replace circle guide dots with a dashed outline.<span class="tip-cost">$5.00 · Trace to buy</span></span></div>
+<div class="upgrade off" data-id="ovalGuides" style="left:69%;top:12%;" tabindex="0" aria-label="Oval Guides, five dollars"><canvas width="192" height="192"></canvas><span class="node-symbol">⬭</span><span class="node-price">$5.00</span><span class="node-name">Oval guides</span><span class="tip"><strong>Oval Guides</strong>Replace oval guide dots with a dashed oval outline.<span class="tip-cost">$5.00 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="eraser" style="left:70%;top:68%;" tabindex="0" aria-label="Pencil Eraser, one dollar twenty five"><canvas width="192" height="192"></canvas><span class="node-symbol eraser-symbol" aria-hidden="true"><svg viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><path d="M4 21 20 5q2-2 4 0l9 9q2 2 0 4L17 34H12L4 26q-2-2 0-5Z"/><path d="m13 12 15 15"/><path d="M12 34h19" stroke-width="1.5"/></svg></span><span class="node-price">$1.25</span><span class="node-name">Eraser</span><span class="tip"><strong>Pencil Eraser</strong>Erase pencil marks and magnification. Each eraser pass uses 1 stroke. Guides and grid remain.<span class="tip-cost">$1.25 · Trace to buy</span></span></div>
 <div class="upgrade off" data-id="eraserSize" style="left:88%;top:88%;" tabindex="0" aria-label="Adjustable Eraser Size, two dollars fifty"><canvas width="192" height="192"></canvas><span class="node-symbol" aria-hidden="true">◉</span><span class="node-price">$2.50</span><span class="node-name">Eraser size</span><span class="tip"><strong>Adjustable Eraser</strong>Adjust your eraser width from 8 to 64 pixels.<span class="tip-cost">$2.50 · Trace to buy</span></span></div>
 </div>
@@ -386,10 +388,11 @@ const defs={
  eraserSize:{name:'Adjustable Eraser',price:250,desc:'Adjust your eraser width from 8 to 64 pixels.',cost:'$2.50'},
  composer:{name:'Shape Composer',price:300,desc:'Draw a magnifying glass, signpost or kite using two-part compositions. Each drawing requires at least 2 strokes.',cost:'$3.00'},
  dashedCircle:{name:'Dashed Circle Guide',price:500,desc:'Replace circle guide dots with a dashed outline.',cost:'$5.00'},
+ ovalGuides:{name:'Oval Guides',price:500,desc:'Replace oval guide dots with a dashed oval outline. Also applies to oval rims in Cylinder and Mug studies.',cost:'$5.00'},
  living:{name:'Living Ink',price:1200,desc:'Bring pencil drawings to life with ramps, moving objects, and balloons. Earn access with three accurate study types.',cost:'$12.00'},
  perspective:{name:'Perspective Lab',price:1200,desc:'Draw believable 3D spaces using vanishing points. Earn access with three accurate study types.',cost:'$12.00'}
 };
-const blank=()=>({cash:0,turn:1,energy:1,left:1,sharedEnergyV1:true,shopRootMigrationV1:true,shopBonusEarned:false,legacyEnduranceShapes:{root:false,stamina:false},strokes:0,practiceDraft:null,phase:'draw',last:0,lastPay:0,lastKind:'line',owned:{root:false,stamina:false,staminaIII:false,secondWind:false,circle:false,curve:false,guideFade:false,oval:false,cylinder:false,object:false,sphere:false,balloon:false,free:false,grid:false,eraser:false,eraserSize:false,dashedCircle:false,square:false,triangle:false,composer:false,selector:false,living:false,perspective:false},specialTrials:[],specialChoice:null,specialChapter:1,specialWins:{living:0,perspective:0},legacySquare:false,legacyComposer:false,legacyBalloon:false,legacyCurvePath:false,curveGateV1:true,composeBase:'circle',composeLine:'diagonal',mugView:'front',mugFewerGuides:false,mugResult:null,disabled:{},traces:{},pendingTraces:{},paperMarks:[],magnifiers:[],balloons:[],balloonSerial:0,guideMastery:{},legacyAspect:null,eraserSize:30,gridOn:true,freeOn:false,mode:'line',studyPreference:null,tool:'pencil'});
+const blank=()=>({cash:0,turn:1,energy:1,left:1,sharedEnergyV1:true,shopRootMigrationV1:true,shopBonusEarned:false,legacyEnduranceShapes:{root:false,stamina:false},strokes:0,practiceDraft:null,phase:'draw',last:0,lastPay:0,lastKind:'line',owned:{root:false,stamina:false,staminaIII:false,secondWind:false,circle:false,curve:false,guideFade:false,oval:false,cylinder:false,object:false,sphere:false,balloon:false,free:false,grid:false,eraser:false,eraserSize:false,dashedCircle:false,ovalGuides:false,square:false,triangle:false,composer:false,selector:false,living:false,perspective:false},specialTrials:[],specialChoice:null,specialChapter:1,specialWins:{living:0,perspective:0},legacySquare:false,legacyComposer:false,legacyBalloon:false,legacyCurvePath:false,curveGateV1:true,composeBase:'circle',composeLine:'diagonal',mugView:'front',mugFewerGuides:false,mugResult:null,disabled:{},traces:{},pendingTraces:{},paperMarks:[],magnifiers:[],balloons:[],balloonSerial:0,guideMastery:{},legacyAspect:null,eraserSize:30,gridOn:true,freeOn:false,mode:'line',studyPreference:null,tool:'pencil'});
 let s=blank();
 try{const q=JSON.parse(localStorage.getItem(key)||'null');if(q&&Number.isFinite(q.cash)&&q.owned&&['draw','shop'].includes(q.phase)){
  s={...blank(),...q,owned:{...blank().owned,...q.owned},disabled:q.disabled&&typeof q.disabled==='object'?q.disabled:{},traces:q.traces&&typeof q.traces==='object'?q.traces:{},pendingTraces:q.pendingTraces&&typeof q.pendingTraces==='object'?q.pendingTraces:{},paperMarks:Array.isArray(q.paperMarks)?q.paperMarks:[],magnifiers:Array.isArray(q.magnifiers)?q.magnifiers:[],balloons:Array.isArray(q.balloons)?q.balloons.slice(0,36):[],guideMastery:q.guideMastery&&typeof q.guideMastery==='object'&&!Array.isArray(q.guideMastery)?q.guideMastery:{},practiceDraft:q.practiceDraft&&typeof q.practiceDraft==='object'?q.practiceDraft:null,
@@ -601,10 +604,10 @@ function stats(){
  }
  $('activityHeading').textContent=mug?'Draw a mug':compose?(composeTemplate==='sphere'?'Shade a sphere':composeTemplate==='cylinder'?'Draw a cylinder':composeTemplate==='balloon'?'Draw a balloon':composeTemplate==='signpost'?'Draw a signpost':composeTemplate==='kite'?'Draw a kite':'Draw a magnifying glass'):oval?'Draw an oval':curve?'Draw a curve':circle?'Draw a circle':square?'Draw a square':triangle?'Draw a triangle':s.freeOn?'Draw a straight line':'Connect the points';
  $('instruction').textContent=mug?[
-  'Draw a closed oval for the rim.',
+  (upgradeActive('ovalGuides')?'Trace the dashed oval rim.':'Draw a closed oval for the rim.'),
   'Draw from one rim edge down around the curved base and up to the other edge.',
   'Join the two points on the right with a curve that bows outward.'
- ][composeStage]:compose?(sphere?['Part 1 of 4: Draw the sphere contour through four guide points.','Part 2 of 4: Trace the terminator computed from the light source.','Part 3 of 4: Add tonal hatching on the shadowed hemisphere.','Part 4 of 4: Trace the cast shadow opposite the light.'][composeStage]:composeStage===0?(composeTemplate==='cylinder'?'Part 1 of 2: Draw the oval top through four guide points.':squareComposition?'Part 1 of 2: Draw the square. Each mark uses 1 stroke.':'Part 1 of 2: Draw the circular outline. Each mark uses 1 stroke.'):composeTemplate==='cylinder'?'Part 2 of 2: Trace down the left side, around the curved bottom, and up the right side from A to B.':composeTemplate==='balloon'?'Part 2 of 2: Draw the string to release your helium balloon.':'Part 2 of 2: Connect A to B to finish your object.'):oval?'Draw a smooth oval through all four guide points.':curve?'Trace the curved guide from A to B. Lift and continue if needed.':circle?(upgradeActive('dashedCircle')?'Trace the dashed circular guide. With Endurance, you can finish it using multiple strokes.':'Use the center dot and four surrounding dots to draw a circle.'):square?'Connect the four corner points with straight sides. With Endurance, you can lift and continue.':triangle?'Connect three points to form a triangle. You can use multiple strokes with Endurance.':s.freeOn?'Start anywhere and draw one smooth, straight line.':'Start on A, draw a continuous line, and finish on B.';
+ ][composeStage]:compose?(sphere?['Part 1 of 4: Draw the sphere contour through four guide points.','Part 2 of 4: Trace the terminator computed from the light source.','Part 3 of 4: Add tonal hatching on the shadowed hemisphere.','Part 4 of 4: Trace the cast shadow opposite the light.'][composeStage]:composeStage===0?(composeTemplate==='cylinder'?(upgradeActive('ovalGuides')?'Part 1 of 2: Trace the dashed oval top.':'Part 1 of 2: Draw the oval top through four guide points.'):squareComposition?'Part 1 of 2: Draw the square. Each mark uses 1 stroke.':'Part 1 of 2: Draw the circular outline. Each mark uses 1 stroke.'):composeTemplate==='cylinder'?'Part 2 of 2: Trace down the left side, around the curved bottom, and up the right side from A to B.':composeTemplate==='balloon'?'Part 2 of 2: Draw the string to release your helium balloon.':'Part 2 of 2: Connect A to B to finish your object.'):oval?(upgradeActive('ovalGuides')?'Trace the dashed oval guide. With Endurance, you can finish it using multiple strokes.':'Draw a smooth oval through all four guide points.'):curve?'Trace the curved guide from A to B. Lift and continue if needed.':circle?(upgradeActive('dashedCircle')?'Trace the dashed circular guide. With Endurance, you can finish it using multiple strokes.':'Use the center dot and four surrounding dots to draw a circle.'):square?'Connect the four corner points with straight sides. With Endurance, you can lift and continue.':triangle?'Connect three points to form a triangle. You can use multiple strokes with Endurance.':s.freeOn?'Start anywhere and draw one smooth, straight line.':'Start on A, draw a continuous line, and finish on B.';
  if(s.mode==='compose'&&composeAutoLine&&!locked){
   const squareBase=['signpost','kite'].includes(composeTemplate);
   $('activityHeading').textContent=composeStage===0?(squareBase?'Draw a square':'Draw a circle'):'Add a connected line';
@@ -974,7 +977,7 @@ function paintMugStudy(reveal){
   for(const path of paths)stroke(dc,path,reveal?'#51a888':'#82aa9b99',reveal?2.4:2);
   dc.setLineDash([]);
  }
- if(!reveal){
+ if(!reveal&&!(composeStage===0&&upgradeActive('ovalGuides'))){
   const anchors=mugStageAnchors(composeStage,guide);
   const points=!reduced?anchors:composeStage===0?[anchors[0],anchors[2]]:[anchors[0],anchors[anchors.length-1]];
   for(const point of points)circleDot(point.x,point.y);
@@ -1135,6 +1138,17 @@ function paintPolygonGuide(corners,reveal){
 }
 // Keep the completed ideal outline on screen until the next prompt. A queued
 // animation frame or a responsive resize must not erase scoring feedback.
+// Oval Guides mirrors Circle Guides: swap the four guide dots for the
+// exact rotated dashed outline without modifying stroke scoring or rewards.
+function paintOvalStudyGuide(reveal){
+ const dashed=upgradeActive('ovalGuides');
+ if(dashed||reveal){
+  dc.save();dc.beginPath();dc.ellipse(O.x,O.y,O.rx,O.ry,O.angle||0,0,Math.PI*2);
+  dc.strokeStyle=reveal?'#51a888':'#82aa9b99';dc.lineWidth=reveal?2.4:2;
+  dc.setLineDash(reveal?[7,5]:[5,7]);dc.stroke();dc.restore();
+ }
+ if(!dashed)for(const p of ovalAnchors())circleDot(p.x,p.y);
+}
 function paintPaper(reveal=feedbackReveal){dc.clearRect(0,0,W,H);
  // Only the temporary targets fade; pencil ink and earned feedback never do.
  dc.save();dc.globalAlpha=displayedGuideOpacity(reveal);
@@ -1144,9 +1158,7 @@ function paintPaper(reveal=feedbackReveal){dc.clearRect(0,0,W,H);
  }
  else if(s.mode==='cylinder'&&O){
   if(composeStage===0){
-   if(reveal){dc.save();dc.beginPath();dc.ellipse(O.x,O.y,O.rx,O.ry,O.angle||0,0,2*Math.PI);
-    dc.strokeStyle='#51a888';dc.lineWidth=2.4;dc.setLineDash([7,5]);dc.stroke();dc.restore()}
-   for(const p of ovalAnchors())circleDot(p.x,p.y);
+   paintOvalStudyGuide(reveal);
   }else{
    const path=cylinderBodyGuide();
    if(path.length){
@@ -1160,13 +1172,7 @@ function paintPaper(reveal=feedbackReveal){dc.clearRect(0,0,W,H);
   }
  }
  else if(s.mode==='triangle'&&O)paintPolygonGuide(triangleCorners(),reveal);
- else if(s.mode==='oval'&&O){
-  if(reveal){
-   dc.save();dc.beginPath();dc.ellipse(O.x,O.y,O.rx,O.ry,O.angle||0,0,Math.PI*2);
-   dc.strokeStyle='#51a888';dc.lineWidth=2.4;dc.setLineDash([7,5]);dc.stroke();dc.restore();
-  }
-  for(const p of ovalAnchors())circleDot(p.x,p.y);
- }
+ else if(s.mode==='oval'&&O)paintOvalStudyGuide(reveal);
  else if(s.mode==='curve'&&A&&B&&O){
   dc.save();dc.beginPath();dc.moveTo(A.x,A.y);dc.quadraticCurveTo(O.x,O.y,B.x,B.y);
   dc.strokeStyle=reveal?'#51a888':'#82aa9b99';dc.lineWidth=reveal?2.4:2;
@@ -2728,6 +2734,7 @@ const guides={
  circle:circleGuide(),
  curve:curveShopGuide(),
  oval:ovalShopGuide(),
+ ovalGuides:ovalShopGuide(),
  cylinder:cylinderShopGuide(),
  object:mugShopGuide(),
  sphere:sphereShopGuide(),
@@ -2930,7 +2937,7 @@ function renderNode(id){const {ctx,strokes,symbol}=nodeCanvas[id];const guide=gu
 // buying it still requires all of its active prerequisites.
 const treeParents={
  root:[],stamina:['root'],staminaIII:['stamina'],secondWind:['stamina'],triangle:['root'],square:['triangle'],free:['root'],grid:['root'],eraser:['root'],selector:['square'],
- circle:['square'],curve:['circle'],guideFade:['curve'],oval:['curve'],cylinder:['oval','stamina'],object:['cylinder'],sphere:['cylinder','staminaIII'],balloon:['curve'],composer:['stamina','balloon'],dashedCircle:['circle'],
+ circle:['square'],curve:['circle'],guideFade:['curve'],oval:['curve'],ovalGuides:['oval'],cylinder:['oval','stamina'],object:['cylinder'],sphere:['cylinder','staminaIII'],balloon:['curve'],composer:['stamina','balloon'],dashedCircle:['circle'],
  eraserSize:['eraser']
 };
 function visibleNode(id){
@@ -2945,6 +2952,7 @@ function prerequisites(id){
  if(id==='curve')return ['circle'];
  if(id==='guideFade')return ['curve'];
  if(id==='oval')return ['curve'];
+ if(id==='ovalGuides')return ['oval'];
  if(id==='cylinder')return ['oval','stamina'];
  if(id==='object')return ['cylinder'];
  if(id==='sphere')return ['cylinder','staminaIII'];
@@ -3021,9 +3029,9 @@ function renderTree(){
  updateSpecializationUI();
  // Show a dotted half-connection toward an unpurchased prerequisite, starting
  // at the visible child. Once the prerequisite is purchased, show the full link.
- const linkParents={sphere:'cylinder',cylinder:'oval',oval:'curve',guideFade:'curve',curve:'circle',stamina:'root',staminaIII:'stamina',secondWind:'stamina',triangle:'root',circle:'square',free:'root',grid:'root',eraser:'root',dashedCircle:'circle',eraserSize:'eraser',square:'triangle',balloon:'curve',composer:'balloon',selector:'square'};
+ const linkParents={sphere:'cylinder',cylinder:'oval',oval:'curve',ovalGuides:'oval',guideFade:'curve',curve:'circle',stamina:'root',staminaIII:'stamina',secondWind:'stamina',triangle:'root',circle:'square',free:'root',grid:'root',eraser:'root',dashedCircle:'circle',eraserSize:'eraser',square:'triangle',balloon:'curve',composer:'balloon',selector:'square'};
  for(const [id,parent] of Object.entries(linkParents)){
-  drawBranch('link-'+id,id,parent,id==='composer'?balloonPlayable():id==='balloon'?curvePlayable():id==='sphere'?cylinderPlayable():id==='cylinder'?ovalPlayable():id==='oval'?curvePlayable():id==='guideFade'?curvePlayable():id==='curve'?circlePlayable():id==='selector'?squarePlayable():id==='circle'?squarePlayable():id==='square'?trianglePlayable():id==='triangle'?upgradeActive('root'):id==='eraserSize'?upgradeActive('eraser'):id==='eraser'?upgradeActive('root'):id==='dashedCircle'?circlePlayable():upgradeActive(parent));
+  drawBranch('link-'+id,id,parent,id==='ovalGuides'?ovalPlayable():id==='composer'?balloonPlayable():id==='balloon'?curvePlayable():id==='sphere'?cylinderPlayable():id==='cylinder'?ovalPlayable():id==='oval'?curvePlayable():id==='guideFade'?curvePlayable():id==='curve'?circlePlayable():id==='selector'?squarePlayable():id==='circle'?squarePlayable():id==='square'?trianglePlayable():id==='triangle'?upgradeActive('root'):id==='eraserSize'?upgradeActive('eraser'):id==='eraser'?upgradeActive('root'):id==='dashedCircle'?circlePlayable():upgradeActive(parent));
  }
  const legacy=$('link-square-legacy');
  legacy.style.display=s.legacySquare&&s.owned.square&&!s.owned.triangle&&s.owned.root?'':'none';

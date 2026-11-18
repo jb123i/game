@@ -47,3 +47,7 @@ After purchasing Shape Composer, players can choose **Living Ink ($12)** or **Pe
 ## Free Lines composition recognition
 
 With Shape Composer and Free Lines active, the second stage has no fixed A/B endpoints. Draw a straight line connected to the circle or square; its direction and length decide the finished object. A long downward string from the bottom of a circle creates a balloon (when Balloon Drawing is unlocked), while a shorter or angled handle creates a magnifier. A long, mostly vertical line below a square makes a signpost; a diagonal downward tail makes a kite. Disconnected lines cannot create the physical magnifier or balloon. Existing guided studies and partially saved drawings keep their original behavior.
+
+## Oval Guides ($5.00)
+
+Oval Guides is unlocked after Oval Studies. Trace its skill-tree oval and pay $5.00 to replace four oval guide dots with a dashed, rotated outline, matching the behavior of Circle Guides. The outline also replaces guide dots on the oval-top stage of Cylinder Studies and the oval-rim stage of Mug Studies. Drawing accuracy, rewards, and required stroke counts are unchanged. Existing saves gain the new unowned upgrade without a reset.
